@@ -1,6 +1,6 @@
 # dkvalg: Folketingsvalg model, adapter and replay
 
-<!-- claude-plan step=4 status=active -->
+<!-- claude-plan step=5 status=active -->
 
 | Field | Value |
 |---|---|
@@ -17,8 +17,8 @@
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
-| 4 | Verify | `/verify` | in `/build` | in progress |
-| 5 | Test | `/test` | in `/build` | pending |
+| 4 | Verify | `/verify` | in `/build` | done |
+| 5 | Test | `/test` | in `/build` | in progress |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
@@ -244,12 +244,18 @@ signature or criterion:
 
 | Check | Result |
 |---|---|
-| `ruff check .` | |
-| `ruff format --check .` | |
-| `mypy` | |
-| Plan completeness | every signature in the Public API table exists as written |
-| `STRUCTURE.md` | in sync |
-| `python -m <package>.<module>` | |
+| `ruff check .` | `All checks passed!` |
+| `ruff format --check .` | `47 files already formatted` |
+| `mypy` | `Success: no issues found in 18 source files` |
+| `pytest` (existing suite only; dkvalg tests arrive in step 5) | `307 passed in 6.57s` |
+| Plan completeness | every signature in the Public API table exists as written; checked by introspection (`dataclasses.fields`, `inspect.signature`, enum members, `has_result` true for 1, 11, 12). No Missing, Deviation or Unplanned entries. `dkvalg.__init__` exports exactly `FeedError`, `ElectionType`, `PlaceType`, `Status`, `PartyResult`, `Place`, `CountingProgress`, `Election`, `load_election`, `ReplaySource`, `ReplayStep`, as planned |
+| `STRUCTURE.md` | in sync: every module, signature and fixture/docs path checked by hand against the code and the auditor report; no edit needed |
+| `python -m dkvalg.<module>` | `errors`, `model`, `adapters.folketingsvalg`, `sources.directory`, `sources.replay` each exit 0 with readable output (the expected `RuntimeWarning` for re-exported modules aside). `python -m dkvalg` prints usage, exit 0. `python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed inf` exit 0: 107 steps ending `92/92 country Hele landet`, `92/92 tally Alle indberettede opstillingskredse`, then the national table (A Socialdemokratiet 21.9% 779524 votes 38 seats ... last row "Uden for partier" 2420 votes) |
+
+Structure-auditor (step 4): its claim of stale `template_repo`/`hello_world` entries was
+checked against the tree and is wrong (STRUCTURE.md already describes `dkvalg`); its
+"no signature drift" and the step 5 test-entries notes hold. Nothing changed in code.
+Housekeeping: removed the stale, git-ignored `src/valg_data.egg-info` the plan's step 1 names.
 
 ---
 
