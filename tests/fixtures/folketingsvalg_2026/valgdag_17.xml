@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folketingsvalg tirsdag 24. marts 2026</ValgNavn>
+  <ValgDato>24-03-2026</ValgDato>
+  <Sted Id="17" Type="StorKreds">Østjyllands Storkreds</Sted>
+  <SenestRettet>24-03-2026 23:17:07</SenestRettet>
+  <SenestRettetIso>2026-03-24T23:17:07</SenestRettetIso>
+  <SenestDannet>25-03-2026 00:20:48</SenestDannet>
+  <SenestDannetIso>2026-03-25T00:20:48</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg2546527/valgopg/valgopgStor17.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg2546527/valgopg/valgopg17.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>618682</Stemmeberettigede>
+  <DeltagelsePct>85.54</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" Mandater="6" Kredsmandater="5" Tillaegsmandater="1" StemmerAntal="110511" StemmerPct="21.2" />
+    <Parti Id="5893" Bogstav="B" Navn="B. Radikale Venstre" Mandater="1" Kredsmandater="1" Tillaegsmandater="0" StemmerAntal="37151" StemmerPct="7.1" />
+    <Parti Id="5895" Bogstav="C" Navn="C. Det Konservative Folkeparti" Mandater="2" Kredsmandater="2" Tillaegsmandater="0" StemmerAntal="40494" StemmerPct="7.8" />
+    <Parti Id="5897" Bogstav="F" Navn="F. SF - Socialistisk Folkeparti" Mandater="3" Kredsmandater="3" Tillaegsmandater="0" StemmerAntal="69722" StemmerPct="13.3" />
+    <Parti Id="2559203" Bogstav="H" Navn="H. Borgernes Parti - Lars Boje Mathiesen" Mandater="1" Kredsmandater="0" Tillaegsmandater="1" StemmerAntal="10927" StemmerPct="2.1" />
+    <Parti Id="5907" Bogstav="I" Navn="I. Liberal Alliance" Mandater="2" Kredsmandater="2" Tillaegsmandater="0" StemmerAntal="55048" StemmerPct="10.5" />
+    <Parti Id="1962293" Bogstav="M" Navn="M. Moderaterne" Mandater="2" Kredsmandater="1" Tillaegsmandater="1" StemmerAntal="38832" StemmerPct="7.4" />
+    <Parti Id="5899" Bogstav="O" Navn="O. Dansk Folkeparti" Mandater="2" Kredsmandater="1" Tillaegsmandater="1" StemmerAntal="34704" StemmerPct="6.6" />
+    <Parti Id="5903" Bogstav="V" Navn="V. Venstre, Danmarks Liberale Parti" Mandater="3" Kredsmandater="2" Tillaegsmandater="1" StemmerAntal="50623" StemmerPct="9.7" />
+    <Parti Id="1968075" Bogstav="Æ" Navn="Æ. Danmarksdemokraterne - Inger Støjberg" Mandater="1" Kredsmandater="1" Tillaegsmandater="0" StemmerAntal="25565" StemmerPct="4.9" />
+    <Parti Id="5905" Bogstav="Ø" Navn="Ø. Enhedslisten - De Rød-Grønne" Mandater="1" Kredsmandater="1" Tillaegsmandater="0" StemmerAntal="33066" StemmerPct="6.3" />
+    <Parti Id="1487618" Bogstav="Å" Navn="Å. Alternativet" Mandater="1" Kredsmandater="0" Tillaegsmandater="1" StemmerAntal="15569" StemmerPct="3" />
+    <Parti Id="" Navn="Uden for partier" Mandater="0" Kredsmandater="0" Tillaegsmandater="0" StemmerAntal="156" StemmerPct="0" />
+    <IAltGyldigeStemmer>522368</IAltGyldigeStemmer>
+    <BlankeStemmer>5582</BlankeStemmer>
+    <AndreUgyldigeStemmer>1283</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>6865</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>529233</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>
