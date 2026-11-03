@@ -162,7 +162,7 @@ the shared helpers. No test touches the network; datetimes are built only with
 
 ### `tests/conftest.py`
 
-Shared helpers, not tests: `FIXTURES`/`ROOT` paths, the `fixture_dir` (read-only), `fixture_copy`
+Shared helpers, not tests: the `FIXTURES`/`ROOT` paths and the `BOM`, `ELECTION_NAME` and `PARTIES_XML` constants (the byte-order mark, the 2026 election name and a three-party `<Stemmer>` body used by the synthetic builders), the `fixture_dir` (read-only), `fixture_copy`
 (a throwaway copy a test may damage) and session-wide `election` (the fixtures loaded once)
 fixtures, and small builders for synthetic feeds in DST's real XML shape: `feed_xml`,
 `overview_xml`, `entry`, `kreds_entry`, `make_ref`, `make_place`, `make_election`,
