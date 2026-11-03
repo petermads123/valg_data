@@ -1,6 +1,6 @@
 # dkvalg: Folketingsvalg model, adapter and replay
 
-<!-- claude-plan step=5 status=active -->
+<!-- claude-plan step=6 status=active -->
 
 | Field | Value |
 |---|---|
@@ -18,8 +18,8 @@
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
-| 5 | Test | `/test` | in `/build` | in progress |
-| 6 | Concept check | `/concept-check` | in `/build` | pending |
+| 5 | Test | `/test` | in `/build` | done |
+| 6 | Concept check | `/concept-check` | in `/build` | in progress |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
@@ -265,8 +265,73 @@ Housekeeping: removed the stale, git-ignored `src/valg_data.egg-info` the plan's
 
 | Intent | Test names | Result |
 |---|---|---|
+| T1 (A1) | `test_package.py`: `test_import_dkvalg_works`, `test_the_old_packages_are_not_importable[valg_data, valg_data.hello_world, template_repo]`, `test_dkvalg_re_exports_the_public_api[*]`; `test_cli.py`: `test_module_run_as_main_prints_usage_and_exits_0` (runpy), `test_python_dash_m_dkvalg_works_without_the_editable_install` (subprocess, `PYTHONPATH=src`), `test_main_exits_with_the_code_run_returns` | pass |
+| T2 (A2) | `test_fixtures.py`: 109 XML files plus README and `SHA256SUMS`, every listed feed present, every SHA-256 matches, BOM on every file, no CRLF drift, PDF present, README names URLs and date, `.gitattributes` | pass |
+| T3 (A3) | `test_directory.py`: 107 places and type counts, overview order, Hovedstaden every field, national seats 175 (135 + 40), landsdele seats 175, opstillingskreds and tally seats `None`, "Uden for partier" non-party, tally text; `test_folketingsvalg.py`: `parse_place_hovedstaden_matches_its_file_field_by_field`, `parse_overview_*` | pass |
+| T4 (A4) | `test_model.py`: `test_counting_progress_counts_only_kredse_with_a_result[6 cases incl. 9, 10, 0]`, `..._ignores_results_at_other_levels`, `..._zero_of_zero`, `..._str_is_counted_slash_total`; `test_directory.py`: `test_load_election_counts_92_of_92_on_the_fixtures`, all-never-reported 0/3, status 0 kept but not counted | pass |
+| T5 (A5) | `test_replay.py`: 0/92 start, one step per place in time order, ties in overview order (fixtures and synthetic), mid-sequence snapshots, final `==` static (also with untimed status 0 and status 9 places), sleeps = gap / speed, no sleep for first step or zero gaps, `inf` never sleeps, bad speeds `ValueError`, twice and interleaved iteration | pass |
+| T6 (A6) | `test_cli.py`: one line per step, counted/total monotonic to 92/92, national table with "Uden for partier" last, exit 0; empty, nonexistent, file, EP, malformed, missing-feed and no-feeds directories exit 1 with `error:` on stderr and empty stdout; bad speeds and argument shapes exit 2; no subcommand and help exit 0 | pass |
+| T7 (A7) | `test_folketingsvalg.py`: BOM and BOM-less equal, empty `Id` kept as non-party, status 0 / 9 / 10 figure-free, missing file and truncated XML name the file (`test_directory.py`), `SenestRettetIso` fallback, unknown status code names code and file | pass |
+| T8 | `test_directory.py`: `test_load_election_twice_gives_equal_elections_and_leaves_files_alone`, `..._does_not_mutate_the_directory_it_reads`; `test_replay.py`: `..._does_not_mutate_the_election`, immutability; `test_model.py`/`test_folketingsvalg.py`: frozen, idempotent, pure | pass |
+
+Result: `ruff check .` clean, `ruff format --check .` clean, `mypy` no issues in 27 files,
+`pytest` 696 passed (the 307 earlier tests plus 389 for dkvalg). The new tests were also run
+against the pre-fix adapter: 26 of them fail there, so they pin the fixes below.
+
+Bugs found by the two test-designers and verified by running code, then fixed in
+`src/dkvalg/adapters/folketingsvalg.py` (no signature or acceptance criterion changed):
+
+1. **DST's "never" timestamp `01-01-0001 00:00:00` was not recognised** (the `0001-01-01`
+   check ran before the `dd-mm-yyyy` rewrite): a status 0 feed got `last_changed = year 1` and
+   skipped the `ref.last_changed` fallback, and an overview entry carrying only that spelling
+   made `load_election` read a file that does not exist. `_timestamp` now rewrites first, then
+   checks, so every spelling is `None`.
+2. **An empty `SenestRettetIso` blocked the `SenestRettet` fallback** (both in feeds and in the
+   overview): an empty value is now treated as absent.
+3. **A status 1/11/12 feed with no `<Stemmer>`** returned a place with `has_result` true and no
+   figures, counted as reported: now `FeedError` ("status N but no Stemmer element").
+4. **A `Parti` with no `Id` attribute silently became "Uden for partier"**: now `FeedError`
+   naming the party and file; only an explicit empty `Id` is the non-party entry.
+5. **`nan`, `inf`, `1_000`, `1e3`, non-ASCII digits passed `_int`/`_float`**: figures must now
+   be plain ASCII integers or decimals, else `FeedError` naming the value and file (negative
+   numbers remain accepted, the adapter does not validate ranges).
+6. **An overview listing zero result feeds** gave an empty election and CLI exit 0: now
+   `FeedError` ("lists no result feeds"), so such a directory exits 1 (A6/A7 spirit).
+7. **A timestamp with a UTC offset** produced an aware datetime that would break sorting in the
+   replay: now `FeedError`, keeping the model's naive-time invariant.
+8. **`str` XML with an encoding declaration** raised `ValueError` on older parsers: `_parse_xml`
+   now also maps `ValueError` to `FeedError` (Python 3.13 accepts such `str` input, so no test).
+
+Docstrings of `parse_overview` and `parse_place` updated for 3, 4, 5, 6; `STRUCTURE.md`
+descriptions updated to match.
+
+Pinned as documented behaviour (tests assert it, nothing fixed):
+
+- A non-bytes `xml` (`None`) raises `TypeError`, a non-numeric `speed` raises `TypeError`, and
+  an ASCII-only `out` stream raises `UnicodeEncodeError` on Danish names: caller errors outside
+  the typed contract; `run` does not catch encoding failures.
+- `ReplaySource(speed=5e-324)` hands `inf` to the injected sleep (a real `time.sleep(inf)`
+  would raise `OverflowError`).
+- An untimed place that has a result is present from the start (`initial()` progress above
+  0 for a hand-built election); a timed status 9 place loses its status text until revealed;
+  `Election.get` returns the first of two places with the same key; negative counts are
+  accepted as served; duplicate overview entries are kept in order; a feed `filnavn` keeps a
+  query string in `file_name`; a landsdel without `land_id` gets parent `"0"`.
 
 Edge cases considered and deliberately skipped, with reasons:
+
+- `chmod 000` unreadable files: root bypasses permissions in this environment, and the
+  `IsADirectoryError`/`NotADirectoryError` cases already cover the `OSError` branch.
+- `load_election` given a `str` instead of a `Path`: type-contract violation, `TypeError`
+  from `str / str`, low value.
+- Mixed naive and aware datetimes in a hand-built `Election`: the adapter can no longer
+  produce them (fix 7); the replay does not promise anything for hand-built ones.
+- Entity-expansion attacks on `ElementTree`: relevant for live polling in round 2, not for
+  local files here.
+- `ValgNavn` such as `Folketingsvalgs-X` passing the `startswith` check: the discriminator is
+  the plan's rule; tightening it would be a concept change.
+- Very long strings and extreme integers: no limits in the code, Python ints are unbounded.
+- Real `time.sleep` pacing: needs real waiting; the injected clock covers the contract.
 
 ---
 
