@@ -7,7 +7,7 @@
 | Feature | `feat/dkvalg-folketingsvalg-replay` (the folder) |
 | Round | 1 |
 | Branch | `feat/dkvalg-folketingsvalg-replay` |
-| Version | `major` — first real capability, new subpackage; step 9 adds `0.1.0 → 1.0.0` (minor, 0.2.0, was the alternative) |
+| Version | `major` — first real capability, new subpackage; `0.1.0 → 1.0.0` (minor, 0.2.0, was the alternative) |
 | Started | 2026-11-03 |
 
 ## Progress
