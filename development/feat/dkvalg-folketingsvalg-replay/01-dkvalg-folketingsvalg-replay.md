@@ -1,6 +1,6 @@
 # dkvalg: Folketingsvalg model, adapter and replay
 
-<!-- claude-plan step=7 status=active -->
+<!-- claude-plan step=8 status=active -->
 
 | Field | Value |
 |---|---|
@@ -20,8 +20,8 @@
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
 | 6 | Concept check | `/concept-check` | in `/build` | done |
-| 7 | Ship | `/ship` | in `/build` | in progress |
-| 8 | Recommend | `/recommend` | with the user | pending |
+| 7 | Ship | `/ship` | in `/build` | done |
+| 8 | Recommend | `/recommend` | with the user | in progress |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
 
@@ -364,8 +364,10 @@ First round; nothing to re-check.
 
 | Field | Value |
 |---|---|
-| Commits | |
-| Pushed to | |
+| Commits | `47d2129` Concept; `814a7ae` Plan draft; `d2701aa` Plan critic findings; `96ad261` Plan accepted by the user; `9227196` WIP step 3 (fixtures, PDF, placeholder removed); `4c0ae98` Implement; `9e9aebb` Verify; `025e245` WIP step 5 (adapter hardening, tests); `2d3542f` WIP step 5 (replay, cli, fixture tests); `1ecb453` Test; `6764e74` Concept check; then `Ship: dkvalg Folketingsvalg model, adapter and replay` (this commit) |
+| Pushed to | `origin/feat/dkvalg-folketingsvalg-replay` |
+
+Gates on the whole tree: `ruff check .` clean, `ruff format --check .` 56 files, `mypy` no issues in 27 files, `pytest` 696 passed; every module showcase and `python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed inf` exit 0; `sha256sum -c SHA256SUMS` all OK. Diff review of `origin/main...HEAD` (140 files): no stray, scratch or secret files, no debug prints outside showcases, no AppDaemon/Home Assistant files, `pyproject.toml` `version` still `0.1.0` (only name and description changed), STRUCTURE.md in sync. Every step from 1 left a commit.
 
 ---
 
