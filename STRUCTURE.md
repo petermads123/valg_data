@@ -38,8 +38,10 @@ here, but everything in this file is in context every session.
 
 ```
 src/                    everything installable; nothing outside it is packaged
-  valg_data/            the package itself
+  dkvalg/               the package: model, adapters, sources and the CLI
+docs/                   reference documents (DST's XML-feeds PDF)
 tests/                  pytest suite, one test_<module>.py per module
+  fixtures/             unmodified real DST feeds used as test data
 development/            one folder per branch, one file per round: the pipeline's state
 .claude/                Claude Code configuration: rules, skills, agents, hooks
 .vscode/                editor config (Ruff as formatter, format on save)
@@ -50,43 +52,111 @@ CLAUDE.md               routing map for Claude
 STRUCTURE.md            this file
 ```
 
-## Package: `src/valg_data/`
+## Package: `src/dkvalg/`
 
-### `src/valg_data/__init__.py`
+Reads DST's Folketingsvalg XML feeds into one normalised, immutable model and replays a
+saved feed set through time. Standard library only. Subpackages: `adapters/` (bytes in,
+model out, one module per election type) and `sources/` (where an `Election` comes from: a
+directory, or a time-scaled replay of one). Every `main()` is a showcase and runs standalone
+with `python -m dkvalg.<module>` (`cli`'s is the entry point); the ones that read fixtures
+locate them by a repo-relative path and say so outside a checkout.
 
-Package entry point. Re-export the public API here so callers can
-`from valg_data import X` rather than reaching into modules, using relative imports so
-it survives renaming the package folder. Nothing is exported yet — the placeholder script
-has no public API.
+### `src/dkvalg/__init__.py`
 
-Every package directory under `src/`, including every subpackage added later, needs one of
-these. The stop gate blocks on a directory of modules without it: it is not a package, so
-it will not install.
+Re-exports the public API: `FeedError`, `ElectionType`, `PlaceType`, `Status`,
+`PartyResult`, `Place`, `CountingProgress`, `Election`, `load_election`, `ReplaySource`,
+`ReplayStep`. Adapter internals (`parse_*`, `unreported_place`, `FeedRef`, `Overview`) and
+the CLI (`run`, `main`) stay in their modules.
 
-### `src/valg_data/hello_world.py`
-
-Placeholder so the package is not empty. Delete the whole file when real code arrives.
+### `src/dkvalg/errors.py`
 
 | Signature | Description |
 |---|---|
-| `main() -> None` | Print `Hello, World!`. |
+| `class FeedError(Exception)` | A feed is missing, unreadable, malformed, or of an unsupported election type; the message names the file or value. |
+| `main() -> None` | Showcase. |
 
-It is deliberately trivial and is **not** the conventions reference — `/implement` carries
-the worked module and `/test` the worked test file, so the examples do not disappear with
-the placeholder.
+### `src/dkvalg/model.py`
 
-Runnable standalone: `python -m valg_data.hello_world`, once the package is installed
-(`pip install -e ".[dev]"`). Under a `src/` layout the repo root is not on `sys.path`, so
-without the install it fails with `No module named valg_data` — an un-set-up
-environment, not a broken module.
+Normalised, immutable election model. Seat fields are `None` where DST gives none.
+
+| Signature | Description |
+|---|---|
+| `class ElectionType(StrEnum)` | `FOLKETINGSVALG = "folketingsvalg"`. |
+| `class PlaceType(StrEnum)` | `COUNTRY`, `TALLY` (DST's seatless preliminary "optalling" total), `LANDSDEL`, `STORKREDS`, `OPSTILLINGSKREDS`. |
+| `class Status(IntEnum)` | DST status code: `NOT_AVAILABLE` 0, `PRELIMINARY` 1, `ERROR` 9, `RECOUNT_PENDING` 10, `RECOUNT_PRELIMINARY` 11, `RECOUNT_FINAL` 12; property `has_result` (true for 1, 11, 12). |
+| `@dataclass(frozen=True, slots=True) class PartyResult` | `party_id: str`, `letter: str`, `name: str`, `votes: int`, `percent: float`, `seats: int \| None = None`, `constituency_seats: int \| None = None`, `supplementary_seats: int \| None = None`; property `is_party` (false for "Uden for partier", `party_id == ""`). |
+| `@dataclass(frozen=True, slots=True) class Place` | `place_type`, `place_id`, `name`, `parent_id`, `status`, `status_text`, `last_changed`, then optional `eligible_voters`, `turnout_percent`, `valid_votes`, `blank_votes`, `other_invalid_votes`, `total_invalid_votes`, `total_votes` and `parties: tuple[PartyResult, ...] = ()`; property `has_result`; `unreported() -> Place` gives the placeholder form. |
+| `@dataclass(frozen=True, slots=True) class CountingProgress` | `counted: int`, `total: int`; `str` gives `"counted/total"`. |
+| `@dataclass(frozen=True, slots=True) class Election` | `name`, `election_type`, `election_date`, `places`; `get(place_type, place_id) -> Place` (`KeyError` naming both), `of_type(place_type) -> tuple[Place, ...]`, `counting_progress() -> CountingProgress` (opstillingskredse with a result). |
+| `main() -> None` | Showcase. |
+
+### `src/dkvalg/adapters/__init__.py`
+
+Package marker for per-election-type adapters.
+
+### `src/dkvalg/adapters/folketingsvalg.py`
+
+Parses DST's Folketingsvalg feeds; no I/O. Timestamps are naive Danish local time as
+served; a BOM is accepted.
+
+| Signature | Description |
+|---|---|
+| `@dataclass(frozen=True, slots=True) class FeedRef` | `place_type`, `place_id`, `name`, `parent_id`, `last_changed: datetime \| None`, `file_name`: one feed as listed by the overview. |
+| `@dataclass(frozen=True, slots=True) class Overview` | `name`, `election_type`, `election_date`, `feeds: tuple[FeedRef, ...]`. |
+| `parse_overview(xml: bytes) -> Overview` | Parse `valgdag.xml`; `FeedError` when malformed or not a Folketingsvalg. |
+| `parse_place(xml: bytes, ref: FeedRef) -> Place` | Parse one result feed; status 0, 9 and others without a result give a figure-free place; `FeedError` on malformed XML or an unknown status code. |
+| `unreported_place(ref: FeedRef) -> Place` | Placeholder for a feed the overview lists as never reported. |
+| `main() -> None` | Showcase. |
+
+### `src/dkvalg/sources/__init__.py`
+
+Package marker for sources.
+
+### `src/dkvalg/sources/directory.py`
+
+| Signature | Description |
+|---|---|
+| `load_election(directory: Path) -> Election` | Read `valgdag.xml` and every reported feed it lists from a DST-layout directory; `FeedError` naming a missing file. |
+| `main() -> None` | Showcase. |
+
+### `src/dkvalg/sources/replay.py`
+
+| Signature | Description |
+|---|---|
+| `@dataclass(frozen=True, slots=True) class ReplayStep` | `at: datetime`, `place: Place`, `election: Election`; property `progress`. One reveal. |
+| `class ReplaySource` | `__init__(self, election: Election, *, speed: float = 1.0, sleep: Callable[[float], None] = time.sleep) -> None` (`ValueError` unless `speed` is positive and not NaN; `inf` never waits); `initial(self) -> Election`; `__iter__(self) -> Iterator[ReplayStep]` reveals each place at its `last_changed`, ties in overview order. |
+| `main() -> None` | Showcase. |
+
+### `src/dkvalg/cli.py`
+
+| Signature | Description |
+|---|---|
+| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep) -> int` | `replay <dir> [--speed N]`; returns 0 ok, 1 on `FeedError` (`error: <message>` on `err`), 2 on bad arguments; no subcommand prints help and returns 0. |
+| `main() -> None` | `raise SystemExit(run())`. |
+
+### `src/dkvalg/__main__.py`
+
+Entry point for `python -m dkvalg`; calls `cli.main()`.
+
+## Documents and fixtures
+
+### `docs/XmlFeeds20260305.pdf`
+
+DST's documentation of its election XML feeds (status codes, element meanings), from
+https://dst.dk/Valg/XmlFeeds20260305.pdf.
+
+### `tests/fixtures/folketingsvalg_2026/`
+
+The unmodified Folketingsvalg 24 March 2026 feeds retrieved 2026-11-03 from
+`https://www.dst.dk/valg/Valg2546527/xml/`: `generel.xml`, `valgdag.xml` and the 107 result
+feeds it lists (109 XML files, BOM intact), plus `README.md` (sources, retrieval date) and
+`SHA256SUMS` (hash of every XML file at download time). `.gitattributes` marks the
+directory `-text` so checkouts never rewrite line endings.
 
 ## Tests: `tests/`
 
-### `tests/test_hello_world.py`
-
-Covers the placeholder script's `main` via `capsys`: the exact output, that it is one line,
-that nothing goes to stderr, and that a second call prints the same thing. Deleted along
-with the script it covers. The edge-case standard is demonstrated in `/test`, not here.
+Tests for the `dkvalg` package arrive with step 5; one `test_<module>.py` per module, plus
+a shared fixture-directory helper in `tests/conftest.py`.
 
 All tests live here and nowhere else — `testpaths = ["tests"]` in `pyproject.toml` means
 `pytest` collects nothing outside this directory, and the stop gate blocks on a test file

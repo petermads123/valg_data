@@ -1,6 +1,6 @@
 # dkvalg: Folketingsvalg model, adapter and replay
 
-<!-- claude-plan step=3 status=active -->
+<!-- claude-plan step=4 status=active -->
 
 | Field | Value |
 |---|---|
@@ -16,8 +16,8 @@
 |---|---|---|---|---|
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
-| 3 | Implement | `/implement` | in `/build` | in progress |
-| 4 | Verify | `/verify` | in `/build` | pending |
+| 3 | Implement | `/implement` | in `/build` | done |
+| 4 | Verify | `/verify` | in `/build` | in progress |
 | 5 | Test | `/test` | in `/build` | pending |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
@@ -216,6 +216,25 @@ Accepted: by the user, 2026-11-03
 > Written in step 3. Only deviations from the plan above, each with its reason. "Built as
 > planned" is a complete and good entry. On a fix round, also the reproduction test's red
 > run, pasted here before the fix was written — step 6 cites it.
+
+Built as planned: every signature in the Public API table is as written. Fixtures verified
+on 2026-11-03: all 109 files returned HTTP 200, all begin with the UTF-8 BOM, `SHA256SUMS`
+lists them and verifies. Implementation choices the plan left open, none changing a
+signature or criterion:
+
+- `model.py` uses `from __future__ import annotations` so `Place.unreported() -> Place`
+  needs no quotes on Python 3.13.
+- `cli.run` parses with a plain `argparse.ArgumentParser` inside
+  `contextlib.redirect_stdout`/`redirect_stderr` onto the injected `out`/`err` and turns
+  argparse's `SystemExit` into the return code, instead of subclassing the parser.
+- `parse_place` reads figures only when the status `has_result` (1, 11, 12); a status 0, 9
+  or 10 feed gives a figure-free place even if it carried a `Stemmer` element.
+- A landsdel's `parent_id` is its `land_id` attribute (`"0"` in the 2026 feeds), defaulting
+  to `"0"`.
+- Places keep overview document order: landsdele, storkredse, opstillingskredse, then the
+  country and the tally (which come last in `valgdag.xml`).
+- `Place.last_changed` for a feed whose own timestamp is `0001-01-01` falls back to the
+  overview's, as for a missing one.
 
 ---
 

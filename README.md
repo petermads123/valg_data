@@ -1,6 +1,9 @@
-# valg_data
+# dkvalg
 
-Provides past and live election data via available APIs, starting with Danish elections.
+Danish election data in one normalised model, built on the XML feeds DST (Danmarks Statistik)
+publishes for the Folketingsvalg. Round 1 reads a saved feed set and can replay it through
+time at accelerated speed, so the pipeline can be developed against a real past election
+(the one of 24 March 2026) without waiting for a live one. Standard library only.
 
 ## Install as a dependency
 
@@ -11,8 +14,44 @@ pip install git+https://github.com/petermads123/valg_data.git@main
 Or in `dependencies` in `pyproject.toml`:
 
 ```toml
-"valg_data @ git+https://github.com/petermads123/valg_data.git@main"
+"dkvalg @ git+https://github.com/petermads123/valg_data.git@main"
 ```
+
+## Usage
+
+### Library
+
+```python
+from pathlib import Path
+
+from dkvalg import PlaceType, ReplaySource, load_election
+
+election = load_election(Path("tests/fixtures/folketingsvalg_2026"))
+print(election.counting_progress())  # 92/92
+hovedstaden = election.get(PlaceType.LANDSDEL, "7")
+print(hovedstaden.eligible_voters, hovedstaden.parties[0].votes)
+
+for step in ReplaySource(election, speed=600):  # waits between steps, 600 times faster
+    print(step.at, step.progress, step.place.name)
+```
+
+`load_election` reads a directory laid out as DST serves it: `valgdag.xml` and the result
+feeds it lists. `tests/fixtures/folketingsvalg_2026/` is such a directory (see its README
+for the sources). A snapshot holds every place (country, the preliminary "optalling" tally,
+landsdele, storkredse and opstillingskredse); a place with no result yet has status
+`NOT_AVAILABLE`. A replay reveals each feed at its last-changed time, so landsdel, storkreds
+and national figures appear late: DST publishes only the latest version of each feed.
+
+### Replay command
+
+```powershell
+python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed 600
+```
+
+Prints one line per place as it is revealed, with a running counted-of-92 progress, and ends
+with the national result table. `--speed` is a positive number (default 600) or `inf` for no
+waiting. A directory that is not a Folketingsvalg feed set prints `error: ...` to stderr and
+exits 1. `python -m dkvalg` with no arguments prints usage.
 
 ## Why `src/`
 
@@ -21,7 +60,7 @@ a stray script — can be picked up as a package by accident, and an import in a
 against the installed package rather than against whatever happens to sit in the working
 directory.
 
-The trade-off: the repo root is not on `sys.path`, so `python -m valg_data.<module>` only
+The trade-off: the repo root is not on `sys.path`, so `python -m dkvalg.<module>` only
 works once you have run `pip install -e ".[dev]"`. `pytest` is unaffected — `pythonpath`
 in `pyproject.toml` points it at `src`.
 
