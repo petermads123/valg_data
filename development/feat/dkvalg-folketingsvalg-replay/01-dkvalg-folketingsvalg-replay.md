@@ -1,6 +1,6 @@
 # dkvalg: Folketingsvalg model, adapter and replay
 
-<!-- claude-plan step=2 status=active -->
+<!-- claude-plan step=3 status=active -->
 
 | Field | Value |
 |---|---|
@@ -15,8 +15,8 @@
 | # | Step | Skill | Runs | Status |
 |---|---|---|---|---|
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
-| 2 | Plan | `/plan` | with the user, unless the critique is clean | in progress |
-| 3 | Implement | `/implement` | in `/build` | pending |
+| 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
+| 3 | Implement | `/implement` | in `/build` | in progress |
 | 4 | Verify | `/verify` | in `/build` | pending |
 | 5 | Test | `/test` | in `/build` | pending |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
@@ -205,7 +205,9 @@ Plan-critic findings (verdict: accept with the changes below), 2026-11-03. The c
 11. **Sleep rule vs `inf`.** Applied: sleep only when `gap / speed > 0`.
 12. **Missing test detail for A3 and A6.** Applied: T3 checks every A3 field on one place; T6 checks the counted/total column rises monotonically to 92/92.
 
-Not accepted yet: finding 1 is the user's decision, and finding 6 is a rebuttal.
+Finding 1 decided by the user: the tally is a place (107 places). Finding 6 rebuttal accepted: status 10 is not counted.
+
+Accepted: by the user, 2026-11-03
 
 ---
 
