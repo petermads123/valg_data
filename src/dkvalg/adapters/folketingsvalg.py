@@ -23,6 +23,8 @@ _NEVER = "0001-01-01"
 _DST_TIMESTAMP = re.compile(r"^(\d{2})-(\d{2})-(\d{4}) (\d{2}:\d{2}:\d{2})$")
 _DST_DATE = re.compile(r"^(\d{2})-(\d{2})-(\d{4})$")
 _TALLY_FILE = re.compile(r"^valgdag_(.+)\.xml$")
+_INTEGER = re.compile(r"[+-]?\d+", re.ASCII)
+_DECIMAL = re.compile(r"[+-]?(?:\d+\.?\d*|\.\d+)", re.ASCII)
 
 # overview element tag -> (place type, attribute holding the id, parent attribute)
 _OVERVIEW_PLACES: dict[str, tuple[PlaceType, str, str | None]] = {
@@ -78,25 +80,32 @@ def _parse_xml(xml: bytes, source: str) -> ET.Element:
     """Parse bytes (BOM or not) into a root element, or raise `FeedError`."""
     try:
         return ET.fromstring(xml)
-    except ET.ParseError as error:
+    except (ET.ParseError, ValueError) as error:
         raise FeedError(f"{source}: malformed XML: {error}") from error
 
 
 def _timestamp(text: str | None, source: str) -> datetime | None:
-    """Convert DST timestamp text (ISO or `dd-mm-yyyy hh:mm:ss`) to a datetime."""
+    """Convert DST timestamp text (ISO or `dd-mm-yyyy hh:mm:ss`) to a datetime.
+
+    Absent, empty and "never" (`0001-01-01`, in either spelling) give None. A
+    timestamp carrying a UTC offset is refused: the model holds naive local time.
+    """
     if text is None:
         return None
     text = text.strip()
-    if text == "" or text.startswith(_NEVER):
-        return None
     match = _DST_TIMESTAMP.match(text)
     if match:
         day, month, year, clock = match.groups()
         text = f"{year}-{month}-{day}T{clock}"
+    if text == "" or text.startswith(_NEVER):
+        return None
     try:
-        return datetime.fromisoformat(text)
+        stamp = datetime.fromisoformat(text)
     except ValueError as error:
         raise FeedError(f"{source}: bad timestamp {text!r}") from error
+    if stamp.tzinfo is not None:
+        raise FeedError(f"{source}: timestamp {text!r} has a UTC offset")
+    return stamp
 
 
 def _date(text: str | None, source: str) -> date:
@@ -114,7 +123,7 @@ def _date(text: str | None, source: str) -> date:
 def _changed(element: ET.Element, source: str) -> datetime | None:
     """Read a `SenestRettetIso` / `SenestRettet` attribute pair from an overview entry."""
     iso = element.get("SenestRettetIso")
-    return _timestamp(iso if iso is not None else element.get("SenestRettet"), source)
+    return _timestamp(iso or element.get("SenestRettet"), source)
 
 
 def _child_text(root: ET.Element, tag: str) -> str | None:
@@ -126,19 +135,17 @@ def _child_text(root: ET.Element, tag: str) -> str | None:
 
 
 def _int(text: str | None, what: str, source: str) -> int:
-    """Convert text to int or raise `FeedError` naming the value."""
-    try:
-        return int(text or "")
-    except ValueError as error:
-        raise FeedError(f"{source}: bad {what} {text!r}") from error
+    """Convert plain digits (optional sign) to int, else raise `FeedError`."""
+    if text is None or not _INTEGER.fullmatch(text.strip()):
+        raise FeedError(f"{source}: bad {what} {text!r}")
+    return int(text)
 
 
 def _float(text: str | None, what: str, source: str) -> float:
-    """Convert text to float or raise `FeedError` naming the value."""
-    try:
-        return float(text or "")
-    except ValueError as error:
-        raise FeedError(f"{source}: bad {what} {text!r}") from error
+    """Convert a plain decimal (no `nan`, `inf`, `_` or exponent) to float."""
+    if text is None or not _DECIMAL.fullmatch(text.strip()):
+        raise FeedError(f"{source}: bad {what} {text!r}")
+    return float(text)
 
 
 def _optional_int(root: ET.Element, tag: str, source: str) -> int | None:
@@ -192,8 +199,8 @@ def parse_overview(xml: bytes) -> Overview:
         The election name, type and date and every result feed it lists.
 
     Raises:
-        FeedError: If the XML is malformed, a required field is missing, or the
-            overview is not a Folketingsvalg.
+        FeedError: If the XML is malformed, a required field is missing, the
+            overview is not a Folketingsvalg, or it lists no result feeds.
     """
     root = _parse_xml(xml, _OVERVIEW_NAME)
     name = _child_text(root, "ValgNavn")
@@ -204,6 +211,8 @@ def parse_overview(xml: bytes) -> Overview:
     election_date = _date(_child_text(root, "ValgDato"), _OVERVIEW_NAME)
     tags = {*_OVERVIEW_PLACES, "Land"}
     feeds = tuple(_feed_ref(element) for element in root.iter() if element.tag in tags)
+    if not feeds:
+        raise FeedError(f"{_OVERVIEW_NAME}: lists no result feeds")
     return Overview(name, ElectionType.FOLKETINGSVALG, election_date, feeds)
 
 
@@ -229,8 +238,11 @@ def unreported_place(ref: FeedRef) -> Place:
 
 def _party(element: ET.Element, source: str) -> PartyResult:
     """Build a `PartyResult` from one `Parti` element."""
+    party_id = element.get("Id")
+    if party_id is None:
+        raise FeedError(f"{source}: <Parti> {element.get('Navn')!r} has no Id")
     return PartyResult(
-        party_id=element.get("Id", ""),
+        party_id=party_id,
         letter=element.get("Bogstav", ""),
         name=element.get("Navn", ""),
         votes=_int(element.get("StemmerAntal"), "StemmerAntal", source),
@@ -244,8 +256,10 @@ def _party(element: ET.Element, source: str) -> PartyResult:
 def parse_place(xml: bytes, ref: FeedRef) -> Place:
     """Parse one result feed.
 
-    Id, name and parent come from `ref`. A feed with status 0 or 9 (or any
-    status that carries no result) yields a place without figures.
+    Id, name and parent come from `ref`. A feed with status 0, 9 or 10 (a status
+    that carries no result) yields a place without figures even if it holds a
+    `Stemmer` element. A feed whose timestamp is absent, empty or "never" takes
+    `ref.last_changed`.
 
     Args:
         xml: The raw bytes of the result feed.
@@ -255,8 +269,9 @@ def parse_place(xml: bytes, ref: FeedRef) -> Place:
         The place, with figures when the status carries a result.
 
     Raises:
-        FeedError: If the XML is malformed, the status is missing or unknown,
-            or a figure is not a number.
+        FeedError: If the XML is malformed, the status is missing or unknown, a
+            status with a result has no `Stemmer`, a `Parti` has no `Id`, or a
+            figure is not a plain number.
     """
     source = ref.file_name
     root = _parse_xml(xml, source)
@@ -271,9 +286,7 @@ def parse_place(xml: bytes, ref: FeedRef) -> Place:
     status_text = (status_element.text or "").strip()
 
     iso = _child_text(root, "SenestRettetIso")
-    stamp = _timestamp(
-        iso if iso is not None else _child_text(root, "SenestRettet"), source
-    )
+    stamp = _timestamp(iso or _child_text(root, "SenestRettet"), source)
     last_changed = stamp if stamp is not None else ref.last_changed
 
     base = Place(
@@ -285,9 +298,11 @@ def parse_place(xml: bytes, ref: FeedRef) -> Place:
         status_text=status_text,
         last_changed=last_changed,
     )
-    votes = root.find("Stemmer")
-    if not status.has_result or votes is None:
+    if not status.has_result:
         return base
+    votes = root.find("Stemmer")
+    if votes is None:
+        raise FeedError(f"{source}: status {status.value} but no Stemmer element")
     turnout = _child_text(root, "DeltagelsePct")
     return Place(
         place_type=base.place_type,
