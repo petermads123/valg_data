@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folketingsvalg tirsdag 24. marts 2026</ValgNavn>
+  <ValgDato>24-03-2026</ValgDato>
+  <Sted Id="60" Type="OpstKreds">1.Odense Øst</Sted>
+  <SenestRettet>24-03-2026 22:54:17</SenestRettet>
+  <SenestRettetIso>2026-03-24T22:54:17</SenestRettetIso>
+  <SenestDannet>25-03-2026 00:20:49</SenestDannet>
+  <SenestDannetIso>2026-03-25T00:20:49</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg2546527/valgopg/valgopgOpst60.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg2546527/valgopg/valgopg60.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>52387</Stemmeberettigede>
+  <DeltagelsePct>78.96</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" StemmerAntal="9626" StemmerPct="23.7" />
+    <Parti Id="5893" Bogstav="B" Navn="B. Radikale Venstre" StemmerAntal="2676" StemmerPct="6.6" />
+    <Parti Id="5895" Bogstav="C" Navn="C. Det Konservative Folkeparti" StemmerAntal="2591" StemmerPct="6.4" />
+    <Parti Id="5897" Bogstav="F" Navn="F. SF - Socialistisk Folkeparti" StemmerAntal="6184" StemmerPct="15.2" />
+    <Parti Id="2559203" Bogstav="H" Navn="H. Borgernes Parti - Lars Boje Mathiesen" StemmerAntal="566" StemmerPct="1.4" />
+    <Parti Id="5907" Bogstav="I" Navn="I. Liberal Alliance" StemmerAntal="3351" StemmerPct="8.2" />
+    <Parti Id="1962293" Bogstav="M" Navn="M. Moderaterne" StemmerAntal="2634" StemmerPct="6.5" />
+    <Parti Id="5899" Bogstav="O" Navn="O. Dansk Folkeparti" StemmerAntal="3202" StemmerPct="7.9" />
+    <Parti Id="5903" Bogstav="V" Navn="V. Venstre, Danmarks Liberale Parti" StemmerAntal="2867" StemmerPct="7.1" />
+    <Parti Id="1968075" Bogstav="Æ" Navn="Æ. Danmarksdemokraterne - Inger Støjberg" StemmerAntal="869" StemmerPct="2.1" />
+    <Parti Id="5905" Bogstav="Ø" Navn="Ø. Enhedslisten - De Rød-Grønne" StemmerAntal="4952" StemmerPct="12.2" />
+    <Parti Id="1487618" Bogstav="Å" Navn="Å. Alternativet" StemmerAntal="1111" StemmerPct="2.7" />
+    <IAltGyldigeStemmer>40629</IAltGyldigeStemmer>
+    <BlankeStemmer>631</BlankeStemmer>
+    <AndreUgyldigeStemmer>104</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>735</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>41364</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>
