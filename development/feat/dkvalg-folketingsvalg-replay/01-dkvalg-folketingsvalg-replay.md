@@ -1,6 +1,6 @@
 # dkvalg: Folketingsvalg model, adapter and replay
 
-<!-- claude-plan step=6 status=active -->
+<!-- claude-plan step=7 status=active -->
 
 | Field | Value |
 |---|---|
@@ -19,8 +19,8 @@
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
-| 6 | Concept check | `/concept-check` | in `/build` | in progress |
-| 7 | Ship | `/ship` | in `/build` | pending |
+| 6 | Concept check | `/concept-check` | in `/build` | done |
+| 7 | Ship | `/ship` | in `/build` | in progress |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
@@ -342,19 +342,21 @@ Edge cases considered and deliberately skipped, with reasons:
 
 | # | Criterion | Met | Evidence |
 |---|---|---|---|
-| A1 | | | |
+| A1 | Package is `dkvalg`; `valg_data` and hello-world gone; `python -m dkvalg` runs | Met | `git ls-files` has no `valg_data`/`hello_world` path; `src/` holds only `dkvalg`; `python -m dkvalg` prints usage, exit 0; `test_package.py` (`test_the_old_packages_are_not_importable[*]`) and `test_cli.py::test_python_dash_m_dkvalg_works_without_the_editable_install` pass; `dependencies = []` in `pyproject.toml` |
+| A2 | Real fixtures and DST PDF, unmodified, README with URLs and date | Met | `docs/XmlFeeds20260305.pdf` exists; `tests/fixtures/folketingsvalg_2026/` has 109 `*.xml` plus `README.md` and `SHA256SUMS`; `sha256sum -c SHA256SUMS` reports 0 non-OK lines; README names `https://www.dst.dk/valg/Valg2546527/xml/` and retrieval date 2026-11-03; `test_fixtures.py` passes |
+| A3 | Parses to a normalised election with 107 places and all fields | Met | Probe on the fixtures: name `Folketingsvalg tirsdag 24. marts 2026`, date 2026-03-24, type `folketingsvalg`, 107 places = 1 country, 1 tally, 3 landsdel, 10 storkreds, 92 opstillingskreds (Counter output). Hovedstaden (landsdel 7): eligible 1309177, turnout 84.31, valid 1091388, blank 9870, invalid 12348; Socialdemokratiet 201493 votes, 18.5 %, seats 10, constituency 10, supplementary 0; national seats sum 175; "Uden for partier" present with `is_party` false. `test_directory.py` and `test_folketingsvalg.py` (Hovedstaden field by field) pass |
+| A4 | Counting progress, no result vs reported | Met | `counting_progress()` is `92/92` on the fixtures; `test_model.py::test_counting_progress_counts_only_kredse_with_a_result` (statuses 0, 1, 9, 10, 11, 12, never reported) and `test_directory.py` all-never-reported 0/3 pass. Note: status 10 and 9 are not counted, a choice step 2 recorded and the user accepted |
+| A5 | ReplaySource reveals feeds at `SenestRettet`, in order, speed-scaled, injected clock | Met | `test_replay.py`: starts 0/92, ordered steps with ties in overview order, mid-sequence snapshots, final snapshot `==` static election, sleeps equal gap/speed, none at `inf`, bad speeds `ValueError`; all use an injected `sleep`, no real waiting (full suite 696 passed in 8.7 s) |
+| A6 | `replay <dir> [--speed N]` prints each reveal with progress, ends with national table, exit 0; bad dir readable error and non-zero | Met | `python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed inf`: 107 lines, e.g. `2026-03-24 21:21:09   1/92  opstillingskreds 3.Tønder`, ending `92/92 tally ...`, then the "Hele landet" table with "Uden for partier" last, rc 0. Empty directory: stderr `error: feed file not found: .../valgdag.xml`, rc 1. `test_cli.py` covers empty, EP, malformed and missing-feed directories (exit 1, empty stdout), bad speed (exit 2) |
+| A7 | Real-feed quirks | Met | `test_folketingsvalg.py`: BOM and BOM-less parse equal, every fixture starts with a BOM (`test_fixtures.py`); empty `Id` kept as non-party (fixture probe `['Uden for partier']`); status 0, 9 and 10 give figure-free places (status 9 is `Status.ERROR`, no crash); `test_directory.py` missing feed raises `FeedError` naming the file; 58 selected quirk/CLI/replay tests pass |
 
-Drift found, and what was done about it:
+Other checks. Out of scope: `grep -rliE 'appdaemon|home.?assistant|apps\.yaml|valg_opdateret'` matches only this plan file (where it is listed as out of scope), nothing in `src/`, `tests/`, README or docs; no `HttpSource`, `diff.py`, EP/FA adapter or fintael code (grep of `src`); no network imports (`urllib`, `requests`, `socket`, `http`, `urlopen`) in `src` or `tests`. Surface: public API is the one the concept implies (model, `load_election`, `ReplaySource`, CLI), nothing extra. Replay assumption as written: aggregates appear late, the last reveals are Hovedstaden, Københavns Storkreds, Hele landet and the tally at 00:12:26. Showcases: `python -m dkvalg.<module>` for errors, model, adapters.folketingsvalg, sources.directory, sources.replay exit 0. Structure: the auditor reported in sync; the only nit is that the `tests/conftest.py` entry omits the constants `BOM`, `ELECTION_NAME` and `PARTIES_XML`, which are not public API and need no entry. Gates: `ruff check .` clean, `mypy` no issues in 27 files, `pytest` 696 passed.
+
+Drift found, and what was done about it: none. Everything in section 1 is built and nothing outside it. The step 5 fixes (nine adapter hardening changes, section 5) stay within the concept: they make A7 and A6 stricter and add no feature. No code was changed in this step.
 
 ### Earlier rounds still hold
 
-> Later rounds only. Re-check every acceptance criterion from every earlier round in this
-> folder: this round changed code they depend on, and their tests passing is necessary but
-> not sufficient — a criterion can be satisfied by tests that no longer describe what the
-> feature does.
-
-| Round | # | Criterion | Still met | Evidence |
-|---|---|---|---|---|
+First round; nothing to re-check.
 
 ---
 
