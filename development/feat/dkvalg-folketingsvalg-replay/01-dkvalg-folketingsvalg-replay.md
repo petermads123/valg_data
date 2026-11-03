@@ -67,8 +67,8 @@ Assumptions: English identifiers and docstrings with Danish values kept as serve
 | # | The finished feature... |
 |---|---|
 | A1 | is the package `dkvalg`: `valg_data` and the hello-world placeholder with its test are gone, and `python -m dkvalg` runs. |
-| A2 | ships real fixtures: `docs/` holds DST's XML-feeds PDF; `tests/fixtures/` holds the unmodified Folketingsvalg 24 March 2026 set (`generel.xml`, `valgdag.xml` and all 106 result feeds), with a README naming the source URLs and retrieval date. |
-| A3 | parses the fixture set into a normalised election: name, date, type, and 106 places, each with type, id, name, status, eligible voters, turnout %, valid, blank and invalid votes, and per-party votes, %, constituency seats and supplementary seats. Tested on values from the files, e.g. Hovedstaden: 1,309,177 eligible voters, Socialdemokratiet 201,493 votes and 10 seats. |
+| A2 | ships real fixtures: `docs/` holds DST's XML-feeds PDF; `tests/fixtures/` holds the unmodified Folketingsvalg 24 March 2026 set (`generel.xml`, `valgdag.xml` and all 107 result feeds), with a README naming the source URLs and retrieval date. |
+| A3 | parses the fixture set into a normalised election: name, date, type, and 107 places (hele landet, the preliminary "optalling" tally, 3 landsdele, 10 storkredse, 92 opstillingskredse), each with type, id, name, status, eligible voters, turnout %, valid, blank and invalid votes, and per-party votes, %, constituency seats and supplementary seats. Tested on values from the files, e.g. Hovedstaden: 1,309,177 eligible voters, Socialdemokratiet 201,493 votes and 10 seats. |
 | A4 | reports counting progress from a snapshot: how many of the 92 opstillingskredse have a result, distinguishing "no result yet" (status 0 or timestamp `0001-01-01`) from a reported result. |
 | A5 | provides a ReplaySource that reveals each result feed at its `SenestRettet` time, in order: nothing counted at the start, equal to the static parse at the end, only already-reported places mid-sequence; at speed N gaps shrink by N, tested with an injected clock and no real waiting. |
 | A6 | provides `python -m dkvalg replay <dir> [--speed N]` that prints each place as it is revealed with running counted-of-92 progress, ends with the national result table and exits 0; an empty or non-election directory prints a readable error to stderr and exits non-zero. |
@@ -77,6 +77,8 @@ Assumptions: English identifiers and docstrings with Danish values kept as serve
 ### Open questions
 
 None.
+
+Correction made in step 2 (2026-11-03): the concept said 106 result feeds and places; the overview lists 107 (the two national feeds are "Hele landet" and the seatless "Optalling" tally). A2 and A3 now say 107; nothing else in the concept changed.
 
 ---
 
@@ -87,47 +89,106 @@ None.
 
 ### Approach
 
-One paragraph on the chosen approach, and one on what was rejected and why.
+Follow the layout the spec already chose, trimmed to what round 1 needs: a `dkvalg` package with a small immutable **model**, a Folketingsvalg **adapter** (bytes in, model out, no I/O), a **directory loader** that reads a DST-layout folder into an `Election`, a **ReplaySource** that turns an `Election` into a time-ordered series of snapshots, and a **CLI**. The replay takes an already-loaded `Election` rather than a path, so it is testable without files, and the loader is the only code that touches the disk. Immutable dataclasses with `tuple` fields make "final replay snapshot equals the static parse" a plain `==`. Datetimes are naive Danish local time exactly as DST publishes them (no `zoneinfo`, which would need a `tzdata` dependency on Windows); only differences between them are used.
+
+Every place is always present in an `Election`: places with no result yet are placeholders (`Status.NOT_AVAILABLE`, no figures), which is how DST itself represents them and what makes "N of 92 counted" computable at every moment of a replay.
+
+Rejected: (a) one flat `dkvalg.py` with functions and dicts, the smallest, but the spec's adapter-per-type and source-per-origin split would then be a refactor in round 2 and 3; (b) defining a `Source` protocol now, speculative until HttpSource exists in round 2 and its polling shape is known, so it is left out and noted under Risks.
+
+Survey: the repo holds only the `valg_data` placeholder and its test, both deleted; nothing is reused. Findings from the real 2026 feeds that shaped this plan: the overview `valgdag.xml` lists 107 feeds (`Land` x2, `Landsdel` x3, `Storkreds` x10, `Opstillingskreds` x92) with `SenestRettetIso`; the two national feeds are `HeleLandet` (with seats) and `Optalling` (no seats, status text "92 af 92 opstillingskredse optalt"); opstillingskreds feeds carry no `Mandater` attributes; `Afstemningsomraader` is empty; opstillingskreds timestamps run 21:21:09 to 00:12:26 with ties (53 distinct for 92); a status 0 feed has no `Stemmer` and an `SenestRettet` of `01-01-0001 00:00:00`; older feeds have no `SenestRettetIso`.
 
 ### Modules
 
 | Path | New or changed | Purpose |
 |---|---|---|
+| `src/valg_data/` (`__init__.py`, `hello_world.py`), `tests/test_hello_world.py` | deleted | Placeholder, replaced by `dkvalg` (A1) |
+| `src/dkvalg/__init__.py` | new | Re-exports the public API |
+| `src/dkvalg/errors.py` | new | `FeedError`, the one exception for bad input |
+| `src/dkvalg/model.py` | new | Normalised, immutable election model (A3, A4) |
+| `src/dkvalg/adapters/__init__.py` | new | Package marker for per-election-type adapters |
+| `src/dkvalg/adapters/folketingsvalg.py` | new | Parses DST's Folketingsvalg overview and result feeds into the model (A3, A7) |
+| `src/dkvalg/sources/__init__.py` | new | Package marker for sources |
+| `src/dkvalg/sources/directory.py` | new | Reads a DST-layout directory into an `Election` (A3, A7) |
+| `src/dkvalg/sources/replay.py` | new | `ReplaySource`: time-ordered, speed-scaled snapshots (A5) |
+| `src/dkvalg/cli.py` | new | `replay` command, argument parsing, output (A6) |
+| `src/dkvalg/__main__.py` | new | `python -m dkvalg` entry point (A1, A6) |
+| `docs/XmlFeeds20260305.pdf` | new | DST's feed documentation (A2) |
+| `tests/fixtures/folketingsvalg_2026/` | new | The 109 unmodified feed files and a README (A2) |
+| `.gitattributes` | new or changed | `tests/fixtures/** -text` so no line-ending rewrite alters the unmodified fixtures (A2) |
+| `tests/test_<module>.py` | new (step 5) | One per module, plus a shared fixture-directory helper in `tests/conftest.py` |
+| `pyproject.toml`, `README.md`, `STRUCTURE.md` | changed | Package name `dkvalg`, usage section, structure map |
 
 ### Public API
 
-> Every public class and function, with its full signature as it will be written.
-> `Covers` links back to the acceptance criteria above.
+All fields are keyword-or-positional in the order shown. Seat fields are `None` where DST gives none (opstillingskreds, tally).
 
 | Signature | Module | Purpose | Covers |
 |---|---|---|---|
+| `class FeedError(Exception)` | `errors` | A feed is missing, unreadable, malformed, or of an unsupported election type; the message names the file or value | A6, A7 |
+| `class ElectionType(StrEnum)`: `FOLKETINGSVALG = "folketingsvalg"` | `model` | Which kind of election | A3 |
+| `class PlaceType(StrEnum)`: `COUNTRY = "country"`, `TALLY = "tally"`, `LANDSDEL = "landsdel"`, `STORKREDS = "storkreds"`, `OPSTILLINGSKREDS = "opstillingskreds"` | `model` | Level of a result place; `TALLY` is DST's seatless preliminary "optalling" total | A3 |
+| `class Status(IntEnum)`: `NOT_AVAILABLE = 0`, `PRELIMINARY = 1`, `ERROR = 9`, `RECOUNT_PENDING = 10`, `RECOUNT_PRELIMINARY = 11`, `RECOUNT_FINAL = 12`; property `has_result(self) -> bool` | `model` | DST status code; `has_result` is true for 1, 11, 12 | A4, A7 |
+| `@dataclass(frozen=True, slots=True) class PartyResult`: `party_id: str`, `letter: str`, `name: str`, `votes: int`, `percent: float`, `seats: int \| None = None`, `constituency_seats: int \| None = None`, `supplementary_seats: int \| None = None`; property `is_party(self) -> bool` | `model` | One party's result in one place; `party_id == ""` is DST's "Uden for partier", `is_party` false for it | A3, A7 |
+| `@dataclass(frozen=True, slots=True) class Place`: `place_type: PlaceType`, `place_id: str`, `name: str`, `parent_id: str \| None`, `status: Status`, `status_text: str`, `last_changed: datetime \| None`, `eligible_voters: int \| None = None`, `turnout_percent: float \| None = None`, `valid_votes: int \| None = None`, `blank_votes: int \| None = None`, `other_invalid_votes: int \| None = None`, `total_invalid_votes: int \| None = None`, `total_votes: int \| None = None`, `parties: tuple[PartyResult, ...] = ()`; property `has_result(self) -> bool`; method `unreported(self) -> Place` | `model` | One result place; `unreported()` returns the placeholder form (status 0, `status_text=""`, `last_changed=None`, no figures) keeping type, id, name and parent | A3, A4, A5, A7 |
+| `@dataclass(frozen=True, slots=True) class CountingProgress`: `counted: int`, `total: int`; `__str__(self) -> str` | `model` | "counted of total" opstillingskredse; `str` gives `"{counted}/{total}"` | A4 |
+| `@dataclass(frozen=True, slots=True) class Election`: `name: str`, `election_type: ElectionType`, `election_date: date`, `places: tuple[Place, ...]`; methods `get(self, place_type: PlaceType, place_id: str) -> Place` (raises `KeyError` naming both), `of_type(self, place_type: PlaceType) -> tuple[Place, ...]`, `counting_progress(self) -> CountingProgress` | `model` | A snapshot of an election in overview order; progress counts opstillingskredse with `has_result` | A3, A4 |
+| `@dataclass(frozen=True, slots=True) class FeedRef`: `place_type: PlaceType`, `place_id: str`, `name: str`, `parent_id: str \| None`, `last_changed: datetime \| None`, `file_name: str` | `adapters.folketingsvalg` | One result feed as listed by the overview (`file_name` is the last path segment of its URL) | A3 |
+| `@dataclass(frozen=True, slots=True) class Overview`: `name: str`, `election_type: ElectionType`, `election_date: date`, `feeds: tuple[FeedRef, ...]` | `adapters.folketingsvalg` | The parsed `valgdag.xml` | A3 |
+| `parse_overview(xml: bytes) -> Overview` | `adapters.folketingsvalg` | Parse `valgdag.xml`; raises `FeedError` when malformed or not a Folketingsvalg | A3, A7 |
+| `parse_place(xml: bytes, ref: FeedRef) -> Place` | `adapters.folketingsvalg` | Parse one result feed; id and parent come from `ref`; status 0 and 9 give a `Place` without figures, never a crash; raises `FeedError` when malformed | A3, A7 |
+| `unreported_place(ref: FeedRef) -> Place` | `adapters.folketingsvalg` | Placeholder `Place` for a feed the overview lists as never reported | A4, A5 |
+| `load_election(directory: Path) -> Election` | `sources.directory` | Read `valgdag.xml` and every reported feed it lists from a DST-layout directory; raises `FeedError` naming a missing file | A3, A6, A7 |
+| `@dataclass(frozen=True, slots=True) class ReplayStep`: `at: datetime`, `place: Place`, `election: Election`; property `progress(self) -> CountingProgress` | `sources.replay` | One reveal: the place that appeared, the feed time, and the snapshot after it | A5, A6 |
+| `class ReplaySource`: `__init__(self, election: Election, *, speed: float = 1.0, sleep: Callable[[float], None] = time.sleep) -> None`; `initial(self) -> Election`; `__iter__(self) -> Iterator[ReplayStep]` | `sources.replay` | Replays `election`. `ValueError` naming the value if `speed` is not positive or is NaN (`math.inf` means no waiting) | A5 |
+| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep) -> int` | `cli` | The CLI; returns the exit code (0 ok, 1 `FeedError`, 2 bad arguments) | A6 |
+| `main() -> None` | `cli` | `raise SystemExit(run())` | A1, A6 |
+
+`dkvalg.__main__` defines no API beyond importing `main` and running it under the guard; `dkvalg/__init__.py` re-exports every name above except `run`, `main`, `parse_*`, `unreported_place`, `FeedRef` and `Overview` (adapter internals stay in their module).
+
+Behaviour the signatures do not carry:
+- **Overview to places.** Place type comes from the overview element: `Land` with a `land_id` is `COUNTRY` (id `"0"`), `Land` without one is `TALLY` (id taken from the file name, `"999"` in 2026), `Landsdel`/`Storkreds`/`Opstillingskreds` map to their types with ids from `landsdel_id`/`storkreds_id`/`opstillingskreds_id`; parents are `storkreds_id` for an opstillingskreds, `landsdel_id` for a storkreds, `"0"` for a landsdel, `None` otherwise. `Afstemningsomraader` is ignored.
+- **Reported or not.** A feed the overview lists with `0001-01-01` (or no timestamp) is not read from disk and becomes `unreported_place(ref)`. All others are read; a missing file raises `FeedError` naming it.
+- **Timestamps.** `SenestRettetIso` if present, else `SenestRettet` (`dd-mm-yyyy hh:mm:ss`, rewritten to ISO text for `datetime.fromisoformat`); `0001-01-01` means `None`. Dates `ValgDato` are `dd-mm-yyyy`.
+- **Replay order.** The places with `last_changed` not `None`, stable-sorted by `last_changed` (ties keep overview order), one step each. `initial()` is the election with every place replaced by `place.unreported()`; step *i* replaces that one place with its real self. `sleep(gap_seconds / speed)` is called before every step after the first, and only when the gap is above zero. Iterating twice restarts from the beginning.
+- **CLI.** `python -m dkvalg replay <dir> [--speed N]`, `--speed` a positive float, default 600, `inf` allowed. One line per step: feed time, `counted/total`, place type and name. Then a table of the `COUNTRY` place: party letter, name, percent, votes, seats, plus "Uden for partier" last. Errors go to stderr as `error: <message>`. A directory without `valgdag.xml`, or with a non-Folketingsvalg overview, is a `FeedError`.
 
 ### Implementation guide
 
-Ordered. Each entry small enough to finish and check.
-
-1.
-2.
+1. Delete `src/valg_data/` and `tests/test_hello_world.py`; create the `src/dkvalg/` skeleton (`__init__.py` in the package and both subpackages); set `pyproject.toml` `name = "dkvalg"` and a matching description; update `README.md` and `STRUCTURE.md` references to the old name.
+2. `errors.py` and `model.py` with showcases.
+3. Fixtures: download `generel.xml`, `valgdag.xml` and every `filnavn` the overview lists from `https://www.dst.dk/valg/Valg2546527/xml/` into `tests/fixtures/folketingsvalg_2026/` unmodified, and the PDF into `docs/`; write the fixtures README (source URLs, retrieval date 2026-11-03); add `.gitattributes`. Verify 109 XML files. If the network refuses, halt (see Risks).
+4. `adapters/folketingsvalg.py`: `parse_overview`, `parse_place`, `unreported_place`, against the fixtures.
+5. `sources/directory.py`: `load_election`.
+6. `sources/replay.py`: `ReplayStep`, `ReplaySource`.
+7. `cli.py` and `__main__.py`; `__init__.py` re-exports.
+8. README usage section (library and `replay` command); `STRUCTURE.md` tree, package and test sections.
 
 ### Test intents
 
-> High-level: what a test must prove, not how it is written. Step 5 turns each of these
-> into concrete cases, including the edge cases.
-
 | # | Must prove | Covers |
 |---|---|---|
-| T1 | | |
+| T1 | `import dkvalg` works, `valg_data` does not, `python -m dkvalg` runs and prints usage | A1 |
+| T2 | The fixture directory holds the 109 files, every feed the overview lists is present, the files are byte-for-byte as served (BOM intact), the PDF exists and the fixtures README names URLs and date | A2 |
+| T3 | `load_election` on the fixtures gives 107 places with the expected type counts, the stated Hovedstaden and Socialdemokratiet figures, national seats summing to 175, opstillingskreds seats `None`, tally with no seats, "Uden for partier" present and `is_party` false | A3 |
+| T4 | `counting_progress` is 92/92 on the fixtures, 0/92 on an all-placeholder election, counts a status 1 place, ignores status 0, status 9 and never-reported places | A4 |
+| T5 | `ReplaySource` starts at 0/92, yields one step per reported place in `last_changed` order with ties in overview order, mid-sequence snapshots hold exactly the revealed places as results and the rest as placeholders, the last snapshot `==` the static election, sleep durations are the gaps divided by speed (none for zero gaps or the first step), `inf` never sleeps, bad speeds raise `ValueError`, iterating twice gives the same steps | A5 |
+| T6 | `run(["replay", dir, "--speed", "inf"])` prints one line per step and the national table and returns 0; an empty directory, a directory with an EP overview, and a malformed overview return 1 with `error:` on stderr and nothing on stdout; bad speed exits 2 | A6 |
+| T7 | BOM and BOM-less input parse; empty `Id` kept as non-party; status 0 feed (no `Stemmer`) gives a figure-free place; status 9 gives `Status.ERROR`, no crash; a feed missing from disk raises `FeedError` naming the file; truncated XML raises `FeedError`; feed without `SenestRettetIso` falls back to `SenestRettet` | A7 |
+| T8 | Purity and idempotency: `load_election` twice gives equal elections, no mutation of arguments, model objects are immutable | A3, A5 |
 
 ### Risks
 
-What could make this harder than it looks, and what the build should do if it does —
-including whether it should halt.
+- **Fixture download.** If dst.dk cannot be reached or a listed feed returns a non-200 during the build, **halt**: fabricated fixtures would break A2. (It worked on 2026-11-03.)
+- **Line endings.** A checkout that rewrites XML line endings would make the fixtures no longer "unmodified"; `.gitattributes` prevents it, and T2 compares byte counts and the BOM so a violation shows up in tests.
+- **Replay is only as late as `SenestRettet`.** National and landsdel aggregates appear at their last change; this is the assumption recorded in section 1, not a defect. Do not try to derive intermediate aggregates; that is out of scope.
+- **Timestamp ties.** 92 opstillingskredse share 53 distinct timestamps; the stable overview-order tie-break keeps replay deterministic. If a test finds order matters elsewhere, it still holds because ties have gap 0.
+- **Other election types.** An EP or folkeafstemning overview must fail clearly (`FeedError`), not half-parse; anything else about those types is out of scope. If the build finds the Folketingsvalg result format differs from what is described here in a way that changes a criterion, **halt**.
+- **Showcases** locate the fixtures by a repo-relative path and say so when run outside a checkout.
+- **No `Source` protocol yet.** Round 2 will add HttpSource and can introduce the shared protocol then, when its shape is known.
 
 ### Critique
 
-> The `plan-critic`'s findings, each with what was done — applied, or rebutted in one
-> sentence — then its verdict, and one line saying how the plan was accepted:
-> `Accepted: clean critique, <date>` or `Accepted: by the user, <date>`.
+(Filled in after the plan-critic has read this plan.)
 
 ---
 
