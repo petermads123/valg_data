@@ -16,7 +16,9 @@ from dkvalg.sources.directory import build_election
 
 _OVERVIEW_NAME = "valgdag.xml"
 _FEED_NAME = re.compile(r"[A-Za-z0-9_-]+\.xml")
-_CAPTURE_NAME = re.compile(r"(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})\.(\d{6})Z")
+_CAPTURE_NAME = re.compile(
+    r"(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})\.(\d{6})Z", re.ASCII
+)
 _TEMP_PREFIX = ".tmp-"
 
 
@@ -28,12 +30,13 @@ def check_feed_name(name: str) -> str:
 
     Returns:
         `name`, unchanged, when it is letters, digits, `_` and `-` followed by
-        `.xml` and is not `valgdag.xml`.
+        `.xml` and is not `valgdag.xml` in any letter case (a case-insensitive disk
+        would let it overwrite the overview).
 
     Raises:
         FeedError: If `name` is anything else; the message names it.
     """
-    if _FEED_NAME.fullmatch(name) is None or name == _OVERVIEW_NAME:
+    if _FEED_NAME.fullmatch(name) is None or name.lower() == _OVERVIEW_NAME:
         raise FeedError(f"unsafe feed file name {name!r}")
     return name
 
@@ -86,16 +89,19 @@ class Recorder:
 
         Raises:
             ValueError: If `fetched_at` is naive or `feeds` is empty.
-            FeedError: If a file name is unsafe, the target folder already exists
-                or the disk refuses a write.
+            FeedError: If a file name is unsafe, a body is not bytes, the target
+                folder already exists or the disk refuses a write. No `.tmp-*`
+                folder is left behind after any failure.
         """
         if fetched_at.tzinfo is None:
             raise ValueError(f"fetched_at must be timezone-aware, got {fetched_at}")
         if not feeds:
             raise ValueError("no feeds to record")
-        for name in feeds:
+        for name, body in feeds.items():
             if name != _OVERVIEW_NAME:
                 check_feed_name(name)
+            if not isinstance(body, bytes):
+                raise FeedError(f"feed {name} must be bytes, got {type(body).__name__}")
         folder_name = _folder_name(fetched_at)
         final = self._directory / folder_name
         temporary = self._directory / f"{_TEMP_PREFIX}{folder_name}"
@@ -112,6 +118,9 @@ class Recorder:
         except OSError as error:
             shutil.rmtree(temporary, ignore_errors=True)
             raise FeedError(f"cannot write capture {final}: {error}") from error
+        except BaseException:
+            shutil.rmtree(temporary, ignore_errors=True)
+            raise
         return final
 
 

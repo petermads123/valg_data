@@ -70,11 +70,29 @@ class Transport(Protocol):
         ...
 
 
-def _read_body(stream: IO[bytes], url: str) -> bytes:
-    """Read a response body under the size cap."""
+def _read_body(
+    stream: IO[bytes], url: str, status: int, headers: Mapping[str, str]
+) -> bytes:
+    """Read a response body under the size cap and check it against Content-Length.
+
+    `http.client` returns a short read without raising when the server closes the
+    connection early and the caller asked for a limited number of bytes, so the
+    declared length is compared here. A 204 or 304 carries no body whatever the
+    header says.
+    """
     body = stream.read(_MAX_BODY + 1)
     if len(body) > _MAX_BODY:
         raise FetchError(f"{url}: response body is over {_MAX_BODY} bytes")
+    declared = headers.get("content-length", "").strip()
+    if (
+        status not in (204, 304)
+        and declared.isascii()
+        and declared.isdigit()
+        and len(body) != int(declared)
+    ):
+        raise FetchError(
+            f"{url}: body is {len(body)} bytes, Content-Length said {declared}"
+        )
     return body
 
 
@@ -101,12 +119,12 @@ def urllib_transport(
             with urllib.request.urlopen(request, timeout=timeout) as response:
                 status = int(response.status)
                 received = {k.lower(): v for k, v in response.headers.items()}
-                body = _read_body(response, url)
+                body = _read_body(response, url, status, received)
         except urllib.error.HTTPError as error:
             with error:
                 status = error.code
                 received = {k.lower(): v for k, v in error.headers.items()}
-                body = _read_body(error, url)
+                body = _read_body(error, url, status, received)
     except (urllib.error.URLError, OSError, http.client.HTTPException) as error:
         raise FetchError(f"{url}: {error}") from error
     return HttpResponse(status=status, headers=received, body=body)
@@ -142,24 +160,38 @@ def overview_url(location: str) -> str:
         The overview URL.
 
     Raises:
-        ValueError: If `location` is none of these, or its scheme is not http or
-            https; the message names the value.
+        ValueError: If `location` is none of these, its scheme is not http or
+            https, or it carries credentials, a bad port, a query, a fragment, a
+            non-ASCII character, whitespace or a control character; the message
+            names the value. A trailing slash after `valgdag.xml`, and any case of
+            that name, is normalised to `valgdag.xml`.
     """
-    if location and all(character in _ID_CHARACTERS for character in location):
+    message = f"location must be an election id or an http(s) URL, got {location!r}"
+    if not location.isascii() or any(
+        character.isspace() or not character.isprintable() for character in location
+    ):
+        raise ValueError(message)
+    if all(character in _ID_CHARACTERS for character in location) and location:
         return _DST_FOLDER.format(election_id=location) + _OVERVIEW_NAME
     parts = urlsplit(location)
+    try:
+        port_ok = parts.port is None or parts.port > 0
+    except ValueError:
+        port_ok = False
     if (
         parts.scheme not in ("http", "https")
-        or not parts.netloc
+        or not parts.hostname
+        or "@" in parts.netloc
+        or not port_ok
         or parts.query
         or parts.fragment
     ):
-        raise ValueError(
-            f"location must be an election id or an http(s) URL, got {location!r}"
-        )
-    if parts.path.endswith("/" + _OVERVIEW_NAME):
-        return location
-    return location.rstrip("/") + "/" + _OVERVIEW_NAME
+        raise ValueError(message)
+    folder = location.rstrip("/")
+    last = folder.rsplit("/", 1)[-1]
+    if last.lower() == _OVERVIEW_NAME and parts.path.rstrip("/") != "":
+        return folder[: -len(last)] + _OVERVIEW_NAME
+    return folder + "/" + _OVERVIEW_NAME
 
 
 @dataclass(frozen=True, slots=True)
@@ -189,8 +221,10 @@ class _Held:
 
 
 def _validators(response: HttpResponse) -> tuple[str | None, str | None]:
-    """Pick the ETag and Last-Modified validators out of a response."""
-    return response.headers.get("etag"), response.headers.get("last-modified")
+    """Pick the ETag and Last-Modified validators out of a response; empty is None."""
+    etag = response.headers.get("etag") or None
+    last_modified = response.headers.get("last-modified") or None
+    return etag, last_modified
 
 
 class HttpSource:
@@ -226,7 +260,7 @@ class HttpSource:
             ValueError: If `location` is not usable or `timeout` is not finite
                 and positive.
         """
-        if not math.isfinite(timeout) or timeout <= 0:
+        if isinstance(timeout, bool) or not math.isfinite(timeout) or timeout <= 0:
             raise ValueError(f"timeout must be finite and positive, got {timeout}")
         self._overview_url = overview_url(location)
         self._folder_url = self._overview_url[: -len(_OVERVIEW_NAME)]
@@ -282,11 +316,15 @@ class HttpSource:
                 good election and the held bodies are left untouched.
         """
         with self._lock:
-            return self._fetch()
+            return self._fetch(self._clock())
 
-    def _fetch(self) -> FetchResult:
-        """Do one fetch; the caller holds the lock."""
-        fetched_at = self._clock()
+    def _fetch_at(self, fetched_at: datetime) -> FetchResult:
+        """Fetch with a time the caller already read, so a cycle reads the clock once."""
+        with self._lock:
+            return self._fetch(fetched_at)
+
+    def _fetch(self, fetched_at: datetime) -> FetchResult:
+        """Do one fetch stamped `fetched_at`; the caller holds the lock."""
         held_overview = self._overview_body
         held_election = self._election
         response = self._get(self._overview_url, self._overview_validators)
@@ -358,7 +396,8 @@ class PollCycle:
 
     Attributes:
         number: 1 for the first cycle, counting up.
-        at: The source's clock at the start of the cycle.
+        at: The source's clock at the start of the cycle: one read, which is also
+            the fetch time and the name of the capture folder.
         election: The last good election; None before the first success.
         changed: The places that changed in this cycle; empty after an error.
         error: The failure of this cycle, or None.
@@ -387,7 +426,7 @@ def _cycles(
         number += 1
         at = source.clock()
         try:
-            result = source.fetch()
+            result = source._fetch_at(at)
         except FeedError as error:
             wait = min(previous_wait * 2, max(MAX_BACKOFF, interval))
             cycle = PollCycle(number, at, source.election, (), error, wait)
@@ -431,13 +470,23 @@ def poll(
         ValueError: At call time, if `interval` is not finite and at least
             `MIN_INTERVAL`, or `max_cycles` is below 1.
     """
-    if not math.isfinite(interval) or interval < MIN_INTERVAL:
+    if (
+        isinstance(interval, bool)
+        or not math.isfinite(interval)
+        or interval < MIN_INTERVAL
+    ):
         raise ValueError(
             f"interval must be finite and at least {MIN_INTERVAL} seconds, "
             f"got {interval}"
         )
-    if max_cycles is not None and max_cycles < 1:
-        raise ValueError(f"max_cycles must be at least 1, got {max_cycles}")
+    if max_cycles is not None and (
+        isinstance(max_cycles, bool)
+        or not isinstance(max_cycles, int)
+        or max_cycles < 1
+    ):
+        raise ValueError(
+            f"max_cycles must be an integer of at least 1, got {max_cycles}"
+        )
     return _cycles(source, interval, max_cycles, stop, sleep)
 
 
