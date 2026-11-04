@@ -4,13 +4,27 @@ import runpy
 import shutil
 import subprocess
 import sys
+from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 
 import pytest
-from conftest import ROOT, feed_xml, kreds_entry, overview_xml, write_directory
+from conftest import (
+    NATIONAL,
+    OVERVIEW,
+    ROOT,
+    FakeClock,
+    FakeTransport,
+    feed_xml,
+    fixture_files,
+    kreds_entry,
+    overview_xml,
+    write_directory,
+)
 
-from dkvalg import ReplaySource, cli, load_election
+from dkvalg import CaptureReplay, FetchError, Recorder, ReplaySource, cli, load_election
 from dkvalg.cli import main, run
+from dkvalg.sources.http_source import HttpResponse
 
 STEP_LINE = re.compile(
     r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}  +(\d+)/(\d+)  (\S+) (.+)$"
@@ -539,3 +553,520 @@ def test_python_dash_m_dkvalg_replay_runs_the_fixtures_end_to_end() -> None:
 def test_cli_module_exposes_run_and_main() -> None:
     assert cli.run is run
     assert cli.main is main
+
+
+# --- poll (A5, A7, T9) ----------------------------------------------------------------
+
+POLL_LINE = re.compile(
+    r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\+00:00  +(\d+)/(\d+)  (\S+) (.+)$"
+)
+THREE = [NATIONAL, "valgdag_20.xml", "valgdag_7.xml"]
+
+
+def _poll(
+    argv: list[str],
+    transport: FakeTransport | None = None,
+    sleep: Callable[[float], None] | None = None,
+    clock: Callable[[], datetime] | None = None,
+) -> tuple[int, str, str, list[float], FakeTransport]:
+    transport = FakeTransport() if transport is None else transport
+    out, err = io.StringIO(), io.StringIO()
+    sleeps: list[float] = []
+
+    def record_sleep(seconds: float) -> None:
+        sleeps.append(seconds)
+        if sleep is not None:
+            sleep(seconds)
+
+    code = run(
+        argv,
+        out=out,
+        err=err,
+        sleep=record_sleep,
+        transport=transport,
+        clock=FakeClock() if clock is None else clock,
+    )
+    return code, out.getvalue(), err.getvalue(), sleeps, transport
+
+
+def _poll_lines(text: str) -> list[str]:
+    return [line for line in text.splitlines() if POLL_LINE.match(line)]
+
+
+def test_poll_prints_a_line_per_changed_place_for_the_first_cycle_only() -> None:
+    code, out, err, sleeps, _ = _poll(["poll", "Valg2546527", "--cycles", "2"])
+
+    assert (code, err) == (0, "")
+    assert len(_poll_lines(out)) == 107
+    assert len(out.splitlines()) == 107
+    assert sleeps == [60.0]
+
+
+def test_poll_lines_carry_the_fetch_time_progress_type_and_name() -> None:
+    _, out, _, _, _ = _poll(["poll", "Valg2546527", "--cycles", "1"])
+
+    match = POLL_LINE.match(out.splitlines()[0])
+    assert match
+    assert out.splitlines()[0].startswith("2026-03-24 20:00:00+00:00")
+    assert {POLL_LINE.match(line).group(1) for line in out.splitlines()} == {"92"}  # type: ignore[union-attr]  # every line matches
+    assert "landsdel Hovedstaden" in out
+    assert "country Hele landet" in out
+
+
+def test_poll_shows_only_the_places_that_changed_in_a_later_cycle() -> None:
+    transport = FakeTransport()
+    touched = {"done": False}
+
+    def after_first_wait(_seconds: float) -> None:
+        if not touched["done"]:
+            touched["done"] = True
+            transport.touch(THREE)
+
+    code, out, _, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2"], transport, sleep=after_first_wait
+    )
+
+    lines = out.splitlines()
+    assert code == 0
+    assert len(lines) == 107 + 3
+    assert all(line.startswith("2026-03-24 20:01:00+00:00") for line in lines[107:])
+    assert {line.split("  ")[-1] for line in lines[107:]} == {
+        "landsdel Hovedstaden",
+        "country Hele landet",
+        "opstillingskreds 1.Østerbro",
+    }
+
+
+def test_poll_without_cycles_runs_until_interrupted() -> None:
+    seen = {"n": 0}
+
+    def interrupt_on_third(_seconds: float) -> None:
+        seen["n"] += 1
+        if seen["n"] == 3:
+            raise KeyboardInterrupt
+
+    code, out, err, sleeps, _ = _poll(["poll", "Valg2546527"], sleep=interrupt_on_third)
+
+    assert code == 130
+    assert "Traceback" not in err
+    assert len(sleeps) == 3
+    assert len(_poll_lines(out)) == 107  # the lines printed so far stay
+
+
+@pytest.mark.parametrize(
+    ("flag", "expected"), [("15", 15.0), ("90", 90.0), ("15.5", 15.5)]
+)
+def test_poll_interval_is_the_wait_between_cycles(flag: str, expected: float) -> None:
+    _, _, _, sleeps, _ = _poll(
+        ["poll", "Valg2546527", "--interval", flag, "--cycles", "2"]
+    )
+
+    assert sleeps == [expected]
+
+
+def test_poll_default_interval_is_60_seconds() -> None:
+    _, _, _, sleeps, _ = _poll(["poll", "Valg2546527", "--cycles", "2"])
+
+    assert sleeps == [60.0]
+
+
+def test_poll_one_cycle_never_sleeps() -> None:
+    code, _, _, sleeps, _ = _poll(["poll", "Valg2546527", "--cycles", "1"])
+
+    assert (code, sleeps) == (0, [])
+
+
+@pytest.mark.parametrize(
+    "interval", ["5", "14.9", "0", "-5", "nan", "inf", "-inf", "abc", "", "1e999"]
+)
+def test_poll_a_bad_interval_exits_2_with_the_reason_on_err(interval: str) -> None:
+    code, out, err, _, transport = _poll(
+        ["poll", "Valg2546527", "--interval", interval]
+    )
+
+    assert code == 2
+    assert out == ""
+    assert "interval" in err
+    assert transport.requests == []
+
+
+def test_poll_a_bad_interval_message_names_the_value() -> None:
+    _, _, err, _, _ = _poll(["poll", "Valg2546527", "--interval", "14.9"])
+
+    assert "14.9" in err
+
+
+@pytest.mark.parametrize("cycles", ["0", "-1", "1.5", "abc", ""])
+def test_poll_a_bad_cycle_count_exits_2(cycles: str) -> None:
+    code, out, err, _, transport = _poll(["poll", "Valg2546527", "--cycles", cycles])
+
+    assert code == 2
+    assert out == ""
+    assert "cycle" in err
+    assert transport.requests == []
+
+
+def test_poll_without_a_location_exits_2() -> None:
+    code, _, err, _, _ = _poll(["poll"])
+
+    assert code == 2
+    assert "location" in err
+
+
+@pytest.mark.parametrize(
+    "location",
+    [
+        "file:///x/valgdag.xml",
+        "ftp://x/",
+        "https://h/x?y=1",
+        "https://u:p@h/x/",
+        "Valg 1",
+        "",
+    ],
+)
+def test_poll_a_bad_location_exits_2_with_error_on_err_and_touches_nothing(
+    location: str,
+) -> None:
+    code, out, err, _, transport = _poll(["poll", location])
+
+    assert code == 2
+    assert out == ""
+    assert err.startswith("error: ")
+    assert transport.requests == []
+
+
+def test_poll_accepts_a_folder_url_and_a_file_url_location() -> None:
+    for location in [
+        "https://www.dst.dk/valg/Valg2546527/xml/",
+        "https://www.dst.dk/valg/Valg2546527/xml/valgdag.xml",
+    ]:
+        code, out, _, _, _ = _poll(["poll", location, "--cycles", "1"])
+
+        assert code == 0
+        assert len(_poll_lines(out)) == 107
+
+
+def test_poll_exits_1_when_the_last_cycle_failed_with_error_on_stderr_only() -> None:
+    transport = FakeTransport()
+    transport.script(OVERVIEW, FetchError("https://x/valgdag.xml: HTTP status 503"))
+
+    code, out, err, sleeps, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "1"], transport
+    )
+
+    assert code == 1
+    assert out == ""
+    assert err == "error: https://x/valgdag.xml: HTTP status 503\n"
+    assert sleeps == []
+
+
+def test_poll_exits_0_when_an_early_cycle_failed_but_the_last_succeeded() -> None:
+    transport = FakeTransport()
+    transport.script(OVERVIEW, FetchError("boom"))
+
+    code, out, err, sleeps, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2"], transport
+    )
+
+    assert code == 0
+    assert err.count("error: ") == 1
+    assert len(_poll_lines(out)) == 107
+    assert sleeps == [120.0]  # one failure backs off to twice the interval
+
+
+def test_poll_exits_1_when_a_success_is_followed_by_a_failure() -> None:
+    transport = FakeTransport()
+
+    def fail_next(_seconds: float) -> None:
+        transport.script(OVERVIEW, FetchError("down"))
+
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2"], transport, sleep=fail_next
+    )
+
+    assert code == 1
+    assert len(_poll_lines(out)) == 107
+    assert "error: down" in err
+
+
+def test_poll_a_failed_cycle_prints_nothing_on_stdout() -> None:
+    transport = FakeTransport()
+    transport.script(OVERVIEW, FetchError("one"), FetchError("two"))
+
+    _, out, err, sleeps, _ = _poll(["poll", "Valg2546527", "--cycles", "2"], transport)
+
+    assert out == ""
+    assert err.splitlines() == ["error: one", "error: two"]
+    assert sleeps == [120.0]
+
+
+def test_poll_a_malformed_overview_is_reported_and_the_loop_continues() -> None:
+    transport = FakeTransport()
+    transport.script(OVERVIEW, HttpResponse(200, {}, b"<Data><broken"))
+
+    code, _, err, _, _ = _poll(["poll", "Valg2546527", "--cycles", "2"], transport)
+
+    assert code == 0
+    assert "malformed" in err
+
+
+def test_poll_record_writes_one_capture_folder_per_poll_that_received_a_body(
+    tmp_path: Path,
+) -> None:
+    transport = FakeTransport()
+    capture = tmp_path / "cap"
+
+    def touch(_seconds: float) -> None:
+        if len(list(capture.iterdir())) == 1:
+            transport.touch(THREE)
+
+    code, _, _, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "3", "--record", str(capture)],
+        transport,
+        sleep=touch,
+    )
+
+    folders = sorted(p.name for p in capture.iterdir())
+    assert code == 0
+    assert folders == [
+        "20260324T200000.000000Z",
+        "20260324T200100.000000Z",
+    ]  # cycle 3 was a 304
+    assert len(list((capture / folders[0]).iterdir())) == 108
+    assert len(list((capture / folders[1]).iterdir())) == 4
+
+
+def test_poll_record_creates_the_directory_with_its_parents(tmp_path: Path) -> None:
+    capture = tmp_path / "a" / "b" / "cap"
+
+    code, _, _, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "1", "--record", str(capture)]
+    )
+
+    assert code == 0
+    assert capture.is_dir()
+
+
+def test_poll_record_to_a_path_that_is_a_file_fails_every_cycle(tmp_path: Path) -> None:
+    blocker = tmp_path / "cap"
+    blocker.write_bytes(b"x")
+
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2", "--record", str(blocker)]
+    )
+
+    assert code == 1
+    assert out == ""
+    assert err.count("error: cannot write capture") == 2
+
+
+def test_poll_without_record_writes_no_files(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+
+    _poll(["poll", "Valg2546527", "--cycles", "1"])
+
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_poll_what_it_records_replays_to_the_polled_election(tmp_path: Path) -> None:
+    transport = FakeTransport()
+    capture = tmp_path / "cap"
+    touched = {"done": False}
+
+    def touch(_seconds: float) -> None:
+        if not touched["done"]:
+            touched["done"] = True
+            transport.touch(THREE)
+
+    _poll(
+        ["poll", "Valg2546527", "--cycles", "2", "--record", str(capture)],
+        transport,
+        sleep=touch,
+    )
+
+    steps = list(CaptureReplay(capture, speed=float("inf")))
+    assert len(steps) == 2
+    assert steps[-1].election == load_election(transport.write_to(tmp_path / "now"))
+
+
+def test_poll_help_lists_its_options() -> None:
+    code, out, _, _, _ = _poll(["poll", "--help"])
+
+    assert code == 0
+    for option in ("--interval", "--record", "--cycles", "location"):
+        assert option in out
+
+
+def test_the_top_level_help_names_both_subcommands() -> None:
+    code, out, _ = _run(["--help"])
+
+    assert code == 0
+    assert "replay" in out
+    assert "poll" in out
+
+
+def test_python_dash_m_dkvalg_poll_a_bad_location_exits_2_without_a_network() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "dkvalg", "poll", "file:///x"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env={"PYTHONPATH": str(ROOT / "src")},
+        cwd=ROOT,
+        check=False,
+    )
+
+    assert result.returncode == 2
+    assert result.stderr.startswith("error: ")
+    assert result.stdout == ""
+
+
+# --- replay on a capture directory (A6, A7, T9) --------------------------------------
+
+
+def _capture(tmp_path: Path) -> Path:
+    """Record two polls: everything, then the national feed and two others."""
+    transport = FakeTransport()
+    capture = tmp_path / "cap"
+    touched = {"done": False}
+
+    def touch(_seconds: float) -> None:
+        if not touched["done"]:
+            touched["done"] = True
+            transport.touch(THREE)
+
+    _poll(
+        ["poll", "Valg2546527", "--cycles", "2", "--record", str(capture)],
+        transport,
+        sleep=touch,
+    )
+    return capture
+
+
+def test_replay_of_a_capture_directory_prints_the_changed_places_per_step_and_the_table(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+
+    code, out, err = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert (code, err) == (0, "")
+    lines = _poll_lines(
+        out
+    )  # capture times are timezone-aware UTC, so they print +00:00
+    assert len(lines) == 107 + 3
+    assert lines[0].startswith("2026-03-24 20:00:00+00:00")
+    assert lines[-1].startswith("2026-03-24 20:01:00+00:00")
+    assert "Uden for partier" in out
+
+
+def test_replay_of_a_capture_directory_sleeps_the_fetch_gap_divided_by_speed(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+    sleeps: list[float] = []
+
+    code, _, _ = _run(["replay", str(capture), "--speed", "30"], sleeps)
+
+    assert code == 0
+    assert sleeps == [2.0]
+
+
+def test_replay_of_a_capture_directory_ends_with_the_final_national_table(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+    final = list(CaptureReplay(capture, speed=float("inf")))[-1].election
+    country = final.of_type(cli.PlaceType.COUNTRY)[0]
+
+    _, out, _ = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert f"{country.name}: " in out
+    assert str(country.parties[0].votes) in out
+
+
+def test_replay_of_a_plain_directory_is_unchanged_by_capture_support(
+    fixture_dir: Path,
+) -> None:
+    code, out, _ = _run(["replay", str(fixture_dir), "--speed", "inf"])
+
+    assert code == 0
+    assert len(_step_lines(out)) == 107
+    assert POLL_LINE.match(out.splitlines()[0]) is None  # the round 1 time format
+
+
+def test_replay_of_a_directory_with_both_an_overview_and_capture_folders_uses_the_plain_path(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+    for name, body in fixture_files().items():
+        (capture / name).write_bytes(body)
+
+    code, out, _ = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert code == 0
+    assert len(_step_lines(out)) == 107
+
+
+def test_replay_of_a_nonexistent_capture_style_directory_exits_1_with_error(
+    tmp_path: Path,
+) -> None:
+    code, out, err = _run(["replay", str(tmp_path / "nowhere"), "--speed", "inf"])
+
+    assert (code, out) == (1, "")
+    assert err.startswith("error: ")
+
+
+def test_replay_of_a_capture_with_a_broken_folder_exits_1_naming_the_folder(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+    (capture / "20261301T000000.000000Z").mkdir()
+
+    code, out, err = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert code == 1
+    assert out == ""
+    assert "20261301T000000.000000Z" in err
+
+
+def test_replay_of_a_capture_with_an_incomplete_first_folder_exits_1(
+    tmp_path: Path,
+) -> None:
+    capture = tmp_path / "cap"
+    Recorder(capture).record(
+        datetime.fromisoformat("2026-03-24T20:00:00+00:00"),
+        {OVERVIEW: fixture_files()[OVERVIEW]},
+    )
+
+    code, out, err = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert code == 1
+    assert out == ""
+    assert "20260324T200000.000000Z" in err
+
+
+def test_replay_of_a_directory_whose_only_capture_like_entry_is_a_file_takes_the_plain_path(
+    tmp_path: Path,
+) -> None:
+    directory = tmp_path / "odd"
+    directory.mkdir()
+    (directory / "20260324T200000.000000Z").write_bytes(b"x")
+
+    code, _, err = _run(["replay", str(directory), "--speed", "inf"])
+
+    assert code == 1
+    assert "valgdag.xml" in err
+
+
+def test_replay_of_a_capture_directory_shows_the_earlier_national_figures_first(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+    first, second = list(CaptureReplay(capture, speed=float("inf")))
+    before = first.election.of_type(cli.PlaceType.COUNTRY)[0]
+    after = second.election.of_type(cli.PlaceType.COUNTRY)[0]
+
+    assert before.valid_votes != after.valid_votes
