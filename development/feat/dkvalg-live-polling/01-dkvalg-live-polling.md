@@ -1,6 +1,6 @@
 # dkvalg: live polling, recording and capture replay
 
-<!-- claude-plan step=7 status=active -->
+<!-- claude-plan step=8 status=active -->
 
 | Field | Value |
 |---|---|
@@ -20,8 +20,8 @@
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
 | 6 | Concept check | `/concept-check` | in `/build` | done |
-| 7 | Ship | `/ship` | in `/build` | in progress |
-| 8 | Recommend | `/recommend` | with the user | pending |
+| 7 | Ship | `/ship` | in `/build` | done |
+| 8 | Recommend | `/recommend` | with the user | in progress |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
 
@@ -384,8 +384,10 @@ First round on this branch; round 1 of the previous branch is merged and covered
 
 | Field | Value |
 |---|---|
-| Commits | |
-| Pushed to | |
+| Commits | `0b65290` Concept; `cde1755` Plan (draft); `13f68b2` Plan (critic findings applied); `300fcbe` Implement; `92ebb83` Verify; `76be69c`, `cb3af6d`, `d646cdd` WIP step 5; `3d612f9` Test; `20f62b3` Concept check; then the final `Ship: dkvalg live polling, recording and capture replay` (this file's marker commit). Every step 1 to 6 left a commit. |
+| Pushed to | `origin/feat/dkvalg-live-polling` |
+
+Whole-tree gates at ship: `ruff check .` clean; `ruff format --check .` 61 files formatted; `mypy` 31 source files clean; `pytest` 1301 passed; showcases for `errors`, `model`, `adapters.folketingsvalg`, `sources.directory`, `sources.http_source`, `sources.capture`, `sources.replay`, `python -m dkvalg` and `python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed inf` all exit 0. Diff review against `origin/main`: 21 files, all in `src/`, `tests/`, the plan file, `README.md`, `STRUCTURE.md`, `DEVELOPMENT.md`; no scratch files, secrets, committed capture or `.tmp-*` directories, AppDaemon or Home Assistant code; prints only in showcases and the CLI; `pyproject.toml` untouched (1.0.0); `STRUCTURE.md` lists both new modules and test files.
 
 ---
 
