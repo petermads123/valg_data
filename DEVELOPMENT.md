@@ -30,3 +30,11 @@ by heading is updated in the same change.
 ## How often DST answers 304 to both validators
 
 2026-11-04, `feat/dkvalg-live-polling` round 1. `HttpSource` sends `If-None-Match` and `If-Modified-Since` together. A live probe of four consecutive polls of the still-served 2026 election gave 200, 304, 200 (the first being unconditional): DST's nodes disagree on ETags, so a poll often gets the full overview as a 200, which the byte comparison then treats as no change. Correctness holds; only politeness suffers. Next step: measure over a longer run and decide whether to drop `If-None-Match`.
+
+## Two kinds of time in replay output
+
+2026-11-04, `feat/dkvalg-live-polling` round 1. `replay` on a plain feed directory prints naive Danish local time (DST's `SenestRettet`), while capture replay and `poll` print timezone-aware UTC fetch times. Nothing compares across them, but a caller mapping `ReplayStep.at` and `CaptureStep.at` onto one timeline needs to know. Next step: decide, when the Home Assistant side consumes steps, whether to expose one convention.
+
+## Broken pipe in the CLI
+
+2026-11-04, `feat/dkvalg-live-polling` round 1. `python -m dkvalg replay <dir> | head` ends with a `BrokenPipeError` traceback (the same on the round 1 path, and `poll` inherits it). Next step: catch `BrokenPipeError` in `cli.main` and exit quietly if anyone pipes the output.
