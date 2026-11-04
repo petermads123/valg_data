@@ -1,6 +1,6 @@
 # dkvalg: live polling, recording and capture replay
 
-<!-- claude-plan step=4 status=active -->
+<!-- claude-plan step=5 status=active -->
 
 | Field | Value |
 |---|---|
@@ -17,8 +17,8 @@
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
-| 4 | Verify | `/verify` | in `/build` | in progress |
-| 5 | Test | `/test` | in `/build` | pending |
+| 4 | Verify | `/verify` | in `/build` | done |
+| 5 | Test | `/test` | in `/build` | in progress |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
@@ -135,7 +135,7 @@ Existing signatures not listed here do not change.
 | `@dataclass(frozen=True, slots=True) class PollCycle`: `number: int`, `at: datetime`, `election: Election \| None`, `changed: tuple[Place, ...]`, `error: FeedError \| None`, `wait: float` | `sources.http_source` | One cycle of the loop; `election` is the last good one (`None` before the first success); `wait` is the seconds slept before the next cycle | A4, A5 |
 | `poll(source: HttpSource, *, interval: float = DEFAULT_INTERVAL, max_cycles: int \| None = None, stop: Callable[[], bool] \| None = None, sleep: Callable[[float], None] = time.sleep) -> Iterator[PollCycle]` | `sources.http_source` | The poll loop, a plain function that validates and returns a private generator: `ValueError` at call time unless `interval` is finite and at least `MIN_INTERVAL`, and if `max_cycles < 1`; each cycle is stamped with `source.clock()` | A4, A5 |
 | `class Recorder`: `__init__(self, directory: Path) -> None`; `record(self, fetched_at: datetime, feeds: Mapping[str, bytes]) -> Path` | `sources.capture` | Creates `directory` (parents included) on the first record and writes `directory/<UTC fetch time>/<file name>` for each feed, atomically (see Capture layout); `ValueError` for a naive `fetched_at` or no feeds; `FeedError` for an unsafe file name, a target folder that already exists, or an I/O failure |
-| `check_feed_name(name: str) -> str` | `sources.capture` | Returns `name` if it matches `^[A-Za-z0-9_-]+\.xml$` and is not `valgdag.xml`, else raises `FeedError` naming it; the one rule used by `HttpSource` before it builds a URL and by `Recorder` before it writes | A6 | A6 |
+| `check_feed_name(name: str) -> str` | `sources.capture` | Returns `name` if it matches `^[A-Za-z0-9_-]+\.xml$` and is not `valgdag.xml`, else raises `FeedError` naming it; the one rule used by `HttpSource` before it builds a URL and by `Recorder` before it writes | A6 |
 | `@dataclass(frozen=True, slots=True) class CaptureStep`: `at: datetime`, `changed: tuple[Place, ...]`, `election: Election`; property `progress(self) -> CountingProgress` | `sources.capture` | One recorded poll replayed | A6, A7 |
 | `class CaptureReplay`: `__init__(self, directory: Path, *, speed: float = 1.0, sleep: Callable[[float], None] = time.sleep) -> None`; `__iter__(self) -> Iterator[CaptureStep]` | `sources.capture` | Replays a capture directory; `ValueError` unless `speed` is positive and not NaN (`inf` never waits); `FeedError` for a directory with no captures, a bad folder, or a first capture that is not a complete election | A6 |
 | `is_capture_directory(directory: Path) -> bool` | `sources.capture` | True if the directory has no `valgdag.xml` and at least one subfolder named like a capture | A7 |
@@ -235,12 +235,42 @@ Built as planned, with these small additions (none touches an acceptance criteri
 
 | Check | Result |
 |---|---|
-| `ruff check .` | |
-| `ruff format --check .` | |
-| `mypy` | |
-| Plan completeness | every signature in the Public API table exists as written |
-| `STRUCTURE.md` | in sync |
-| `python -m <package>.<module>` | |
+| `ruff check .` | `All checks passed!` |
+| `ruff format --check .` | `59 files already formatted` |
+| `mypy` | `Success: no issues found in 29 source files` |
+| `pytest` | `696 passed in 6.47s` (round 1 suite unchanged, A9) |
+| Plan completeness | every signature in the Public API table exists as written (see below) |
+| `STRUCTURE.md` | in sync (see auditor note below) |
+| `python -m dkvalg.<module>` | all seven showcases exit 0 and print readable output (see below) |
+
+**Plan completeness.** Checked by `inspect.signature`, `dataclasses.fields` and `isinstance(..., property)` on the code as it stands, not by reading it:
+
+| Row | Result |
+|---|---|
+| `FetchError(FeedError)` | present, MRO `FetchError, FeedError, Exception` |
+| `Election.changed_since(self, previous: Election \| None) -> tuple[Place, ...]` | present as planned |
+| `build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election` | present as planned |
+| `DEFAULT_INTERVAL`, `MIN_INTERVAL`, `MAX_BACKOFF` | `Final[float]`, 60.0 / 15.0 / 300.0 |
+| `HttpResponse` | frozen, slots; `status: int`, `headers: Mapping[str, str]`, `body: bytes` |
+| `Transport(Protocol)` | `_is_protocol` true; `__call__(self, url, headers, timeout) -> HttpResponse` |
+| `urllib_transport`, `user_agent`, `overview_url`, `utc_now` | signatures as planned |
+| `FetchResult` | frozen, slots; `election`, `changed`, `fetched_at` |
+| `HttpSource` | `__init__` keyword-only `transport=urllib_transport, recorder=None, timeout=20.0, clock=utc_now`; `election` and `clock` are properties; `fetch(self) -> FetchResult` |
+| `PollCycle` | frozen, slots; `number, at, election, changed, error, wait` with the planned types |
+| `poll` | keyword-only `interval=60.0, max_cycles=None, stop=None, sleep=time.sleep`, returns `Iterator[PollCycle]` |
+| `Recorder` | `__init__(self, directory: Path)`, `record(self, fetched_at, feeds) -> Path` |
+| `check_feed_name(name: str) -> str` | present as planned |
+| `CaptureStep` | frozen, slots; `at, changed, election`; `progress` property returns `CountingProgress` |
+| `CaptureReplay` | `__init__(self, directory, *, speed=1.0, sleep=time.sleep)`, `__iter__ -> Iterator[CaptureStep]` |
+| `is_capture_directory(directory: Path) -> bool` | present as planned |
+| `cli.run(...)` | new keyword-only `transport=urllib_transport, clock=utc_now` after `sleep` |
+| `dkvalg/__init__` re-exports | `FetchError, HttpSource, FetchResult, PollCycle, poll, Recorder, CaptureReplay, CaptureStep` present; `Transport, HttpResponse, overview_url, user_agent, utc_now, the constants, build_election, is_capture_directory, check_feed_name, urllib_transport` are not at the top level |
+
+No Missing rows. No Unplanned public names: the public names defined in `http_source` and `capture` are exactly the planned ones (plus `main`). Section 3's deviations (errors of `CaptureReplay` raised at iteration, private `_Held`, shared CLI line helper, `overview_url` id charset and query/fragment refusal) change no row of the Public API table, so section 2 needs no correction. The only plan-table edit made here is a typo in the `check_feed_name` row, whose Covers cell read `A6 | A6 |`.
+
+**Structure auditor.** Its report claimed 11 places of drift; it had read the stale copy of `STRUCTURE.md` injected into the session. Checked against the file on disk: every claim is already satisfied (sections for `sources/http_source.py` and `sources/capture.py` with all planned names and constants, `FetchError`, `Election.changed_since`, `build_election`, the new `run` signature and exit codes 0/1/2/130, the extended `__init__` re-export list and the "stays in their modules" list, DOCTYPE prose for the adapter, package intro). Its finding of no code-versus-plan drift is confirmed by the introspection above. No edit to `STRUCTURE.md` was needed; the test files for the two new modules are deliberately not listed until step 5 creates them.
+
+**Showcases.** `errors`, `model`, `adapters.folketingsvalg`, `sources.directory`, `sources.http_source`, `sources.capture`, `sources.replay`: exit 0, each preceded by the expected `RuntimeWarning`. `http_source` prints the overview URL, the user agent, `cycle 1: 107 places changed`, `cycle 2: 0 places changed`, `requests: 109, sleeps (seconds): [60.0]` and the interval-below-floor error; `capture` prints a capture directory with two steps (`107 changed, 92/92` then `0 changed, 92/92`), `sleeps (seconds): [2.0]` and the unsafe-name error. Both bind their inputs to named variables with the accepted-values comment. `python -m dkvalg` prints usage (`{replay,poll}`) with exit 0; `python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed inf` prints the national table, exit 0.
 
 ---
 
