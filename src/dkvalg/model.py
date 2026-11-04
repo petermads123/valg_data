@@ -11,6 +11,7 @@ class ElectionType(StrEnum):
     """Which kind of election."""
 
     FOLKETINGSVALG = "folketingsvalg"
+    EUROPAPARLAMENTSVALG = "europaparlamentsvalg"
 
 
 class PlaceType(StrEnum):
@@ -120,6 +121,21 @@ class Place:
     def has_result(self) -> bool:
         """Whether this place has a reported result."""
         return self.status.has_result
+
+    @property
+    def leader(self) -> PartyResult | None:
+        """The party with the most votes at this place.
+
+        "Uden for partier" never leads; a tie goes to the party earlier in the
+        feed. None when the place has no result or no party.
+        """
+        if not self.has_result:
+            return None
+        best: PartyResult | None = None
+        for party in self.parties:
+            if party.is_party and (best is None or party.votes > best.votes):
+                best = party
+        return best
 
     def unreported(self) -> Place:
         """Return the placeholder form of this place.
