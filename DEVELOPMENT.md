@@ -42,3 +42,11 @@ by heading is updated in the same change.
 ## EP seats are not in DST's feeds
 
 2026-11-04, `feat/dkvalg-diff-and-ep` round 1. DST's Europa-Parlamentsvalg result feeds (checked on the 9 June 2024 election) carry votes and percentages only, no seat attributes at any level, so every EP seat field is `None` and `diff` never reports EP seat changes. Denmark's 15 seats are allocated nationally by d'Hondt among the lists. Next step: if seats are wanted, compute them from the national votes in a separate feature, or find an official source that publishes them.
+
+## Election type is recognised by a name prefix
+
+2026-11-04, `feat/dkvalg-diff-and-ep` round 1. `parse_any_overview` picks the adapter by `startswith` on `ValgNavn` (`Folketingsvalg`, `Europa-Parlamentsvalg`), case-sensitive, so a bare prefix or `Folketingsvalgxyz` is accepted and a respelling by DST (for example `Europaparlamentsvalg`) is refused with the supported types listed. Next step: if DST ever changes the spelling, add the new prefix in the registry; there is no feed field that states the election type.
+
+## diff on a finished election shows seats arriving with the count
+
+2026-11-04, `feat/dkvalg-diff-and-ep` round 1. In live feeds DST computes seats after a place is first counted, so `--diff` prints a `seats ... - -> n` line when they arrive; replaying a finished election's end-state files reveals a place with its seats already present, so no seat line appears at that step (documented and pinned by tests). Next step: if end-state replays should also show seat lines, derive them from `PlaceCounted` places that carry seats, or wait for a recorded live capture, which shows the real order.
