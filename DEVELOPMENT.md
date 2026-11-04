@@ -15,14 +15,6 @@ by heading is updated in the same change.
 
 2026-11-03, `feat/dkvalg-folketingsvalg-replay` round 1. DST's XML feeds (dst.dk/Valg/xml.htm) cover only Folketingsvalg, EP-valg and folkeafstemning. The original spec also listed kommunal- and regionsvalg. Next step: find another official source (e.g. valg.dk / the ministry) or drop them from the project's aims.
 
-## Faithful replay needs recorded live captures
-
-2026-11-03, `feat/dkvalg-folketingsvalg-replay` round 1. DST keeps only the latest state, and `SenestRettet` is a file's last change, so replay from saved end-state files cannot show intermediate landsdel/storkreds/national aggregates or seats. Next step: a recorder that saves every polled feed with its fetch time during a live election, built together with HttpSource (planned round 2); replay can then play those captures.
-
-## Harden XML parsing before live polling
-
-2026-11-03, `feat/dkvalg-folketingsvalg-replay` round 1. The adapter uses `xml.etree.ElementTree`, which is fine for saved DST files but expands entities from whatever it is given. Before HttpSource feeds it network responses (planned round 2), decide whether to add `defusedxml` (a dependency) or reject any DOCTYPE/entity declaration in the adapter.
-
 ## CLI output encoding
 
 2026-11-03, `feat/dkvalg-folketingsvalg-replay` round 1. `dkvalg replay` raises `UnicodeEncodeError` when stdout cannot encode Danish place names (an ASCII-only stream); pinned by a test as a documented limitation. Next step: reconfigure the stream with `errors="replace"` in `cli.main` if it ever bites a real terminal.
@@ -30,3 +22,11 @@ by heading is updated in the same change.
 ## Finding the current election's id
 
 2026-11-04, `feat/dkvalg-live-polling` round 1. `poll` takes an election id or URL as given (DST ids look like `Valg2546527`). Finding the current election automatically means reading the list on dst.dk/valg/xml.htm, an HTML page whose layout may change. Next step: decide, once someone needs it, between scraping that page and keeping the id a manual setting.
+
+## A recorder failure fails the fetch
+
+2026-11-04, `feat/dkvalg-live-polling` round 1. `HttpSource.fetch` writes the capture before it commits its state, so a disk failure makes the fetch fail and `poll` keeps handing out the last good election with the error. The alternative is to keep fetching and rewrite every held body at the next successful record. Next step: decide once a real night shows how often the disk fails.
+
+## How often DST answers 304 to both validators
+
+2026-11-04, `feat/dkvalg-live-polling` round 1. `HttpSource` sends `If-None-Match` and `If-Modified-Since` together. A live probe of four consecutive polls of the still-served 2026 election gave 200, 304, 200 (the first being unconditional): DST's nodes disagree on ETags, so a poll often gets the full overview as a 200, which the byte comparison then treats as no change. Correctness holds; only politeness suffers. Next step: measure over a longer run and decide whether to drop `If-None-Match`.

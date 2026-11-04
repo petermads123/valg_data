@@ -5,9 +5,11 @@ Bytes in, model out: nothing here touches the disk.
 
 import re
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
+from xml.parsers import expat
 
 from dkvalg.errors import FeedError
 from dkvalg.model import (
@@ -76,8 +78,46 @@ class Overview:
     feeds: tuple[FeedRef, ...]
 
 
+class _DeclarationFoundError(Exception):
+    """Raised from an expat handler when a DOCTYPE or entity declaration appears."""
+
+
+def _refuse_declaration(*_args: object) -> None:
+    """Expat handler: any DOCTYPE or entity declaration is refused."""
+    raise _DeclarationFoundError
+
+
+def _refuse_declarations(xml: bytes, source: str) -> None:
+    """Raise `FeedError` if the document declares a DOCTYPE or an entity.
+
+    Runs a throwaway expat pass that stops at the first such declaration, before
+    `ElementTree` could expand anything. Expat decodes the document itself, so a
+    UTF-16 document is checked as well as a UTF-8 one. A document expat cannot
+    parse is left for `ElementTree` to report.
+    """
+    parser = expat.ParserCreate()
+    handlers: dict[str, Callable[..., None]] = {
+        "StartDoctypeDeclHandler": _refuse_declaration,
+        "EntityDeclHandler": _refuse_declaration,
+    }
+    for attribute, handler in handlers.items():
+        setattr(parser, attribute, handler)
+    try:
+        parser.Parse(xml, True)
+    except _DeclarationFoundError as error:
+        raise FeedError(
+            f"{source}: contains a DOCTYPE or entity declaration"
+        ) from error
+    except expat.ExpatError:
+        return
+
+
 def _parse_xml(xml: bytes, source: str) -> ET.Element:
-    """Parse bytes (BOM or not) into a root element, or raise `FeedError`."""
+    """Parse bytes (BOM or not) into a root element, or raise `FeedError`.
+
+    A document with a DOCTYPE or entity declaration is refused first.
+    """
+    _refuse_declarations(xml, source)
     try:
         return ET.fromstring(xml)
     except (ET.ParseError, ValueError) as error:

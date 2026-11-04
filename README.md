@@ -53,6 +53,40 @@ with the national result table. `--speed` is a positive number (default 600) or 
 waiting. A directory that is not a Folketingsvalg feed set prints `error: ...` to stderr and
 exits 1. `python -m dkvalg` with no arguments prints usage.
 
+### Live polling and recording
+
+```python
+from datetime import datetime
+from pathlib import Path
+
+from dkvalg import HttpSource, Recorder, poll
+
+source = HttpSource("Valg2546527", recorder=Recorder(Path("capture")))  # id or URL
+for cycle in poll(source, interval=60):  # at least 15 seconds
+    if cycle.error is not None:
+        print("error:", cycle.error)  # the last good election is kept
+    for place in cycle.changed:
+        print(cycle.at, place.place_type.value, place.name)
+```
+
+`HttpSource.fetch()` is a blocking call that returns the current `Election` and the places
+that changed since the last fetch; `poll` is a loop around it that a caller can run from its
+own thread and end with `stop` or `max_cycles`. Requests are conditional (`ETag` and
+`Last-Modified`), carry a `dkvalg/<version>` User-Agent and a timeout, and back off after
+errors. A recorder saves every received feed in a folder named by the UTC fetch time, so
+the recording can be replayed with its true timing and shows the real intermediate national
+and storkreds results:
+
+```powershell
+python -m dkvalg poll Valg2546527 --interval 60 --record capture
+python -m dkvalg replay capture --speed 600
+```
+
+`poll` takes an election id or the URL of its folder or `valgdag.xml`, prints one line per
+changed place per poll, and reports failures as `error: ...` on stderr (exit 1 if the last
+poll failed; exit 2 for a bad interval or location). `replay` accepts either a plain feed
+directory or a capture directory. XML that declares a DOCTYPE or an entity is refused.
+
 ## Why `src/`
 
 Everything installable lives under `src/`, so nothing else in the repo — `tests/`, `docs/`,

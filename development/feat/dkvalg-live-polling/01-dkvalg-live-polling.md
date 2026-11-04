@@ -1,6 +1,6 @@
 # dkvalg: live polling, recording and capture replay
 
-<!-- claude-plan step=3 status=active -->
+<!-- claude-plan step=4 status=active -->
 
 | Field | Value |
 |---|---|
@@ -16,8 +16,8 @@
 |---|---|---|---|---|
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
-| 3 | Implement | `/implement` | in `/build` | in progress |
-| 4 | Verify | `/verify` | in `/build` | pending |
+| 3 | Implement | `/implement` | in `/build` | done |
+| 4 | Verify | `/verify` | in `/build` | in progress |
 | 5 | Test | `/test` | in `/build` | pending |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
@@ -216,6 +216,16 @@ Accepted: by delegation, 2026-11-04. The user said "continue, don't wait for my 
 > Written in step 3. Only deviations from the plan above, each with its reason. "Built as
 > planned" is a complete and good entry. On a fix round, also the reproduction test's red
 > run, pasted here before the fix was written — step 6 cites it.
+
+Built as planned, with these small additions (none touches an acceptance criterion):
+
+- `CaptureReplay` raises its `FeedError`s (no captures, bad folder, incomplete first capture) when iteration starts, not in `__init__`, because the directory is read per iteration so a restart sees new folders; only `ValueError` for `speed` is raised at construction. Documented in its docstring.
+- `_Held` (private) keeps, per feed, the overview timestamp it was fetched at, the body and the validators. On a feed 304 the held body is kept and its timestamp moved forward; on an identical 200 body the validators are refreshed. An identical-body 200 of the overview also refreshes the overview validators.
+- The CLI prints changed places with the round 1 line format (`<time>  <counted/total>  <type> <name>`, two spaces, progress right-aligned) for `replay` on both kinds of directory and for `poll`, so all three share one helper.
+- `overview_url` accepts an id made of letters, digits, `_` and `-`; an http(s) URL with a query or fragment is refused.
+- Live sanity run (network reachable): `python -m dkvalg poll Valg2546527 --cycles 2 --interval 15` printed 107 lines for cycle 1 (counted 92/92) and none for cycle 2, exit 0. A separate probe of four consecutive fetches saw overview responses 200 (unconditional), 200, 304, 200 with both validators sent: DST answers 304 only some of the time, as the plan's Risks expected; noted in `DEVELOPMENT.md`.
+- `DEVELOPMENT.md`: the two resolved entries deleted; added "A recorder failure fails the fetch" and "How often DST answers 304 to both validators".
+- Existing suite: 696 passed unchanged. `ruff check .`, `ruff format --check .`, `mypy` clean; all showcases run.
 
 ---
 

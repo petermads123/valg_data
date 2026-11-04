@@ -1,5 +1,6 @@
 """Read a directory laid out as DST serves it into an `Election`."""
 
+from collections.abc import Callable
 from pathlib import Path
 
 from dkvalg.adapters.folketingsvalg import (
@@ -23,6 +24,36 @@ def _read(path: Path) -> bytes:
         raise FeedError(f"cannot read feed file {path}: {error}") from error
 
 
+def build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election:
+    """Assemble an `Election` from an overview and a way to read its feeds.
+
+    Args:
+        overview_xml: The bytes of `valgdag.xml`.
+        read_feed: Called with a feed's file name, returns its bytes. Called only
+            for feeds the overview lists as reported; its exceptions propagate.
+
+    Returns:
+        The election, with its places in overview order. A feed the overview
+        lists as never reported becomes a placeholder place.
+
+    Raises:
+        FeedError: If the overview or a feed is malformed or not a Folketingsvalg.
+    """
+    overview = parse_overview(overview_xml)
+    places: list[Place] = []
+    for ref in overview.feeds:
+        if ref.last_changed is None:
+            places.append(unreported_place(ref))
+        else:
+            places.append(parse_place(read_feed(ref.file_name), ref))
+    return Election(
+        name=overview.name,
+        election_type=overview.election_type,
+        election_date=overview.election_date,
+        places=tuple(places),
+    )
+
+
 def load_election(directory: Path) -> Election:
     """Read `valgdag.xml` and every reported feed it lists.
 
@@ -40,18 +71,8 @@ def load_election(directory: Path) -> Election:
         FeedError: If `valgdag.xml` or a listed feed is missing or unreadable,
             or any feed is malformed or not a Folketingsvalg.
     """
-    overview = parse_overview(_read(directory / _OVERVIEW_NAME))
-    places: list[Place] = []
-    for ref in overview.feeds:
-        if ref.last_changed is None:
-            places.append(unreported_place(ref))
-        else:
-            places.append(parse_place(_read(directory / ref.file_name), ref))
-    return Election(
-        name=overview.name,
-        election_type=overview.election_type,
-        election_date=overview.election_date,
-        places=tuple(places),
+    return build_election(
+        _read(directory / _OVERVIEW_NAME), lambda name: _read(directory / name)
     )
 
 
