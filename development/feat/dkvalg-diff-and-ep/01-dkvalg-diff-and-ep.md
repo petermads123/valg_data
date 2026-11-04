@@ -7,7 +7,7 @@
 | Feature | `feat/dkvalg-diff-and-ep` (the folder) |
 | Round | 1 |
 | Branch | `feat/dkvalg-diff-and-ep` |
-| Version | `minor` — two additions to the existing library (a second election type through the same feed machinery, and a change-detection function); step 9 adds `1.1.0 → 1.2.0` (major, 2.0.0, was the alternative) |
+| Version | `minor` — two additions to the existing library (a second election type through the same feed machinery, and a change-detection function); `1.1.0 → 1.2.0` (major, 2.0.0, was the alternative) |
 | Started | 2026-11-04 |
 
 ## Progress
