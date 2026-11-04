@@ -1,6 +1,6 @@
 # dkvalg: EP-valg adapter and snapshot diff
 
-<!-- claude-plan step=4 status=active -->
+<!-- claude-plan step=5 status=active -->
 
 | Field | Value |
 |---|---|
@@ -17,8 +17,8 @@
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
-| 4 | Verify | `/verify` | in `/build` | in progress |
-| 5 | Test | `/test` | in `/build` | pending |
+| 4 | Verify | `/verify` | in `/build` | done |
+| 5 | Test | `/test` | in `/build` | in progress |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
@@ -225,12 +225,27 @@ Built as planned, with these details the plan left open:
 
 | Check | Result |
 |---|---|
-| `ruff check .` | |
-| `ruff format --check .` | |
-| `mypy` | |
-| Plan completeness | every signature in the Public API table exists as written |
-| `STRUCTURE.md` | in sync |
-| `python -m <package>.<module>` | |
+| `ruff check .` | `All checks passed!` |
+| `ruff format --check .` | `67 files already formatted` |
+| `mypy` | `Success: no issues found in 35 source files` |
+| `pytest` (existing suite) | `1301 passed in 17.51s` |
+| Plan completeness | every row of the Public API table checked with `inspect.signature`, dataclass fields and properties: exact match (below) |
+| `STRUCTURE.md` | in sync after two edits from the auditor (below) |
+| `python -m dkvalg.<module>` | errors, model, adapters.dst_feed, adapters.folketingsvalg, adapters.europaparlamentsvalg, adapters.registry, sources.directory, sources.http_source, sources.capture, sources.replay, diff: all exit 0 with meaningful output (only the expected `RuntimeWarning`) |
+| CLI | `replay` on `folketingsvalg_2026` and `ep_2024`, with and without `--diff`: all exit 0; plain output 122 and 120 lines, `--diff` output 228 and 226 lines; the `--diff` output with its leader/seats/status/progress lines removed is identical to the plain output for both; plain output contains none of those lines; EP table shows `-` for every seat |
+
+Plan completeness (all as planned, no Missing, Deviation or Unplanned):
+
+- `model`: `ElectionType.EUROPAPARLAMENTSVALG == "europaparlamentsvalg"`; `Place.leader` is a property `(self) -> PartyResult | None`.
+- `adapters.dst_feed`: `election_name(xml: bytes) -> str`, `parse_overview_for(xml, election_type: ElectionType, name_prefix: str) -> Overview`, `parse_place(xml, ref: FeedRef) -> Place`, `unreported_place(ref) -> Place`, frozen slotted `FeedRef`/`Overview` with the same fields, `main() -> None`.
+- `adapters.folketingsvalg` and `adapters.europaparlamentsvalg`: `parse_overview(xml: bytes) -> Overview`; `__all__` is `FeedRef, Overview, main, parse_overview, parse_place, unreported_place`; `FeedRef`, `Overview`, `parse_place`, `unreported_place` are the same objects as in `dst_feed`.
+- `adapters.registry`: `parse_any_overview(xml: bytes) -> Overview`, `main`.
+- `diff`: five frozen slotted dataclasses with the planned fields; `votes_delta`/`seats_delta` properties `-> int | None`; `Change` is a `TypeAliasType` whose `__value__` is the five-member union; `diff_elections(previous: Election | None, current: Election) -> tuple[Change, ...]`; `main`.
+- `dkvalg` top level re-exports exactly the 19 earlier names plus `diff_elections`, `Change`, `PlaceCounted`, `PartyResultChanged`, `LeaderChanged`, `StatusChanged`, `ProgressChanged`; `parse_any_overview`, `election_name`, `parse_overview_for` and `parse_overview` are not exported.
+- No unplanned public names: the only public functions and classes defined in the new or changed adapter and diff modules are the planned ones.
+- `git diff main -U0 -- tests` shows edits to existing tests only in `test_directory.py` and `test_cli.py` (the two A9 retargets, `Europa-Parlamentsvalg 2024` to `Folkeafstemning 2022`); everything else under `tests/` is the new `ep_2024` fixture set. `sha256sum -c SHA256SUMS` in `tests/fixtures/ep_2024` passes.
+
+structure-auditor: both edits were genuine and applied: the `build_election` row in `STRUCTURE.md` now says `parse_any_overview` picks the adapter and unsupported types are a `FeedError`; the top-level paragraph names `parse_overview_for` among the adapter internals kept out of the package namespace. Its other findings were clean. Section 3 notes need no plan-table correction: they record details, not deviations.
 
 ---
 

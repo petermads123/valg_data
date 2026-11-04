@@ -69,7 +69,7 @@ Re-exports the public API: `FeedError`, `ElectionType`, `PlaceType`, `Status`,
 `ReplayStep`, `FetchError`, `HttpSource`, `FetchResult`, `PollCycle`, `poll`, `Recorder`,
 `CaptureReplay`, `CaptureStep`, `diff_elections`, `Change`, `PlaceCounted`,
 `PartyResultChanged`, `LeaderChanged`, `StatusChanged`, `ProgressChanged`. Adapter internals
-(`parse_*`, `parse_any_overview`, `election_name`, `unreported_place`, `FeedRef`, `Overview`), the transport pieces, `overview_url`, `user_agent`, `utc_now`, the interval
+(`parse_*`, `parse_any_overview`, `parse_overview_for`, `election_name`, `unreported_place`, `FeedRef`, `Overview`), the transport pieces, `overview_url`, `user_agent`, `utc_now`, the interval
 constants, `build_election`, `check_feed_name`, `is_capture_directory` and the CLI (`run`,
 `main`) stay in their modules.
 
@@ -154,7 +154,7 @@ Package marker for sources.
 
 | Signature | Description |
 |---|---|
-| `build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election` | `parse_overview`, then `parse_place` of `read_feed(file_name)` for every reported feed and a placeholder for the rest; chooses the adapter with `parse_any_overview`; the one assembly shared by `load_election`, `HttpSource` and `CaptureReplay`. |
+| `build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election` | `parse_any_overview` (which picks the adapter from `ValgNavn`), then `parse_place` of `read_feed(file_name)` for every reported feed and a placeholder for the rest; `FeedError` for an unsupported election type; the one assembly shared by `load_election`, `HttpSource` and `CaptureReplay`. |
 | `load_election(directory: Path) -> Election` | Read `valgdag.xml` and every reported feed it lists from a DST-layout directory; `FeedError` naming a missing file. |
 | `main() -> None` | Showcase. |
 
