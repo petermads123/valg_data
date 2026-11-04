@@ -1,9 +1,10 @@
 # dkvalg
 
 Danish election data in one normalised model, built on the XML feeds DST (Danmarks Statistik)
-publishes for the Folketingsvalg. Round 1 reads a saved feed set and can replay it through
-time at accelerated speed, so the pipeline can be developed against a real past election
-(the one of 24 March 2026) without waiting for a live one. Standard library only.
+publishes for the Folketingsvalg. It reads a saved feed set and replays it through time at
+accelerated speed, polls DST's live feeds over HTTP, and records what a poll receives so a
+live night can be replayed later with its true timing. The pipeline is developed against a
+real past election (24 March 2026). Standard library only.
 
 ## Install as a dependency
 
@@ -56,7 +57,6 @@ exits 1. `python -m dkvalg` with no arguments prints usage.
 ### Live polling and recording
 
 ```python
-from datetime import datetime
 from pathlib import Path
 
 from dkvalg import HttpSource, Recorder, poll
@@ -82,9 +82,11 @@ python -m dkvalg poll Valg2546527 --interval 60 --record capture
 python -m dkvalg replay capture --speed 600
 ```
 
-`poll` takes an election id or the URL of its folder or `valgdag.xml`, prints one line per
-changed place per poll, and reports failures as `error: ...` on stderr (exit 1 if the last
-poll failed; exit 2 for a bad interval or location). `replay` accepts either a plain feed
+`poll` takes an election id or the URL of its folder or `valgdag.xml`, an optional
+`--interval` (seconds, at least 15, default 60), `--record DIR` and `--cycles N` (stop after
+N polls; default no limit). It prints one line per changed place per poll and reports
+failures as `error: ...` on stderr (exit 1 if the last poll failed; exit 2 for a bad
+interval, cycle count or location; exit 130 on Ctrl-C). `replay` accepts either a plain feed
 directory or a capture directory. XML that declares a DOCTYPE or an entity is refused.
 
 ## Why `src/`

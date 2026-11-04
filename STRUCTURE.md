@@ -220,7 +220,9 @@ DST's different-ETag-per-request behaviour, scripted per-file outcomes and a req
 its `touch`, `retime_only` and `never_reported` rewrite a feed body and the overview timestamps),
 `Request`, `FakeClock` (strictly advancing, counts its calls), `FlakyRecorder` (a `Recorder` that
 fails on chosen calls), the `transport` fixture, `fixture_files`, `retime_feed`, `bump_votes`,
-`retime_overview`, `dst_stamp`, `utc` and the constants `BASE_URL`, `OVERVIEW`, `NATIONAL`, `LATER_ISO`.
+`retime_overview`, `dst_stamp`, `utc` and the constants `BASE_URL`, `OVERVIEW`, `NATIONAL`, `LATER_ISO`. `FakeTransport` also offers `names`, `publish(name, body)`,
+`script(name, *outcomes)` and `write_to(directory)`; `Request.conditional` says whether a
+request carried a validator.
 
 ### `tests/test_errors.py`
 
