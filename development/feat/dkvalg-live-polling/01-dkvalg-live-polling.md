@@ -1,6 +1,6 @@
 # dkvalg: live polling, recording and capture replay
 
-<!-- claude-plan step=6 status=active -->
+<!-- claude-plan step=7 status=active -->
 
 | Field | Value |
 |---|---|
@@ -19,8 +19,8 @@
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
-| 6 | Concept check | `/concept-check` | in `/build` | in progress |
-| 7 | Ship | `/ship` | in `/build` | pending |
+| 6 | Concept check | `/concept-check` | in `/build` | done |
+| 7 | Ship | `/ship` | in `/build` | in progress |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
@@ -354,19 +354,29 @@ Edge cases considered and deliberately skipped, with reasons:
 
 | # | Criterion | Met | Evidence |
 |---|---|---|---|
-| A1 | | | |
+| A1 | First fetch equals `load_election` | yes | `test_first_fetch_equals_load_election_of_the_same_files` (1 passed), plus `..._reports_every_reported_place_as_changed`; live: first cycle of `python -m dkvalg poll Valg2546527 --cycles 2 --interval 15` printed 107 lines at 92/92. |
+| A2 | Both validators; 304 or identical 200 means no feed requested, same election, no changes | yes | `test_second_fetch_sends_only_the_overview_with_both_previous_validators`, `test_an_unchanged_overview_returns_the_same_election_and_no_changes[304, 200-same-body-new-etag]`, `test_a_304_records_nothing_and_an_identical_200_records_only_the_overview` (all pass). Live: probe of 8 fetches sent `If-None-Match` and `If-Modified-Since` on every later request, got 3 x 304 and 4 x 200 (identical body, `changed` 0 each) for 7 conditional overview requests; the CLI run's cycle 2 was a 200 with an identical body and recorded a folder holding only `valgdag.xml`. No feed was requested after the first fetch (feed-200 count stayed 107). |
+| A3 | Only newer feeds requested; changed list exact | yes | `test_only_the_feeds_with_a_newer_timestamp_are_requested_conditionally`, `test_the_changed_list_names_exactly_the_touched_places`, `..._follows_the_election_order`, `..._never_reported_to_reported_is_fetched_unconditionally` (pass). Fake-transport recording: after touching the national feed and two others, the second fetch recorded a folder of 4 files (overview plus 3 feeds) and replay printed exactly 3 changed places for it. |
+| A4 | User-Agent, timeout, floor 15, back-off, atomic failure | yes | Live probe showed `User-Agent: dkvalg/1.0.0 (+https://github.com/petermads123/valg_data)` on the overview request. Tests: `test_every_request_carries_the_user_agent_accept_and_the_timeout` and `user_agent` (12 passed with the interval cases); `test_poll_waits_120_240_300_300_then_60_after_a_success_then_120_again` and the back-off cases (8 passed); the failure and recorder-failure cases (13 passed) leave election and held bodies unchanged. CLI `--interval 5` exits 2 naming the value. |
+| A5 | Poll loop | yes | `test_poll_stops_after_max_cycles_and_never_sleeps_after_the_last`, `test_poll_never_touches_the_network_or_the_real_sleep`, `test_poll_reads_the_clock_once_per_cycle_and_stamps_the_cycle_with_it`, stop and cycle-field tests (pass). Live: 2 cycles under `--cycles 2` with a real 15 s sleep between them. |
+| A6 | Recorder layout, capture replay, timing, last snapshot, earlier national figures | yes | Live: `--record` gave `20261104T070753.162603Z` (108 files: overview plus 107 feeds) and `20261104T070906.861541Z` (only `valgdag.xml`, the identical 200); `python -m dkvalg replay <dir> --speed inf` exit 0 printed the national table. Fake-transport run (scratchpad `fake_record.py`): 3 folders of 108, 4 and 1 files (the 304 recorded nothing), replay exit 0. Tests: `..._an_earlier_step_shows_the_earlier_national_figures`, `..._the_last_step_equals_the_election_as_last_fetched`, `..._the_identical_body_capture_holds_only_the_overview`, `..._sleeps_are_the_fetch_gaps_divided_by_speed`, restart (8 passed). |
+| A7 | CLI `poll` and `replay`, exit codes | yes | `python -m dkvalg poll foo/bar` gives `error:` and exit 2; `--interval 5` exits 2; `replay /nonexistent` prints `error: feed file not found: .../valgdag.xml` and exits 1; `replay tests/fixtures/folketingsvalg_2026 --speed inf` unchanged from round 1; capture-directory replay exit 0 (above). 98 CLI tests passed (`poll`, `replay`, exit codes). |
+| A8 | DOCTYPE and entity refusal; note deleted | yes | `-k doctype`: 93 passed (both parsers, five encodings, billion laughs, UTF-16, fixtures still parse via `test_every_fixture_feed_still_parses_after_the_hardening`); `grep 'Harden XML' DEVELOPMENT.md` finds nothing; `test_development_notes_no_longer_list_the_entries_this_round_resolved` passes. |
+| A9 | Round 1 untouched | yes | Full suite 1301 passed. `git diff main -U0 -- tests` removes only four import lines (names added to existing `from` imports in `conftest.py`, `test_cli.py`, `test_errors.py`) and no `def test_` or decorator; round 1's 696 tests taken from `main` and run against the current `src/`: 693 passed, the other 3 (`test_fixtures` PDF and `.gitattributes`, `test_guard_git` settings) failed only because the copy sits outside the repo, and they pass in the repo. `src/dkvalg/sources/replay.py` has no diff against `main`. |
 
-Drift found, and what was done about it:
+Out of scope holds: grep for AppDaemon or Home Assistant finds only the plan files under `development/` (prose saying it is excluded), nothing in `src/`, `tests/`, `README.md`; no `diff.py`; the only adapter is `folketingsvalg.py`; no kommunal or fintal in `src/`; the only concurrency import is `threading.Lock` in `http_source.py:271` (no `Thread`, no asyncio); `pyproject.toml` has `dependencies = []`; no test reaches the external network (`urlopen` is monkeypatched in `test_http_source.py:1619`; the transport tests use a `127.0.0.1` server). Surface: the public names are the ones the concept asked for. Showcases for `http_source` and `capture` run without network. Gates: `ruff check`, `ruff format --check` (61 files), `mypy` (31 files) clean. Structure: auditor reported in sync; spot-checked the module list, all of which exist on disk.
+
+Live measurement for the DEVELOPMENT.md note (2026-11-04, one run, 107 + 8 + 1 requests, 1 s apart in the probe): of 7 conditional overview requests carrying both validators, 3 were answered 304 and 4 a 200 with an identical body; the unconditional first request was 200. The CLI run's second cycle was also a 200. The byte comparison absorbed every one of them (no false change). This matches the plan's Risk, and the DEVELOPMENT.md entry already says so.
+
+Drift found, and what was done about it: none against section 1. Observations that are not drift: (1) `replay <dir> | head` raises `BrokenPipeError` with a traceback, the same as round 1's code path; not a criterion and not changed. (2) Capture steps print timezone-aware UTC times while plain replay prints naive local time, already recorded in section 5 and in the plan's Risks. (3) Section 3's one-clock-read refinement of `poll` changes no criterion. No code was edited in this step.
 
 ### Earlier rounds still hold
 
-> Later rounds only. Re-check every acceptance criterion from every earlier round in this
-> folder: this round changed code they depend on, and their tests passing is necessary but
-> not sufficient — a criterion can be satisfied by tests that no longer describe what the
-> feature does.
+First round on this branch; round 1 of the previous branch is merged and covered by A9.
 
 | Round | # | Criterion | Still met | Evidence |
 |---|---|---|---|---|
+| 1 | A9 | Round 1 of the previous branch is untouched | yes | See the A9 row above. |
 
 ---
 
