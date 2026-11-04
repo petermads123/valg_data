@@ -1,9 +1,10 @@
 # dkvalg
 
 Danish election data in one normalised model, built on the XML feeds DST (Danmarks Statistik)
-publishes for the Folketingsvalg. Round 1 reads a saved feed set and can replay it through
-time at accelerated speed, so the pipeline can be developed against a real past election
-(the one of 24 March 2026) without waiting for a live one. Standard library only.
+publishes for the Folketingsvalg. It reads a saved feed set and replays it through time at
+accelerated speed, polls DST's live feeds over HTTP, and records what a poll receives so a
+live night can be replayed later with its true timing. The pipeline is developed against a
+real past election (24 March 2026). Standard library only.
 
 ## Install as a dependency
 
@@ -52,6 +53,41 @@ Prints one line per place as it is revealed, with a running counted-of-92 progre
 with the national result table. `--speed` is a positive number (default 600) or `inf` for no
 waiting. A directory that is not a Folketingsvalg feed set prints `error: ...` to stderr and
 exits 1. `python -m dkvalg` with no arguments prints usage.
+
+### Live polling and recording
+
+```python
+from pathlib import Path
+
+from dkvalg import HttpSource, Recorder, poll
+
+source = HttpSource("Valg2546527", recorder=Recorder(Path("capture")))  # id or URL
+for cycle in poll(source, interval=60):  # at least 15 seconds
+    if cycle.error is not None:
+        print("error:", cycle.error)  # the last good election is kept
+    for place in cycle.changed:
+        print(cycle.at, place.place_type.value, place.name)
+```
+
+`HttpSource.fetch()` is a blocking call that returns the current `Election` and the places
+that changed since the last fetch; `poll` is a loop around it that a caller can run from its
+own thread and end with `stop` or `max_cycles`. Requests are conditional (`ETag` and
+`Last-Modified`), carry a `dkvalg/<version>` User-Agent and a timeout, and back off after
+errors. A recorder saves every received feed in a folder named by the UTC fetch time, so
+the recording can be replayed with its true timing and shows the real intermediate national
+and storkreds results:
+
+```powershell
+python -m dkvalg poll Valg2546527 --interval 60 --record capture
+python -m dkvalg replay capture --speed 600
+```
+
+`poll` takes an election id or the URL of its folder or `valgdag.xml`, an optional
+`--interval` (seconds, at least 15, default 60), `--record DIR` and `--cycles N` (stop after
+N polls; default no limit). It prints one line per changed place per poll and reports
+failures as `error: ...` on stderr (exit 1 if the last poll failed; exit 2 for a bad
+interval, cycle count or location; exit 130 on Ctrl-C). `replay` accepts either a plain feed
+directory or a capture directory. XML that declares a DOCTYPE or an entity is refused.
 
 ## Why `src/`
 

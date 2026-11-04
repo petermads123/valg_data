@@ -9,6 +9,9 @@ from conftest import (
     overview_xml,
     write_directory,
 )
+from conftest import (
+    entry as overview_entry,
+)
 
 from dkvalg import (
     CountingProgress,
@@ -20,6 +23,7 @@ from dkvalg import (
     load_election,
 )
 from dkvalg.adapters.folketingsvalg import parse_overview, unreported_place
+from dkvalg.sources.directory import build_election
 
 
 def _digests(directory: Path) -> dict[str, str]:
@@ -408,3 +412,150 @@ def test_load_election_does_not_mutate_the_directory_it_reads(tmp_path: Path) ->
     load_election(directory)
 
     assert _digests(directory) == before
+
+
+# --- build_election (A1, A6, A9, T11) ---------------------------------------------
+
+
+def test_build_election_equals_load_election_on_the_fixtures(
+    fixture_dir: Path, election: Election
+) -> None:
+    built = build_election(
+        (fixture_dir / "valgdag.xml").read_bytes(),
+        lambda name: (fixture_dir / name).read_bytes(),
+    )
+
+    assert built == election
+
+
+def test_build_election_asks_for_each_reported_feed_once_in_overview_order(
+    fixture_dir: Path,
+) -> None:
+    overview = (fixture_dir / "valgdag.xml").read_bytes()
+    asked: list[str] = []
+
+    def read(name: str) -> bytes:
+        asked.append(name)
+        return (fixture_dir / name).read_bytes()
+
+    build_election(overview, read)
+
+    assert asked == [f.file_name for f in parse_overview(overview).feeds]
+    assert len(asked) == 107
+
+
+def test_build_election_never_asks_for_a_feed_listed_as_never_reported() -> None:
+    overview = overview_xml(
+        [
+            kreds_entry("20", "K20"),
+            kreds_entry("21", "K21", senest=None, iso=None),
+            kreds_entry("22", "K22", senest="", iso=""),
+        ]
+    )
+    asked: list[str] = []
+
+    def read(name: str) -> bytes:
+        asked.append(name)
+        return feed_xml()
+
+    result = build_election(overview, read)
+
+    assert asked == ["valgdag_20.xml"]
+    assert [p.last_changed is None for p in result.places] == [False, True, True]
+    assert result.places[1].status is Status.NOT_AVAILABLE
+
+
+def test_build_election_with_an_overview_of_only_unreported_feeds_reads_nothing() -> (
+    None
+):
+    overview = overview_xml([kreds_entry("20", "K", senest=None, iso=None)])
+
+    def read(name: str) -> bytes:
+        raise AssertionError(f"read {name}")
+
+    assert build_election(overview, read).places[0].last_changed is None
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        FeedError("feed file not found: valgdag_20.xml"),
+        KeyError("valgdag_20.xml"),
+        OSError("gone"),
+    ],
+    ids=["feed-error", "key-error", "os-error"],
+)
+def test_build_election_lets_the_readers_exceptions_through_unchanged(
+    error: Exception,
+) -> None:
+    overview = overview_xml([kreds_entry("20", "K")])
+
+    def read(_name: str) -> bytes:
+        raise error
+
+    with pytest.raises(type(error)) as caught:
+        build_election(overview, read)
+
+    assert caught.value is error
+
+
+def test_build_election_a_malformed_overview_is_a_feed_error_naming_it() -> None:
+    with pytest.raises(FeedError, match="valgdag.xml"):
+        build_election(b"<Data><broken", lambda _name: b"")
+
+
+def test_build_election_a_malformed_feed_is_a_feed_error_naming_the_feed() -> None:
+    overview = overview_xml([kreds_entry("20", "K")])
+
+    with pytest.raises(FeedError, match=r"valgdag_20\.xml"):
+        build_election(overview, lambda _name: b"<Data><broken")
+
+
+def test_build_election_refuses_a_doctype_in_the_overview_before_reading_any_feed() -> (
+    None
+):
+    hostile = b'<!DOCTYPE d [<!ENTITY a "b">]><Data/>'
+
+    def read(name: str) -> bytes:
+        raise AssertionError(f"read {name}")
+
+    with pytest.raises(FeedError, match="DOCTYPE"):
+        build_election(hostile, read)
+
+
+def test_build_election_is_idempotent_and_leaves_the_overview_bytes_alone() -> None:
+    overview = overview_xml([kreds_entry("20", "K")])
+    copy = bytes(overview)
+
+    first = build_election(overview, lambda _name: feed_xml())
+    second = build_election(overview, lambda _name: feed_xml())
+
+    assert first == second
+    assert overview == copy
+
+
+def test_build_election_calls_the_reader_once_per_listing_of_a_shared_file_name() -> (
+    None
+):
+    overview = overview_xml(
+        [
+            kreds_entry("20", "A"),
+            overview_entry(
+                "Opstillingskreds",
+                "B",
+                "valgdag_20.xml",
+                opstillingskreds_id="21",
+                storkreds_id="10",
+            ),
+        ]
+    )
+    asked: list[str] = []
+
+    def read(name: str) -> bytes:
+        asked.append(name)
+        return feed_xml()
+
+    result = build_election(overview, read)
+
+    assert asked == ["valgdag_20.xml", "valgdag_20.xml"]
+    assert [p.place_id for p in result.places] == ["20", "21"]

@@ -5,13 +5,19 @@ exercises the same code path a downloaded one does. Datetimes are built only wit
 `datetime.fromisoformat`, as Ruff's DTZ rules require.
 """
 
+import functools
+import hashlib
+import re
 import shutil
-from datetime import date, datetime
+from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
 
 from dkvalg.adapters.folketingsvalg import FeedRef
+from dkvalg.errors import FeedError
 from dkvalg.model import (
     Election,
     ElectionType,
@@ -20,7 +26,9 @@ from dkvalg.model import (
     PlaceType,
     Status,
 )
+from dkvalg.sources.capture import Recorder
 from dkvalg.sources.directory import load_election
+from dkvalg.sources.http_source import HttpResponse
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures" / "folketingsvalg_2026"
@@ -237,3 +245,254 @@ def fixture_copy(tmp_path: Path) -> Path:
 def election(fixture_dir: Path) -> Election:
     """The fixture set loaded once; immutable, so sharing it is safe."""
     return load_election(fixture_dir)
+
+
+# --- live polling helpers: a fake transport, a fake clock, feed mutations -------
+
+BASE_URL = "https://www.dst.dk/valg/Valg2546527/xml/"
+OVERVIEW = "valgdag.xml"
+NATIONAL = "valgdag_0.xml"
+LATER_ISO = "2026-03-25T01:00:00"  # after every timestamp in the 2026 fixtures
+
+
+@functools.cache
+def _fixture_bytes() -> tuple[tuple[str, bytes], ...]:
+    """Every fixture XML file as (name, bytes), read once per session."""
+    return tuple((p.name, p.read_bytes()) for p in sorted(FIXTURES.glob("*.xml")))
+
+
+def fixture_files() -> dict[str, bytes]:
+    """A fresh dict of the 109 fixture files by name, free to mutate."""
+    return dict(_fixture_bytes())
+
+
+def dst_stamp(iso: str) -> str:
+    """Spell an ISO timestamp the way DST's `SenestRettet` does."""
+    return datetime.fromisoformat(iso).strftime("%d-%m-%Y %H:%M:%S")
+
+
+def retime_feed(body: bytes, iso: str) -> bytes:
+    """Rewrite a result feed's own `SenestRettet` and `SenestRettetIso`."""
+    text = body.decode("utf-8")
+    text = re.sub(
+        r"<SenestRettetIso>[^<]*</SenestRettetIso>",
+        f"<SenestRettetIso>{iso}</SenestRettetIso>",
+        text,
+        count=1,
+    )
+    text = re.sub(
+        r"<SenestRettet>[^<]*</SenestRettet>",
+        f"<SenestRettet>{dst_stamp(iso)}</SenestRettet>",
+        text,
+        count=1,
+    )
+    return text.encode("utf-8")
+
+
+def bump_votes(body: bytes) -> bytes:
+    """Add one to the feed's `IAltGyldigeStemmer`, so its figures differ."""
+    text = body.decode("utf-8")
+    text = re.sub(
+        r"<IAltGyldigeStemmer>(\d+)</IAltGyldigeStemmer>",
+        lambda m: f"<IAltGyldigeStemmer>{int(m.group(1)) + 1}</IAltGyldigeStemmer>",
+        text,
+        count=1,
+    )
+    return text.encode("utf-8")
+
+
+def retime_overview(
+    overview: bytes, file_name: str, iso: str, senest: str = ""
+) -> bytes:
+    """Rewrite the two timestamp attributes of the overview entry for `file_name`.
+
+    `senest` overrides the `SenestRettet` spelling (used for "never" in DST's form).
+    """
+    lines = overview.decode("utf-8").split("\n")
+    marker = f'/{file_name}"'
+    hits = 0
+    for index, line in enumerate(lines):
+        if marker in line and "SenestRettetIso=" in line:
+            line = re.sub(r'SenestRettetIso="[^"]*"', f'SenestRettetIso="{iso}"', line)
+            line = re.sub(
+                r'SenestRettet="[^"]*"',
+                f'SenestRettet="{senest or dst_stamp(iso)}"',
+                line,
+            )
+            lines[index] = line
+            hits += 1
+    assert hits >= 1, f"no overview entry for {file_name}"
+    return "\n".join(lines).encode("utf-8")
+
+
+@dataclass(frozen=True)
+class Request:
+    """One request a `FakeTransport` saw."""
+
+    url: str
+    name: str
+    headers: Mapping[str, str]
+    timeout: float
+
+    @property
+    def conditional(self) -> bool:
+        """Whether the request carried a validator."""
+        return "If-None-Match" in self.headers or "If-Modified-Since" in self.headers
+
+
+class FakeTransport:
+    """A `Transport` serving feeds from memory the way DST's servers behave.
+
+    Every file has an ETag (a hash of its body) and a Last-Modified (a counter
+    that moves when its body changes). A request whose `If-None-Match` matches, or
+    that has no `If-None-Match` and whose `If-Modified-Since` matches, gets a 304.
+    With `vary_etag` every response carries a fresh ETag, so an ETag never matches
+    (DST's nodes do this) and only the body comparison can see "unchanged".
+    Outcomes queued with `script` are served first, once each, per file name.
+    """
+
+    def __init__(
+        self,
+        files: Mapping[str, bytes] | None = None,
+        *,
+        vary_etag: bool = False,
+        base_url: str = BASE_URL,
+    ) -> None:
+        """Serve `files` (the 2026 fixtures by default) under `base_url`."""
+        self.files: dict[str, bytes] = fixture_files() if files is None else dict(files)
+        self.vary_etag = vary_etag
+        self.base_url = base_url
+        self.requests: list[Request] = []
+        self.responses: list[HttpResponse] = []
+        self._revision: dict[str, int] = dict.fromkeys(self.files, 1)
+        self._scripted: dict[str, list[HttpResponse | Exception]] = {}
+        self._served = 0
+
+    @property
+    def names(self) -> list[str]:
+        """The file names requested so far, in order."""
+        return [request.name for request in self.requests]
+
+    def publish(self, name: str, body: bytes) -> None:
+        """Replace a file; its Last-Modified moves only if the body changed."""
+        if self.files.get(name) != body:
+            self._revision[name] = self._revision.get(name, 0) + 1
+        self.files[name] = body
+
+    def touch(
+        self, names: Iterable[str], iso: str = LATER_ISO, *, bump: bool = True
+    ) -> None:
+        """Re-report feeds: new figures (if `bump`), new timestamps, in feed and overview."""
+        for name in names:
+            body = self.files[name]
+            body = bump_votes(body) if bump else body
+            self.publish(name, retime_feed(body, iso))
+            self.publish(OVERVIEW, retime_overview(self.files[OVERVIEW], name, iso))
+
+    def retime_only(self, names: Iterable[str], iso: str = LATER_ISO) -> None:
+        """Move only the overview timestamps; the feed bodies stay byte-identical."""
+        for name in names:
+            self.publish(OVERVIEW, retime_overview(self.files[OVERVIEW], name, iso))
+
+    def never_reported(self, name: str) -> None:
+        """Make the overview list a feed as never reported."""
+        self.publish(
+            OVERVIEW,
+            retime_overview(
+                self.files[OVERVIEW], name, "0001-01-01T00:00:00", "01-01-0001 00:00:00"
+            ),
+        )
+
+    def script(self, name: str, *outcomes: HttpResponse | Exception) -> None:
+        """Queue outcomes for `name`: a response is returned, an exception raised."""
+        self._scripted.setdefault(name, []).extend(outcomes)
+
+    def write_to(self, directory: Path) -> Path:
+        """Write the current files into a directory, for `load_election`."""
+        directory.mkdir(parents=True, exist_ok=True)
+        for name, body in self.files.items():
+            (directory / name).write_bytes(body)
+        return directory
+
+    def __call__(
+        self, url: str, headers: Mapping[str, str], timeout: float
+    ) -> HttpResponse:
+        """Answer one request, logging the request and the response."""
+        response = self._answer(url, headers, timeout)
+        self.responses.append(response)
+        return response
+
+    def _answer(
+        self, url: str, headers: Mapping[str, str], timeout: float
+    ) -> HttpResponse:
+        """Decide the response to one request."""
+        name = url.rsplit("/", 1)[-1]
+        self.requests.append(Request(url, name, dict(headers), timeout))
+        queue = self._scripted.get(name)
+        if queue:
+            outcome = queue.pop(0)
+            if isinstance(outcome, Exception):
+                raise outcome
+            return outcome
+        if not url.startswith(self.base_url) or name not in self.files:
+            return HttpResponse(404, {}, b"")
+        body = self.files[name]
+        self._served += 1
+        digest = hashlib.sha1(body).hexdigest()[:10]
+        etag = f'"{digest}-{self._served}"' if self.vary_etag else f'"{digest}"'
+        modified = f"Tue, 24 Mar 2026 20:{self._revision[name] % 60:02d}:00 GMT"
+        validators = {"etag": etag, "last-modified": modified}
+        if "If-None-Match" in headers:
+            unchanged = headers["If-None-Match"] == etag
+        else:
+            unchanged = headers.get("If-Modified-Since") == modified
+        if unchanged:
+            return HttpResponse(304, validators, b"")
+        return HttpResponse(200, validators, body)
+
+
+class FakeClock:
+    """A strictly advancing timezone-aware clock: one step per call."""
+
+    def __init__(
+        self, start: str = "2026-03-24T20:00:00+00:00", step: float = 60.0
+    ) -> None:
+        """Start at `start`, advancing `step` seconds per call."""
+        self._next = datetime.fromisoformat(start)
+        self._step = timedelta(seconds=step)
+        self.calls = 0
+
+    def __call__(self) -> datetime:
+        """Return the next time."""
+        self.calls += 1
+        now = self._next
+        self._next = now + self._step
+        return now
+
+
+class FlakyRecorder(Recorder):
+    """A recorder that raises `FeedError` on the calls numbered in `fail_on`."""
+
+    def __init__(self, directory: Path, fail_on: Iterable[int]) -> None:
+        """Record into `directory`, failing on the numbered calls (1-based)."""
+        super().__init__(directory)
+        self.fail_on = set(fail_on)
+        self.calls: list[tuple[datetime, dict[str, bytes]]] = []
+
+    def record(self, fetched_at: datetime, feeds: Mapping[str, bytes]) -> Path:
+        """Record, or fail on the configured calls."""
+        self.calls.append((fetched_at, dict(feeds)))
+        if len(self.calls) in self.fail_on:
+            raise FeedError("disk full (simulated)")
+        return super().record(fetched_at, feeds)
+
+
+def utc(text: str) -> datetime:
+    """A timezone-aware UTC datetime from ISO text without an offset."""
+    return datetime.fromisoformat(text).replace(tzinfo=UTC)
+
+
+@pytest.fixture
+def transport() -> FakeTransport:
+    """A fake DST serving the 2026 fixtures."""
+    return FakeTransport()

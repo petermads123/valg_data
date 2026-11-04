@@ -212,6 +212,28 @@ class Election:
             counted=sum(1 for p in kredse if p.has_result), total=len(kredse)
         )
 
+    def changed_since(self, previous: Election | None) -> tuple[Place, ...]:
+        """List the places that differ from an earlier snapshot.
+
+        Args:
+            previous: The earlier snapshot, or None for no earlier snapshot.
+
+        Returns:
+            The places of this election that have a `last_changed` and are not
+            equal to the place with the same type and id in `previous` (or are
+            absent from it), in this election's order. Every such place when
+            `previous` is None.
+        """
+        if previous is None:
+            return tuple(p for p in self.places if p.last_changed is not None)
+        earlier = {(p.place_type, p.place_id): p for p in previous.places}
+        return tuple(
+            p
+            for p in self.places
+            if p.last_changed is not None
+            and earlier.get((p.place_type, p.place_id)) != p
+        )
+
 
 def main() -> None:
     """Showcase this module's functionality."""

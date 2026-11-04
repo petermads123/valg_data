@@ -38,7 +38,7 @@ here, but everything in this file is in context every session.
 
 ```
 src/                    everything installable; nothing outside it is packaged
-  dkvalg/               the package: model, adapters, sources and the CLI
+  dkvalg/               the package: model, adapters, sources (files, HTTP, captures) and the CLI
 docs/                   reference documents (DST's XML-feeds PDF)
 tests/                  pytest suite, one test_<module>.py per module
   fixtures/             unmodified real DST feeds used as test data
@@ -54,10 +54,11 @@ STRUCTURE.md            this file
 
 ## Package: `src/dkvalg/`
 
-Reads DST's Folketingsvalg XML feeds into one normalised, immutable model and replays a
-saved feed set through time. Standard library only. Subpackages: `adapters/` (bytes in,
-model out, one module per election type) and `sources/` (where an `Election` comes from: a
-directory, or a time-scaled replay of one). Every `main()` is a showcase and runs standalone
+Reads DST's Folketingsvalg XML feeds into one normalised, immutable model, polls them live
+over HTTP, records what a poll receives and replays a saved feed set or a recording through
+time. Standard library only. Subpackages: `adapters/` (bytes in, model out, one module per
+election type) and `sources/` (where an `Election` comes from: a directory, a time-scaled
+replay of one, an HTTP poller, or a capture directory it recorded). Every `main()` is a showcase and runs standalone
 with `python -m dkvalg.<module>` (`cli`'s is the entry point); the ones that read fixtures
 locate them by a repo-relative path and say so outside a checkout.
 
@@ -65,14 +66,18 @@ locate them by a repo-relative path and say so outside a checkout.
 
 Re-exports the public API: `FeedError`, `ElectionType`, `PlaceType`, `Status`,
 `PartyResult`, `Place`, `CountingProgress`, `Election`, `load_election`, `ReplaySource`,
-`ReplayStep`. Adapter internals (`parse_*`, `unreported_place`, `FeedRef`, `Overview`) and
-the CLI (`run`, `main`) stay in their modules.
+`ReplayStep`, `FetchError`, `HttpSource`, `FetchResult`, `PollCycle`, `poll`, `Recorder`,
+`CaptureReplay`, `CaptureStep`. Adapter internals (`parse_*`, `unreported_place`, `FeedRef`,
+`Overview`), the transport pieces, `overview_url`, `user_agent`, `utc_now`, the interval
+constants, `build_election`, `check_feed_name`, `is_capture_directory` and the CLI (`run`,
+`main`) stay in their modules.
 
 ### `src/dkvalg/errors.py`
 
 | Signature | Description |
 |---|---|
 | `class FeedError(Exception)` | A feed is missing, unreadable, malformed, or of an unsupported election type; the message names the file or value. |
+| `class FetchError(FeedError)` | A request failed: network error, timeout, oversize body or an unexpected HTTP status; the message names the URL and the cause. |
 | `main() -> None` | Showcase. |
 
 ### `src/dkvalg/model.py`
@@ -87,7 +92,7 @@ Normalised, immutable election model. Seat fields are `None` where DST gives non
 | `@dataclass(frozen=True, slots=True) class PartyResult` | `party_id: str`, `letter: str`, `name: str`, `votes: int`, `percent: float`, `seats: int \| None = None`, `constituency_seats: int \| None = None`, `supplementary_seats: int \| None = None`; property `is_party` (false for "Uden for partier", `party_id == ""`). |
 | `@dataclass(frozen=True, slots=True) class Place` | `place_type`, `place_id`, `name`, `parent_id`, `status`, `status_text`, `last_changed`, then optional `eligible_voters`, `turnout_percent`, `valid_votes`, `blank_votes`, `other_invalid_votes`, `total_invalid_votes`, `total_votes` and `parties: tuple[PartyResult, ...] = ()`; property `has_result`; `unreported() -> Place` gives the placeholder form. |
 | `@dataclass(frozen=True, slots=True) class CountingProgress` | `counted: int`, `total: int`; `str` gives `"counted/total"`. |
-| `@dataclass(frozen=True, slots=True) class Election` | `name`, `election_type`, `election_date`, `places`; `get(place_type, place_id) -> Place` (`KeyError` naming both), `of_type(place_type) -> tuple[Place, ...]`, `counting_progress() -> CountingProgress` (opstillingskredse with a result). |
+| `@dataclass(frozen=True, slots=True) class Election` | `name`, `election_type`, `election_date`, `places`; `get(place_type, place_id) -> Place` (`KeyError` naming both), `of_type(place_type) -> tuple[Place, ...]`, `counting_progress() -> CountingProgress` (opstillingskredse with a result), `changed_since(previous: Election \| None) -> tuple[Place, ...]` (places with a `last_changed` that differ from, or are absent in, `previous`; all of them for `None`). |
 | `main() -> None` | Showcase. |
 
 ### `src/dkvalg/adapters/__init__.py`
@@ -98,7 +103,9 @@ Package marker for per-election-type adapters.
 
 Parses DST's Folketingsvalg feeds; no I/O. Timestamps are naive Danish local time as
 served (a UTC offset is refused; "never" in either spelling is None); a BOM is accepted;
-figures must be plain numbers (no `nan`, `inf`, `1_000`).
+figures must be plain numbers (no `nan`, `inf`, `1_000`). Both parsers refuse a document that
+declares a DOCTYPE or an entity (an `expat` pre-scan, so UTF-16 is covered) with a
+`FeedError` naming the file, before `ElementTree` expands anything.
 
 | Signature | Description |
 |---|---|
@@ -117,6 +124,7 @@ Package marker for sources.
 
 | Signature | Description |
 |---|---|
+| `build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election` | `parse_overview`, then `parse_place` of `read_feed(file_name)` for every reported feed and a placeholder for the rest; the one assembly shared by `load_election`, `HttpSource` and `CaptureReplay`. |
 | `load_election(directory: Path) -> Election` | Read `valgdag.xml` and every reported feed it lists from a DST-layout directory; `FeedError` naming a missing file. |
 | `main() -> None` | Showcase. |
 
@@ -128,11 +136,51 @@ Package marker for sources.
 | `class ReplaySource` | `__init__(self, election: Election, *, speed: float = 1.0, sleep: Callable[[float], None] = time.sleep) -> None` (`ValueError` unless `speed` is positive and not NaN; `inf` never waits); `initial(self) -> Election`; `__iter__(self) -> Iterator[ReplayStep]` reveals each place at its `last_changed`, ties in overview order. |
 | `main() -> None` | Showcase. |
 
+### `src/dkvalg/sources/http_source.py`
+
+Polls a live election over HTTP; standard library only. `HttpSource` holds the accepted
+body of the overview and of each reported feed with its validators, requests only feeds
+whose overview timestamp moved, treats a 304 or a byte-identical 200 as no change, and
+builds each `Election` with `build_election`. A fetch is atomic: the recorder runs before
+state is committed. `Place.last_changed` is naive Danish local time; fetch times are
+timezone-aware UTC.
+
+| Signature | Description |
+|---|---|
+| `DEFAULT_INTERVAL: Final[float] = 60.0`, `MIN_INTERVAL: Final[float] = 15.0`, `MAX_BACKOFF: Final[float] = 300.0` | Seconds. |
+| `@dataclass(frozen=True, slots=True) class HttpResponse` | `status: int`, `headers: Mapping[str, str]` (names lower-case), `body: bytes`. |
+| `class Transport(Protocol)` | `__call__(self, url: str, headers: Mapping[str, str], timeout: float) -> HttpResponse`; returns every status, raises `FetchError` only when no response arrives. |
+| `urllib_transport(url: str, headers: Mapping[str, str], timeout: float) -> HttpResponse` | Default `Transport` over `urllib.request`; `FetchError` for network errors, timeouts, a body shorter than its `Content-Length` (not checked for 204/304) and bodies over 10 MB. |
+| `user_agent() -> str` | `dkvalg/<version> (+https://github.com/petermads123/valg_data)`; version `unknown` without package metadata. |
+| `overview_url(location: str) -> str` | An election id, folder URL or `valgdag.xml` URL to the overview URL (a trailing slash and any letter case of `valgdag.xml` are normalised); `ValueError` for anything else, including credentials, a bad port, a query, a fragment, non-ASCII, whitespace or control characters. |
+| `utc_now() -> datetime` | The default clock, timezone-aware UTC. |
+| `@dataclass(frozen=True, slots=True) class FetchResult` | `election: Election`, `changed: tuple[Place, ...]`, `fetched_at: datetime`. |
+| `class HttpSource` | `__init__(self, location: str, *, transport: Transport = urllib_transport, recorder: Recorder \| None = None, timeout: float = 20.0, clock: Callable[[], datetime] = utc_now) -> None` (`ValueError` for a bad location or a timeout that is not a finite positive number, a bool included); properties `election -> Election \| None` and `clock`; `fetch(self) -> FetchResult` (`FetchError`/`FeedError`, state untouched on failure; serialised by a lock). |
+| `@dataclass(frozen=True, slots=True) class PollCycle` | `number: int`, `at: datetime`, `election: Election \| None`, `changed: tuple[Place, ...]`, `error: FeedError \| None`, `wait: float`. |
+| `poll(source: HttpSource, *, interval: float = DEFAULT_INTERVAL, max_cycles: int \| None = None, stop: Callable[[], bool] \| None = None, sleep: Callable[[float], None] = time.sleep) -> Iterator[PollCycle]` | The poll loop; `ValueError` at call time for an interval that is not a finite number of at least 15 or a `max_cycles` that is not an integer of at least 1 (bools refused); backs off after errors (doubling to 5 minutes); reads `source.clock()` once per cycle, and that one time is both `PollCycle.at` and the fetch and capture time; never sleeps after the last cycle. |
+| `main() -> None` | Showcase (an in-memory transport over the fixtures; no network). |
+
+### `src/dkvalg/sources/capture.py`
+
+Records what a poll receives and replays it. A capture directory holds one subfolder per
+poll that received a body, named `YYYYMMDDTHHMMSS.ffffffZ` (UTC fetch time) and holding the
+feeds under their DST file names; a folder is written as `.tmp-<name>` and renamed when
+complete, and entries not named like a capture (ASCII digits only) are ignored.
+
+| Signature | Description |
+|---|---|
+| `check_feed_name(name: str) -> str` | `name` if it is letters, digits, `_`, `-` plus `.xml` and not `valgdag.xml` in any letter case, else `FeedError`; the one allowlist `HttpSource` and `Recorder` share. |
+| `class Recorder` | `__init__(self, directory: Path) -> None`; `record(self, fetched_at: datetime, feeds: Mapping[str, bytes]) -> Path` (`ValueError` for a naive time or no feeds; `FeedError` for an unsafe name, a body that is not `bytes`, an existing folder or an I/O failure; no `.tmp-*` folder survives any failure). |
+| `@dataclass(frozen=True, slots=True) class CaptureStep` | `at: datetime`, `changed: tuple[Place, ...]`, `election: Election`; property `progress`. One recorded poll. |
+| `class CaptureReplay` | `__init__(self, directory: Path, *, speed: float = 1.0, sleep: Callable[[float], None] = time.sleep) -> None` (`ValueError` unless `speed` is positive and not NaN); `__iter__(self) -> Iterator[CaptureStep]` accumulates files folder by folder and sleeps `gap / speed`; `FeedError` (on iteration) for no captures, a bad folder or an incomplete first capture. |
+| `is_capture_directory(directory: Path) -> bool` | No `valgdag.xml` and at least one capture-named subfolder. |
+| `main() -> None` | Showcase (records and replays the fixtures in a temporary directory). |
+
 ### `src/dkvalg/cli.py`
 
 | Signature | Description |
 |---|---|
-| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep) -> int` | `replay <dir> [--speed N]`; returns 0 ok, 1 on `FeedError` (`error: <message>` on `err`), 2 on bad arguments; no subcommand prints help and returns 0. |
+| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N]`; returns 0 ok, 1 on `FeedError` or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
 | `main() -> None` | `raise SystemExit(run())`. |
 
 ### `src/dkvalg/__main__.py`
@@ -166,22 +214,30 @@ Shared helpers, not tests: the `FIXTURES`/`ROOT` paths and the `BOM`, `ELECTION_
 (a throwaway copy a test may damage) and session-wide `election` (the fixtures loaded once)
 fixtures, and small builders for synthetic feeds in DST's real XML shape: `feed_xml`,
 `overview_xml`, `entry`, `kreds_entry`, `make_ref`, `make_place`, `make_election`,
-`write_directory` and `dt`.
+`write_directory` and `dt`. For live polling it adds `FakeTransport` (a `Transport` serving the 2026
+fixtures or an in-memory mapping with ETag/Last-Modified, 304 on a match, a `vary_etag` switch for
+DST's different-ETag-per-request behaviour, scripted per-file outcomes and a request/response log;
+its `touch`, `retime_only` and `never_reported` rewrite a feed body and the overview timestamps),
+`Request`, `FakeClock` (strictly advancing, counts its calls), `FlakyRecorder` (a `Recorder` that
+fails on chosen calls), the `transport` fixture, `fixture_files`, `retime_feed`, `bump_votes`,
+`retime_overview`, `dst_stamp`, `utc` and the constants `BASE_URL`, `OVERVIEW`, `NATIONAL`, `LATER_ISO`. `FakeTransport` also offers `names`, `publish(name, body)`,
+`script(name, *outcomes)` and `write_to(directory)`; `Request.conditional` says whether a
+request carried a validator.
 
 ### `tests/test_errors.py`
 
-Covers `FeedError`: message kept, not a `ValueError`/`KeyError`/`OSError`, cause preserved.
+Covers `FeedError` and `FetchError`: message kept, not a `ValueError`/`KeyError`/`OSError`, cause preserved; a `FetchError` is a `FeedError`, not the reverse.
 
 ### `tests/test_model.py`
 
 Covers `dkvalg.model`: `Status.has_result` per code, `PartyResult.is_party`, `Place.unreported`
 (identity kept, figures dropped, idempotent, pure), immutability and hashing, `Election.get` /
-`of_type` / `counting_progress` boundaries, `CountingProgress.__str__` (T4, T8).
+`of_type` / `counting_progress` boundaries, `CountingProgress.__str__` (T4, T8), and `Election.changed_since`: `None`, equal, changed, new, removed, back-to-never (not reported), order, type-aware identity, purity (T11).
 
 ### `tests/test_package.py`
 
 Covers the package surface: `import dkvalg`, the re-exported names, adapter and CLI names kept
-out of the top level, and `valg_data`/`template_repo` not importable (T1, A1).
+out of the top level, and `valg_data`/`template_repo` not importable (T1, A1); the live-polling names re-exported and the transport pieces kept in their modules.
 
 ### `tests/test_folketingsvalg.py`
 
@@ -189,14 +245,14 @@ Covers `dkvalg.adapters.folketingsvalg`: `parse_overview`, `parse_place` and `un
 against the real fixtures (Hovedstaden field by field) and synthetic feeds: BOM, "never"
 timestamps in every spelling, empty `SenestRettetIso`, status codes, missing and non-numeric
 figures (`nan`, `inf`, `1_000`), a party without `Id`, malformed XML, non-Folketingsvalg
-overviews (T3, T7, A3, A7).
+overviews (T3, T7, A3, A7); the DOCTYPE/entity hardening (T10, A8): every hostile shape in UTF-8, UTF-8 with BOM and UTF-16, a billion-laughs payload refused quickly, a comment, CDATA, escaped text, processing instruction or attribute mentioning DOCTYPE accepted, every fixture still parsing, and `DEVELOPMENT.md` without the resolved entries.
 
 ### `tests/test_directory.py`
 
 Covers `dkvalg.sources.directory.load_election`: the 107-place fixture election (type counts,
 seats summing to 175, no seats below storkreds, "Uden for partier"), placeholders for never
 reported feeds, missing/empty/malformed files and unreadable paths all as `FeedError`
-naming the file, purity and idempotency (T3, T7, T8, A3, A7).
+naming the file, purity and idempotency (T3, T7, T8, A3, A7); and `build_election`: equal to `load_election`, the reader called only for reported feeds in overview order, its exceptions propagated, hostile overviews refused before any read (T11, A9).
 
 ### `tests/test_replay.py`
 
@@ -210,7 +266,31 @@ validation, restart and interleaved iterators, purity (T5, T8, A5).
 Covers `dkvalg.cli` and `dkvalg.__main__`: `run` on the fixtures (one line per step, rising
 counted/total, national table), errors on stderr with exit 1, bad arguments with exit 2, usage
 and help with exit 0, stream handling, and `main` / `python -m dkvalg` through `runpy` and a
-subprocess with `PYTHONPATH=src`, independent of the editable install (T1, T6, A1, A6).
+subprocess with `PYTHONPATH=src`, independent of the editable install (T1, T6, A1, A6); `poll` through
+an injected transport, sleep and clock (lines, `--interval`, `--cycles`, `--record`, exit codes 0/1/2/130,
+bad arguments, errors on stderr only) and `replay` on a capture directory against a plain one (T9, A7).
+
+### `tests/test_http_source.py`
+
+Covers `dkvalg.sources.http_source` through `FakeTransport` and, for `urllib_transport`, a server bound
+to `127.0.0.1`: the constants, `user_agent` (also without package metadata), `overview_url` (every
+accepted and rejected shape), the loopback transport (headers lower-cased, 304/404/500 returned, refused
+connection, timeout, dropped connection, truncated body, the 10 MB cap at its boundary, redirects),
+`HttpSource` construction, the first fetch against `load_election`, validators per resource,
+304 and identical-body 200s, changed-feed selection, never-reported transitions, unsafe feed names,
+a failure at every stage leaving state and capture untouched, recorder and clock failures, two threads
+fetching at once, and `poll` (backoff schedule, call-time validation, one clock read per cycle, stop and
+`max_cycles`) (T1 to T6, T12, A1 to A5).
+
+### `tests/test_capture.py`
+
+Covers `dkvalg.sources.capture`: `check_feed_name` (all 108 non-overview fixture names accepted,
+unsafe names and any case of `valgdag.xml` refused), `Recorder` (UTC folder names, atomicity with no
+`.tmp-*` left after OSError or other failures, existing folder, stale temporary folder, non-bytes bodies),
+`is_capture_directory`, `CaptureReplay` (order by name, gaps divided by speed, ignored and refused
+entries, incomplete first capture, errors mid-iteration, restart) and an end-to-end record-then-replay of
+four fetches (full, partial with the national feed, identical 200, 304) checking steps, changed lists,
+earlier national figures, last step equal to the source's election and sleeps (T7, T8, T9, A6).
 
 ### `tests/test_fixtures.py`
 

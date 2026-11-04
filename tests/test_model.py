@@ -235,3 +235,143 @@ def test_places_compare_by_value() -> None:
     assert make_place("1") == make_place("1")
     assert make_place("1") != make_place("2")
     assert isinstance(make_place("1"), Place)
+
+
+# --- Election.changed_since (A3, A6, T11) --------------------------------------
+
+SEEN = dt("2026-03-24T22:00:00")
+LATER = dt("2026-03-24T23:00:00")
+
+
+def _reported(place_id: str, last_changed: object = SEEN, **kwargs: object) -> Place:
+    return make_place(place_id, last_changed=last_changed, **kwargs)  # type: ignore[arg-type]  # test helper, kwargs forwarded
+
+
+def test_changed_since_none_gives_every_place_with_a_last_changed() -> None:
+    election = make_election(_reported("1"), _reported("2"))
+
+    assert election.changed_since(None) == election.places
+
+
+def test_changed_since_none_leaves_out_a_never_reported_placeholder() -> None:
+    placeholder = make_place("3", status=Status.NOT_AVAILABLE)
+    election = make_election(_reported("1"), placeholder, _reported("2"))
+
+    assert election.changed_since(None) == (election.places[0], election.places[2])
+
+
+def test_changed_since_an_equal_election_gives_nothing() -> None:
+    election = make_election(_reported("1"), _reported("2"))
+    same = make_election(_reported("1"), _reported("2"))
+
+    assert election.changed_since(same) == ()
+
+
+def test_changed_since_itself_gives_nothing() -> None:
+    election = make_election(_reported("1"), _reported("2"))
+
+    assert election.changed_since(election) == ()
+
+
+def test_changed_since_names_a_place_whose_figures_changed() -> None:
+    party = (PartyResult("5891", "A", "A. Socialdemokratiet", 700, 70.0),)
+    before = make_election(_reported("1"), _reported("2"))
+    after = make_election(_reported("1"), _reported("2", parties=party))
+
+    assert after.changed_since(before) == (after.places[1],)
+
+
+def test_changed_since_names_a_place_whose_timestamp_moved() -> None:
+    before = make_election(_reported("1"), _reported("2"))
+    after = make_election(_reported("1"), _reported("2", LATER))
+
+    assert after.changed_since(before) == (after.places[1],)
+
+
+def test_changed_since_names_a_place_that_was_not_in_the_earlier_election() -> None:
+    before = make_election(_reported("1"))
+    after = make_election(_reported("1"), _reported("2"))
+
+    assert after.changed_since(before) == (after.places[1],)
+
+
+def test_changed_since_names_a_place_that_was_never_reported_before() -> None:
+    before = make_election(make_place("1", status=Status.NOT_AVAILABLE))
+    after = make_election(_reported("1"))
+
+    assert after.changed_since(before) == after.places
+
+
+def test_changed_since_does_not_report_a_place_that_disappeared() -> None:
+    before = make_election(_reported("1"), _reported("2"))
+    after = make_election(_reported("1"))
+
+    assert after.changed_since(before) == ()
+
+
+def test_changed_since_does_not_report_a_place_that_went_back_to_never_reported() -> (
+    None
+):
+    before = make_election(_reported("1"), _reported("2"))
+    after = make_election(_reported("1"), make_place("2", status=Status.NOT_AVAILABLE))
+
+    assert after.changed_since(before) == ()
+
+
+def test_changed_since_follows_the_current_elections_order() -> None:
+    before = make_election(_reported("1"), _reported("2"), _reported("3"))
+    after = make_election(
+        _reported("3", LATER), _reported("1", LATER), _reported("2", LATER)
+    )
+
+    assert [p.place_id for p in after.changed_since(before)] == ["3", "1", "2"]
+
+
+def test_changed_since_the_same_id_with_another_type_counts_as_new() -> None:
+    before = make_election(
+        make_place("1", place_type=PlaceType.STORKREDS, last_changed=SEEN)
+    )
+    after = make_election(make_place("1", place_type=KREDS, last_changed=SEEN))
+
+    assert after.changed_since(before) == after.places
+
+
+def test_changed_since_against_an_empty_election_gives_every_reported_place() -> None:
+    after = make_election(_reported("1"), _reported("2"))
+
+    assert after.changed_since(make_election()) == after.places
+
+
+def test_changed_since_on_an_empty_election_gives_nothing() -> None:
+    assert make_election().changed_since(make_election(_reported("1"))) == ()
+    assert make_election().changed_since(None) == ()
+
+
+def test_changed_since_a_duplicate_in_the_earlier_election_counts_as_the_last_one() -> (
+    None
+):
+    old = _reported("1", parties=(PartyResult("1", "A", "A", 1, 1.0),))
+    new = _reported("1")
+    before = make_election(old, new)
+    after = make_election(new)
+
+    assert after.changed_since(before) == ()
+
+
+def test_changed_since_is_idempotent_and_changes_neither_election() -> None:
+    before = make_election(_reported("1"), _reported("2"))
+    after = make_election(_reported("1"), _reported("2", LATER))
+    snapshot = (before.places, after.places)
+
+    first = after.changed_since(before)
+    second = after.changed_since(before)
+
+    assert first == second
+    assert (before.places, after.places) == snapshot
+
+
+def test_changed_since_returns_a_tuple() -> None:
+    election = make_election(_reported("1"))
+
+    assert isinstance(election.changed_since(None), tuple)
+    assert isinstance(election.changed_since(election), tuple)

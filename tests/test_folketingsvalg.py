@@ -1,4 +1,5 @@
 import dataclasses
+import time
 from datetime import date
 from pathlib import Path
 
@@ -6,6 +7,7 @@ import pytest
 from conftest import (
     BOM,
     PARTIES_XML,
+    ROOT,
     dt,
     entry,
     feed_xml,
@@ -871,3 +873,228 @@ def test_parse_place_non_bytes_input_is_a_type_error_not_a_feed_error() -> None:
     """Documented limitation: the signature says bytes, so `None` is a caller bug."""
     with pytest.raises(TypeError):
         parse_place(None, REF)  # type: ignore[arg-type]  # pinning the wrong-type behaviour
+
+
+# --- DOCTYPE and entity hardening (A8, T10) -------------------------------------------
+
+XML_DECL = '<?xml version="1.0" encoding="utf-8"?>'
+ENTITY_DOC = XML_DECL + '<!DOCTYPE d [<!ENTITY a "b">]><Data>&a;</Data>'
+HOSTILE_DOCUMENTS = {
+    "internal-entity": ENTITY_DOC,
+    "system-doctype-no-subset": XML_DECL + '<!DOCTYPE x SYSTEM "a.dtd"><Data/>',
+    "bare-doctype": XML_DECL + "<!DOCTYPE x><Data/>",
+    "parameter-entity": XML_DECL + '<!DOCTYPE x [<!ENTITY % p "x">]><Data/>',
+    "external-entity": XML_DECL
+    + '<!DOCTYPE x [<!ENTITY e SYSTEM "file:///etc/passwd">]><Data>&e;</Data>',
+    "doctype-truncated-mid-declaration": '<!DOCTYPE x [<!ENTITY a "b',
+    "doctype-without-xml-declaration": "<!DOCTYPE x><Data/>",
+}
+BILLION_LAUGHS = (
+    XML_DECL
+    + '<!DOCTYPE lolz [<!ENTITY lol "lol">'
+    + "".join(
+        f'<!ENTITY lol{n} "{f"&lol{n - 1};" * 10 if n > 2 else "&lol;" * 10}">'
+        for n in range(2, 10)
+    )
+    + "]><Data>&lol9;</Data>"
+)
+ENCODINGS = ["utf-8", "utf-8-sig", "utf-16", "utf-16-le+bom", "utf-16-be+bom"]
+
+
+def _encode(text: str, encoding: str) -> bytes:
+    if encoding.startswith("utf-16"):
+        text = text.replace('encoding="utf-8"', 'encoding="utf-16"')
+    if encoding == "utf-16-le+bom":
+        return b"\xff\xfe" + text.encode("utf-16-le")
+    if encoding == "utf-16-be+bom":
+        return b"\xfe\xff" + text.encode("utf-16-be")
+    return text.encode(encoding)
+
+
+def _both(xml: bytes, ref: FeedRef = REF) -> None:
+    """Parse as an overview and as a result feed; the callers expect FeedError."""
+    parse_overview(xml)
+    parse_place(xml, ref)
+
+
+@pytest.mark.parametrize("encoding", ENCODINGS)
+@pytest.mark.parametrize("name", sorted(HOSTILE_DOCUMENTS))
+def test_parse_overview_refuses_a_doctype_or_entity_in_every_encoding(
+    name: str, encoding: str
+) -> None:
+    xml = _encode(HOSTILE_DOCUMENTS[name], encoding)
+
+    with pytest.raises(FeedError, match=r"valgdag\.xml: contains a DOCTYPE or entity"):
+        parse_overview(xml)
+
+
+@pytest.mark.parametrize("encoding", ENCODINGS)
+@pytest.mark.parametrize("name", sorted(HOSTILE_DOCUMENTS))
+def test_parse_place_refuses_a_doctype_or_entity_in_every_encoding_naming_the_feed(
+    name: str, encoding: str
+) -> None:
+    xml = _encode(HOSTILE_DOCUMENTS[name], encoding)
+
+    with pytest.raises(
+        FeedError, match=r"valgdag_20\.xml: contains a DOCTYPE or entity"
+    ):
+        parse_place(xml, REF)
+
+
+@pytest.mark.parametrize("encoding", ENCODINGS)
+def test_a_billion_laughs_payload_is_refused_quickly_in_both_parsers(
+    encoding: str,
+) -> None:
+    xml = _encode(BILLION_LAUGHS, encoding)
+    started = time.monotonic()
+
+    with pytest.raises(FeedError, match="DOCTYPE or entity"):
+        parse_overview(xml)
+    with pytest.raises(FeedError, match="DOCTYPE or entity"):
+        parse_place(xml, REF)
+
+    assert time.monotonic() - started < 2.0
+
+
+@pytest.mark.parametrize("encoding", ["utf-16", "utf-16-le+bom", "utf-16-be+bom"])
+def test_a_utf_16_doctype_under_a_utf_8_declaration_is_still_a_feed_error(
+    encoding: str,
+) -> None:
+    xml = ENTITY_DOC.encode("utf-16")
+    if encoding != "utf-16":
+        xml = (
+            (b"\xff\xfe" + ENTITY_DOC.encode("utf-16-le"))
+            if "le" in encoding
+            else (b"\xfe\xff" + ENTITY_DOC.encode("utf-16-be"))
+        )
+
+    with pytest.raises(FeedError):
+        parse_overview(xml)
+    with pytest.raises(FeedError):
+        parse_place(xml, REF)
+
+
+def test_a_doctype_after_the_root_element_is_refused_either_way() -> None:
+    xml = b"<Data/><!DOCTYPE x>"
+
+    with pytest.raises(FeedError):
+        parse_overview(xml)
+    with pytest.raises(FeedError):
+        parse_place(xml, REF)
+
+
+def test_a_doctype_in_a_valid_overview_is_refused_not_just_in_a_stub() -> None:
+    xml = overview_xml([kreds_entry("20", "K")], bom=False).replace(
+        b"<Data>", b'<!DOCTYPE Data [<!ENTITY a "b">]><Data>', 1
+    )
+
+    with pytest.raises(FeedError, match="DOCTYPE"):
+        parse_overview(xml)
+
+
+def test_a_doctype_in_a_valid_feed_is_refused_not_just_in_a_stub() -> None:
+    xml = feed_xml(bom=False).replace(b"<Data>", b"<!DOCTYPE Data><Data>", 1)
+
+    with pytest.raises(FeedError, match="DOCTYPE"):
+        parse_place(xml, REF)
+
+
+_COMMENT = b'<!-- <!DOCTYPE x [<!ENTITY a "b">]> -->'
+_CDATA = b'<Note><![CDATA[<!DOCTYPE x [<!ENTITY a "b">]>]]></Note>'
+_TEXT = b"<Note>&lt;!DOCTYPE x&gt; &lt;!ENTITY a&gt;</Note>"
+_PI = b"<?DOCTYPE x?>"
+_ATTRIBUTE = b'<Note kind="DOCTYPE" what="ENTITY"/>'
+
+
+@pytest.mark.parametrize(
+    "insert",
+    [_COMMENT, _CDATA, _TEXT, _PI, _ATTRIBUTE],
+    ids=[
+        "comment",
+        "cdata",
+        "escaped-text",
+        "processing-instruction",
+        "attribute-value",
+    ],
+)
+def test_the_word_doctype_in_a_comment_cdata_text_pi_or_attribute_is_not_refused(
+    insert: bytes,
+) -> None:
+    overview = overview_xml([kreds_entry("20", "K")], bom=False)
+    feed = feed_xml(bom=False)
+
+    parsed = parse_overview(overview.replace(b"<Data>", b"<Data>" + insert, 1))
+    place = parse_place(feed.replace(b"<Data>", b"<Data>" + insert, 1), REF)
+
+    assert [f.place_id for f in parsed.feeds] == ["20"]
+    assert place.status is Status.PRELIMINARY
+
+
+def test_a_utf_16_document_without_a_doctype_still_parses() -> None:
+    text = overview_xml([kreds_entry("20", "K")], bom=False).decode("utf-8")
+    text = text.replace('encoding="utf-8"', 'encoding="utf-16"')
+
+    parsed = parse_overview(text.encode("utf-16"))
+
+    assert [f.place_id for f in parsed.feeds] == ["20"]
+
+
+def test_a_utf_8_document_with_a_byte_order_mark_still_parses() -> None:
+    parsed = parse_overview(overview_xml([kreds_entry("20", "K")], bom=True))
+
+    assert [f.place_id for f in parsed.feeds] == ["20"]
+
+
+def test_every_fixture_feed_still_parses_after_the_hardening(fixture_dir: Path) -> None:
+    overview = parse_overview((fixture_dir / "valgdag.xml").read_bytes())
+
+    for ref in overview.feeds:
+        parse_place((fixture_dir / ref.file_name).read_bytes(), ref)
+
+    assert len(overview.feeds) == 107
+
+
+@pytest.mark.parametrize(
+    "xml",
+    [b"", b"\x00\x00\x00\x00", XML_DECL.encode(), b"hello", b"<Data><unclosed"],
+    ids=["empty", "nul-bytes", "declaration-only", "plain-text", "unclosed"],
+)
+def test_malformed_input_is_reported_as_malformed_not_as_a_doctype_or_a_crash(
+    xml: bytes,
+) -> None:
+    with pytest.raises(FeedError, match="malformed XML") as overview_error:
+        parse_overview(xml)
+    with pytest.raises(FeedError, match="malformed XML") as place_error:
+        parse_place(xml, REF)
+
+    assert "DOCTYPE" not in str(overview_error.value)
+    assert "DOCTYPE" not in str(place_error.value)
+
+
+def test_the_refusal_keeps_its_cause_for_debugging() -> None:
+    with pytest.raises(FeedError) as caught:
+        parse_overview(ENTITY_DOC.encode())
+
+    assert caught.value.__cause__ is not None
+
+
+def test_refusing_a_document_does_not_depend_on_what_the_ref_says() -> None:
+    other = make_ref("99", file_name="valgdag_99.xml")
+
+    with pytest.raises(FeedError, match=r"valgdag_99\.xml"):
+        parse_place(ENTITY_DOC.encode(), other)
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "Harden XML parsing before live polling",
+        "Faithful replay needs recorded live captures",
+    ],
+)
+def test_development_notes_no_longer_list_the_entries_this_round_resolved(
+    heading: str,
+) -> None:
+    notes = (ROOT / "DEVELOPMENT.md").read_text(encoding="utf-8")
+
+    assert heading not in notes
