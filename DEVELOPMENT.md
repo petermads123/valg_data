@@ -38,3 +38,7 @@ by heading is updated in the same change.
 ## Broken pipe in the CLI
 
 2026-11-04, `feat/dkvalg-live-polling` round 1. `python -m dkvalg replay <dir> | head` ends with a `BrokenPipeError` traceback (the same on the round 1 path, and `poll` inherits it). Next step: catch `BrokenPipeError` in `cli.main` and exit quietly if anyone pipes the output.
+
+## EP seats are not in DST's feeds
+
+2026-11-04, `feat/dkvalg-diff-and-ep` round 1. DST's Europa-Parlamentsvalg result feeds (checked on the 9 June 2024 election) carry votes and percentages only, no seat attributes at any level, so every EP seat field is `None` and `diff` never reports EP seat changes. Denmark's 15 seats are allocated nationally by d'Hondt among the lists. Next step: if seats are wanted, compute them from the national votes in a separate feature, or find an official source that publishes them.
