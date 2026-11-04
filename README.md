@@ -70,6 +70,14 @@ stable order (places in overview order, then the progress change): `PlaceCounted
 and `ProgressChanged`. `previous` may be `None`. The library only detects; what to do about a
 change, and any threshold, is the caller's.
 
+Things to know: DST calculates seats after a place is first counted, so live, a counted place
+gains its seats in a later snapshot and that shows as a `PartyResultChanged` (and a `seats`
+line under `--diff`); only a replay of finished files shows seats arriving together with the
+count, where a first count gives `PlaceCounted` and `LeaderChanged` but no `PartyResultChanged`.
+A place nobody has voted at has no leader, and a place that loses its leader (a status fall to
+0, 9 or 10) gives only a `StatusChanged`. Two snapshots of different elections raise `ValueError`
+(the CLI turns that into `error: ...` and exit 1).
+
 ```python
 from pathlib import Path
 

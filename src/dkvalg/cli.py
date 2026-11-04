@@ -148,7 +148,11 @@ def _diff_lines(at: datetime, previous: Election | None, current: Election) -> s
     """
     stamp = at.isoformat(sep=" ")
     lines: list[str] = []
-    for change in diff_elections(previous, current):
+    try:
+        changes = diff_elections(previous, current)
+    except ValueError as error:
+        raise FeedError(str(error)) from error
+    for change in changes:
         match change:
             case LeaderChanged(place=place, before=before, after=after):
                 if place.place_type in _LEADER_LEVELS:

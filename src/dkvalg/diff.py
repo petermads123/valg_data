@@ -148,6 +148,15 @@ def diff_elections(previous: Election | None, current: Election) -> tuple[Change
     a result); then `LeaderChanged`. Last comes one `ProgressChanged` if the
     counting progress differs.
 
+    Behaviour worth knowing: a place counted for the first time (status 0 to a
+    result) gives `PlaceCounted` and `LeaderChanged` but no `PartyResultChanged`,
+    even when its figures carry seats; DST computes seats after a place is first
+    counted, so live seats arrive as a later none-to-figure `PartyResultChanged`
+    (only a replay of finished files shows them together with the count). A place
+    that loses its leader (a result to none, or all votes gone) gives only a
+    `StatusChanged`, never a `LeaderChanged`. Parties are matched on `party_id`,
+    which DST keeps unique within a place; with duplicate ids the last one wins.
+
     Args:
         previous: The earlier snapshot, or None for none (every place then counts
             as unreported).

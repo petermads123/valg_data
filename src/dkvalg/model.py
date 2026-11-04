@@ -127,13 +127,14 @@ class Place:
         """The party with the most votes at this place.
 
         "Uden for partier" never leads; a tie goes to the party earlier in the
-        feed. None when the place has no result or no party.
+        feed. None when the place has no result, no party, or no party with more
+        than 0 votes (nobody leads a place nobody has voted at).
         """
         if not self.has_result:
             return None
         best: PartyResult | None = None
         for party in self.parties:
-            if party.is_party and (best is None or party.votes > best.votes):
+            if party.is_party and party.votes > (0 if best is None else best.votes):
                 best = party
         return best
 

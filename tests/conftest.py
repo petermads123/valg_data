@@ -32,8 +32,10 @@ from dkvalg.sources.http_source import HttpResponse
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures" / "folketingsvalg_2026"
+EP_FIXTURES = ROOT / "tests" / "fixtures" / "ep_2024"
 BOM = b"\xef\xbb\xbf"
 ELECTION_NAME = "Folketingsvalg tirsdag 24. marts 2026"
+EP_ELECTION_NAME = "Europa-Parlamentsvalg søndag  9. juni 2024"  # note the double space
 
 PARTIES_XML = (
     '<Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" StemmerAntal="600" '
@@ -215,6 +217,44 @@ def make_election(*places: Place) -> Election:
     )
 
 
+def make_party(
+    letter: str,
+    votes: int,
+    *,
+    percent: float | None = None,
+    seats: int | None = None,
+    constituency_seats: int | None = None,
+    supplementary_seats: int | None = None,
+    party_id: str | None = None,
+) -> PartyResult:
+    """Build a `PartyResult`; the id defaults to one derived from the letter.
+
+    An empty `letter` with no `party_id` gives "Uden for partier" (id `""`).
+    """
+    if party_id is None:
+        party_id = f"id-{letter}" if letter else ""
+    return PartyResult(
+        party_id,
+        letter,
+        f"{letter}. Party" if letter else "Uden for partier",
+        votes,
+        votes / 10 if percent is None else percent,
+        seats,
+        constituency_seats,
+        supplementary_seats,
+    )
+
+
+def make_ep_election(*places: Place) -> Election:
+    """Build a Europa-Parlamentsvalg `Election` around the given places."""
+    return Election(
+        EP_ELECTION_NAME,
+        ElectionType.EUROPAPARLAMENTSVALG,
+        date.fromisoformat("2024-06-09"),
+        tuple(places),
+    )
+
+
 def write_directory(
     directory: Path, overview: bytes, feeds: dict[str, bytes] | None = None
 ) -> Path:
@@ -247,9 +287,31 @@ def election(fixture_dir: Path) -> Election:
     return load_election(fixture_dir)
 
 
+@pytest.fixture(scope="session")
+def ep_fixture_dir() -> Path:
+    """The unmodified 2024 Europa-Parlamentsvalg fixtures (read-only)."""
+    assert EP_FIXTURES.is_dir(), f"fixtures missing at {EP_FIXTURES}"
+    return EP_FIXTURES
+
+
+@pytest.fixture
+def ep_fixture_copy(tmp_path: Path) -> Path:
+    """A throwaway copy of the EP fixture directory that a test may damage."""
+    target = tmp_path / "ep_copy"
+    shutil.copytree(EP_FIXTURES, target)
+    return target
+
+
+@pytest.fixture(scope="session")
+def ep_election(ep_fixture_dir: Path) -> Election:
+    """The EP fixture set loaded once; immutable, so sharing it is safe."""
+    return load_election(ep_fixture_dir)
+
+
 # --- live polling helpers: a fake transport, a fake clock, feed mutations -------
 
 BASE_URL = "https://www.dst.dk/valg/Valg2546527/xml/"
+EP_BASE_URL = "https://www.dst.dk/valg/Valg2546524/xml/"
 OVERVIEW = "valgdag.xml"
 NATIONAL = "valgdag_0.xml"
 LATER_ISO = "2026-03-25T01:00:00"  # after every timestamp in the 2026 fixtures
@@ -264,6 +326,11 @@ def _fixture_bytes() -> tuple[tuple[str, bytes], ...]:
 def fixture_files() -> dict[str, bytes]:
     """A fresh dict of the 109 fixture files by name, free to mutate."""
     return dict(_fixture_bytes())
+
+
+def ep_fixture_files() -> dict[str, bytes]:
+    """A fresh dict of the 109 EP fixture files by name, free to mutate."""
+    return {p.name: p.read_bytes() for p in sorted(EP_FIXTURES.glob("*.xml"))}
 
 
 def dst_stamp(iso: str) -> str:
@@ -496,3 +563,9 @@ def utc(text: str) -> datetime:
 def transport() -> FakeTransport:
     """A fake DST serving the 2026 fixtures."""
     return FakeTransport()
+
+
+@pytest.fixture
+def ep_transport() -> FakeTransport:
+    """A fake DST serving the 2024 EP fixtures under their own election id."""
+    return FakeTransport(ep_fixture_files(), base_url=EP_BASE_URL)
