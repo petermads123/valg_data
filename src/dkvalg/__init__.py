@@ -1,5 +1,14 @@
 """dkvalg: Danish election data in one normalised model, with live polling, recording and replay."""
 
+from .diff import (
+    Change,
+    LeaderChanged,
+    PartyResultChanged,
+    PlaceCounted,
+    ProgressChanged,
+    StatusChanged,
+    diff_elections,
+)
 from .errors import FeedError, FetchError
 from .model import (
     CountingProgress,

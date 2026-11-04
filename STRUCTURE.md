@@ -38,10 +38,10 @@ here, but everything in this file is in context every session.
 
 ```
 src/                    everything installable; nothing outside it is packaged
-  dkvalg/               the package: model, adapters, sources (files, HTTP, captures) and the CLI
+  dkvalg/               the package: model, diff, adapters, sources (files, HTTP, captures) and the CLI
 docs/                   reference documents (DST's XML-feeds PDF)
 tests/                  pytest suite, one test_<module>.py per module
-  fixtures/             unmodified real DST feeds used as test data
+  fixtures/             unmodified real DST feeds used as test data (Folketingsvalg 2026, EP 2024)
 development/            one folder per branch, one file per round: the pipeline's state
 .claude/                Claude Code configuration: rules, skills, agents, hooks
 .vscode/                editor config (Ruff as formatter, format on save)
@@ -54,10 +54,10 @@ STRUCTURE.md            this file
 
 ## Package: `src/dkvalg/`
 
-Reads DST's Folketingsvalg XML feeds into one normalised, immutable model, polls them live
-over HTTP, records what a poll receives and replays a saved feed set or a recording through
-time. Standard library only. Subpackages: `adapters/` (bytes in, model out, one module per
-election type) and `sources/` (where an `Election` comes from: a directory, a time-scaled
+Reads DST's Folketingsvalg and Europa-Parlamentsvalg XML feeds into one normalised, immutable
+model, compares two snapshots (`diff`), polls them live over HTTP, records what a poll receives and replays a saved feed set or a recording through
+time. Standard library only. Subpackages: `adapters/` (bytes in, model out: the shared `dst_feed`, a thin
+module per election type and a `registry` choosing between them) and `sources/` (where an `Election` comes from: a directory, a time-scaled
 replay of one, an HTTP poller, or a capture directory it recorded). Every `main()` is a showcase and runs standalone
 with `python -m dkvalg.<module>` (`cli`'s is the entry point); the ones that read fixtures
 locate them by a repo-relative path and say so outside a checkout.
@@ -67,8 +67,9 @@ locate them by a repo-relative path and say so outside a checkout.
 Re-exports the public API: `FeedError`, `ElectionType`, `PlaceType`, `Status`,
 `PartyResult`, `Place`, `CountingProgress`, `Election`, `load_election`, `ReplaySource`,
 `ReplayStep`, `FetchError`, `HttpSource`, `FetchResult`, `PollCycle`, `poll`, `Recorder`,
-`CaptureReplay`, `CaptureStep`. Adapter internals (`parse_*`, `unreported_place`, `FeedRef`,
-`Overview`), the transport pieces, `overview_url`, `user_agent`, `utc_now`, the interval
+`CaptureReplay`, `CaptureStep`, `diff_elections`, `Change`, `PlaceCounted`,
+`PartyResultChanged`, `LeaderChanged`, `StatusChanged`, `ProgressChanged`. Adapter internals
+(`parse_*`, `parse_any_overview`, `election_name`, `unreported_place`, `FeedRef`, `Overview`), the transport pieces, `overview_url`, `user_agent`, `utc_now`, the interval
 constants, `build_election`, `check_feed_name`, `is_capture_directory` and the CLI (`run`,
 `main`) stay in their modules.
 
@@ -86,11 +87,11 @@ Normalised, immutable election model. Seat fields are `None` where DST gives non
 
 | Signature | Description |
 |---|---|
-| `class ElectionType(StrEnum)` | `FOLKETINGSVALG = "folketingsvalg"`. |
+| `class ElectionType(StrEnum)` | `FOLKETINGSVALG = "folketingsvalg"`, `EUROPAPARLAMENTSVALG = "europaparlamentsvalg"`. |
 | `class PlaceType(StrEnum)` | `COUNTRY`, `TALLY` (DST's seatless preliminary "optalling" total), `LANDSDEL`, `STORKREDS`, `OPSTILLINGSKREDS`. |
 | `class Status(IntEnum)` | DST status code: `NOT_AVAILABLE` 0, `PRELIMINARY` 1, `ERROR` 9, `RECOUNT_PENDING` 10, `RECOUNT_PRELIMINARY` 11, `RECOUNT_FINAL` 12; property `has_result` (true for 1, 11, 12). |
 | `@dataclass(frozen=True, slots=True) class PartyResult` | `party_id: str`, `letter: str`, `name: str`, `votes: int`, `percent: float`, `seats: int \| None = None`, `constituency_seats: int \| None = None`, `supplementary_seats: int \| None = None`; property `is_party` (false for "Uden for partier", `party_id == ""`). |
-| `@dataclass(frozen=True, slots=True) class Place` | `place_type`, `place_id`, `name`, `parent_id`, `status`, `status_text`, `last_changed`, then optional `eligible_voters`, `turnout_percent`, `valid_votes`, `blank_votes`, `other_invalid_votes`, `total_invalid_votes`, `total_votes` and `parties: tuple[PartyResult, ...] = ()`; property `has_result`; `unreported() -> Place` gives the placeholder form. |
+| `@dataclass(frozen=True, slots=True) class Place` | `place_type`, `place_id`, `name`, `parent_id`, `status`, `status_text`, `last_changed`, then optional `eligible_voters`, `turnout_percent`, `valid_votes`, `blank_votes`, `other_invalid_votes`, `total_invalid_votes`, `total_votes` and `parties: tuple[PartyResult, ...] = ()`; properties `has_result` and `leader -> PartyResult \| None` (the `is_party` party with most votes at a place with a result, ties to the earlier in the feed; `None` otherwise); `unreported() -> Place` gives the placeholder form. |
 | `@dataclass(frozen=True, slots=True) class CountingProgress` | `counted: int`, `total: int`; `str` gives `"counted/total"`. |
 | `@dataclass(frozen=True, slots=True) class Election` | `name`, `election_type`, `election_date`, `places`; `get(place_type, place_id) -> Place` (`KeyError` naming both), `of_type(place_type) -> tuple[Place, ...]`, `counting_progress() -> CountingProgress` (opstillingskredse with a result), `changed_since(previous: Election \| None) -> tuple[Place, ...]` (places with a `last_changed` that differ from, or are absent in, `previous`; all of them for `None`). |
 | `main() -> None` | Showcase. |
@@ -99,21 +100,50 @@ Normalised, immutable election model. Seat fields are `None` where DST gives non
 
 Package marker for per-election-type adapters.
 
-### `src/dkvalg/adapters/folketingsvalg.py`
+### `src/dkvalg/adapters/dst_feed.py`
 
-Parses DST's Folketingsvalg feeds; no I/O. Timestamps are naive Danish local time as
-served (a UTC offset is refused; "never" in either spelling is None); a BOM is accepted;
-figures must be plain numbers (no `nan`, `inf`, `1_000`). Both parsers refuse a document that
-declares a DOCTYPE or an entity (an `expat` pre-scan, so UTF-16 is covered) with a
-`FeedError` naming the file, before `ElementTree` expands anything.
+The election-type-independent parsing of DST's feeds, shared by the per-type adapters; no
+I/O. Timestamps are naive Danish local time as served (a UTC offset is refused; "never" in
+either spelling is None); a BOM is accepted; figures must be plain numbers (no `nan`, `inf`,
+`1_000`). Both parsers refuse a document that declares a DOCTYPE or an entity (an `expat`
+pre-scan, so UTF-16 is covered) with a `FeedError` naming the file, before `ElementTree`
+expands anything. Seat attributes are optional, so a feed without them (EP) gives `None` seats.
 
 | Signature | Description |
 |---|---|
 | `@dataclass(frozen=True, slots=True) class FeedRef` | `place_type`, `place_id`, `name`, `parent_id`, `last_changed: datetime \| None`, `file_name`: one feed as listed by the overview. |
 | `@dataclass(frozen=True, slots=True) class Overview` | `name`, `election_type`, `election_date`, `feeds: tuple[FeedRef, ...]`. |
-| `parse_overview(xml: bytes) -> Overview` | Parse `valgdag.xml`; `FeedError` when malformed, not a Folketingsvalg, or listing no feeds. |
+| `election_name(xml: bytes) -> str` | The stripped `ValgNavn` of an overview (hardened parse); `FeedError` for malformed XML, a DOCTYPE, or an absent or empty name (`valgdag.xml: no ValgNavn`). |
+| `parse_overview_for(xml: bytes, election_type: ElectionType, name_prefix: str) -> Overview` | Parse `valgdag.xml` as `election_type` when `ValgNavn` starts with `name_prefix` (case-sensitive); otherwise `FeedError("valgdag.xml: not a <name_prefix>, ValgNavn is <name>")`; also `FeedError` when malformed, without a date, or listing no feeds. |
 | `parse_place(xml: bytes, ref: FeedRef) -> Place` | Parse one result feed; status 0, 9 and others without a result give a figure-free place; `FeedError` on malformed XML, an unknown status code, a result status without `Stemmer`, a `Parti` without `Id`, or a non-numeric figure. |
 | `unreported_place(ref: FeedRef) -> Place` | Placeholder for a feed the overview lists as never reported. |
+| `main() -> None` | Showcase. |
+
+### `src/dkvalg/adapters/folketingsvalg.py`
+
+Thin adapter for Folketingsvalg feeds; re-exports `FeedRef`, `Overview`, `parse_place` and
+`unreported_place` from `dst_feed` (`__all__`), so every existing import keeps working.
+
+| Signature | Description |
+|---|---|
+| `parse_overview(xml: bytes) -> Overview` | `parse_overview_for(xml, ElectionType.FOLKETINGSVALG, "Folketingsvalg")`; `FeedError` when malformed, not a Folketingsvalg, or listing no feeds. |
+| `main() -> None` | Showcase. |
+
+### `src/dkvalg/adapters/europaparlamentsvalg.py`
+
+Thin adapter for Europa-Parlamentsvalg feeds (same structure as Folketingsvalg, but no seat
+attributes); re-exports the same four shared names.
+
+| Signature | Description |
+|---|---|
+| `parse_overview(xml: bytes) -> Overview` | `parse_overview_for(xml, ElectionType.EUROPAPARLAMENTSVALG, "Europa-Parlamentsvalg")`. |
+| `main() -> None` | Showcase (reads `tests/fixtures/ep_2024` by a repo-relative path). |
+
+### `src/dkvalg/adapters/registry.py`
+
+| Signature | Description |
+|---|---|
+| `parse_any_overview(xml: bytes) -> Overview` | Read the name with `election_name` and call the matching adapter's `parse_overview`; any other name is `FeedError("valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg), ValgNavn is <name>")`. Used by `build_election` and `HttpSource`. |
 | `main() -> None` | Showcase. |
 
 ### `src/dkvalg/sources/__init__.py`
@@ -124,7 +154,7 @@ Package marker for sources.
 
 | Signature | Description |
 |---|---|
-| `build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election` | `parse_overview`, then `parse_place` of `read_feed(file_name)` for every reported feed and a placeholder for the rest; the one assembly shared by `load_election`, `HttpSource` and `CaptureReplay`. |
+| `build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> Election` | `parse_overview`, then `parse_place` of `read_feed(file_name)` for every reported feed and a placeholder for the rest; chooses the adapter with `parse_any_overview`; the one assembly shared by `load_election`, `HttpSource` and `CaptureReplay`. |
 | `load_election(directory: Path) -> Election` | Read `valgdag.xml` and every reported feed it lists from a DST-layout directory; `FeedError` naming a missing file. |
 | `main() -> None` | Showcase. |
 
@@ -176,11 +206,30 @@ complete, and entries not named like a capture (ASCII digits only) are ignored.
 | `is_capture_directory(directory: Path) -> bool` | No `valgdag.xml` and at least one capture-named subfolder. |
 | `main() -> None` | Showcase (records and replays the fixtures in a temporary directory). |
 
+### `src/dkvalg/diff.py`
+
+Compares two snapshots; pure, deterministic, detects only (no formatting, no delivery). Places
+are matched on type and id and visited in `current`'s order; per place `PlaceCounted` or
+`StatusChanged`, then `PartyResultChanged` per party (only where both snapshots hold a
+result), then `LeaderChanged`; one closing `ProgressChanged`. A place only in `previous` is
+ignored; a place only in `current` is compared with its unreported form.
+
+| Signature | Description |
+|---|---|
+| `@dataclass(frozen=True, slots=True) class PlaceCounted` | `place: Place`: the earlier status was `NOT_AVAILABLE` and there is a result now. |
+| `@dataclass(frozen=True, slots=True) class PartyResultChanged` | `place`, `before: PartyResult \| None`, `after: PartyResult`; properties `votes_delta -> int \| None`, `seats_delta -> int \| None` (`None` when `before` is `None`, and for seats when either side has no seat figure). |
+| `@dataclass(frozen=True, slots=True) class LeaderChanged` | `place`, `before: PartyResult \| None`, `after: PartyResult`. |
+| `@dataclass(frozen=True, slots=True) class StatusChanged` | `place`, `before: Status`, `after: Status`; every status difference except `NOT_AVAILABLE` to a result. |
+| `@dataclass(frozen=True, slots=True) class ProgressChanged` | `before: CountingProgress`, `after: CountingProgress`. |
+| `type Change = PlaceCounted \| PartyResultChanged \| LeaderChanged \| StatusChanged \| ProgressChanged` | The union of the five. |
+| `diff_elections(previous: Election \| None, current: Election) -> tuple[Change, ...]` | The typed changes from `previous` to `current` (`None` = every place unreported); `ValueError` naming both if the election type or date differs. |
+| `main() -> None` | Showcase. |
+
 ### `src/dkvalg/cli.py`
 
 | Signature | Description |
 |---|---|
-| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N]`; returns 0 ok, 1 on `FeedError` or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
+| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N] [--diff]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N] [--diff]`; `--diff` adds, after each step's place lines, one line per notable change (leader at country, landsdel or storkreds; seats; status; progress), and without it the output is unchanged; returns 0 ok, 1 on `FeedError` or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
 | `main() -> None` | `raise SystemExit(run())`. |
 
 ### `src/dkvalg/__main__.py`
@@ -201,6 +250,13 @@ The unmodified Folketingsvalg 24 March 2026 feeds retrieved 2026-11-03 from
 feeds it lists (109 XML files, BOM intact), plus `README.md` (sources, retrieval date) and
 `SHA256SUMS` (hash of every XML file at download time). `.gitattributes` marks the
 directory `-text` so checkouts never rewrite line endings.
+
+### `tests/fixtures/ep_2024/`
+
+The unmodified Europa-Parlamentsvalg 9 June 2024 feeds retrieved 2026-11-04 from
+`https://www.dst.dk/valg/Valg2546524/xml/`: `generel.xml`, `valgdag.xml` and the 107 result
+feeds it lists (109 XML files, BOM intact, no seat attributes), plus `README.md` and
+`SHA256SUMS`. `.gitattributes` marks it `-text` like the other fixture directory.
 
 ## Tests: `tests/`
 

@@ -1,6 +1,6 @@
 # dkvalg: EP-valg adapter and snapshot diff
 
-<!-- claude-plan step=3 status=active -->
+<!-- claude-plan step=4 status=active -->
 
 | Field | Value |
 |---|---|
@@ -16,8 +16,8 @@
 |---|---|---|---|---|
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
-| 3 | Implement | `/implement` | in `/build` | in progress |
-| 4 | Verify | `/verify` | in `/build` | pending |
+| 3 | Implement | `/implement` | in `/build` | done |
+| 4 | Verify | `/verify` | in `/build` | in progress |
 | 5 | Test | `/test` | in `/build` | pending |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
@@ -209,6 +209,13 @@ Accepted: clean critique, 2026-11-04 (all six findings applied in full, none reb
 > Written in step 3. Only deviations from the plan above, each with its reason. "Built as
 > planned" is a complete and good entry. On a fix round, also the reproduction test's red
 > run, pasted here before the fix was written — step 6 cites it.
+
+Built as planned, with these details the plan left open:
+
+- The two retargeted tests (`test_load_election_an_ep_overview_is_refused` in `test_directory.py`, the `_ep_directory` case in `test_cli.py`) keep their names and helper name; only the replaced `ValgNavn` (`Folkeafstemning 2022`) and the matched text (`Folkeafstemning`) changed. Step 5 may rename them.
+- The `ep_2024` fixtures were downloaded afresh from `https://www.dst.dk/valg/Valg2546524/xml/` on 2026-11-04 (the network was available) rather than copied from the planner's set. 55 result feeds differ from the planner's copy only in the generated `SenestDato`/`SenestRettet` timestamp of when DST regenerated the feed; the content (figures, structure) is identical.
+- `diff.py` has a private `_describe` for its showcase; the CLI's `--diff` formatting is the private `_diff_lines` in `cli.py`. Seat lines print when `after.seats` is not None and the earlier seat figure was `None` or differs (a `PartyResultChanged` with a new party counts as seats appearing).
+- Docstrings of `directory.py` and `http_source.py` say "supported election type" instead of "Folketingsvalg"; no behaviour or signature change.
 
 ---
 
