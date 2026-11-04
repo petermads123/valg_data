@@ -2,7 +2,7 @@ import dataclasses
 from datetime import date
 
 import pytest
-from conftest import dt, make_election, make_place
+from conftest import dt, make_election, make_party, make_place
 
 from dkvalg import (
     CountingProgress,
@@ -375,3 +375,105 @@ def test_changed_since_returns_a_tuple() -> None:
 
     assert isinstance(election.changed_since(None), tuple)
     assert isinstance(election.changed_since(election), tuple)
+
+
+# --- round 3: the EP member and Place.leader ---------------------------------------
+
+
+def test_election_type_has_exactly_the_folketingsvalg_and_ep_members() -> None:
+    assert {m.name: m.value for m in ElectionType} == {
+        "FOLKETINGSVALG": "folketingsvalg",
+        "EUROPAPARLAMENTSVALG": "europaparlamentsvalg",
+    }
+    assert ElectionType("europaparlamentsvalg") is ElectionType.EUROPAPARLAMENTSVALG
+    assert ElectionType.EUROPAPARLAMENTSVALG == "europaparlamentsvalg"
+
+
+def test_an_election_can_hold_the_ep_type() -> None:
+    election = Election(
+        "Europa-Parlamentsvalg",
+        ElectionType.EUROPAPARLAMENTSVALG,
+        date(2024, 6, 9),
+        (),
+    )
+
+    assert election.election_type is ElectionType.EUROPAPARLAMENTSVALG
+    assert election.counting_progress() == CountingProgress(0, 0)
+
+
+def test_place_leader_is_the_party_with_the_most_votes() -> None:
+    place = make_place(parties=(make_party("A", 100), make_party("F", 300)))
+
+    assert place.leader == make_party("F", 300)
+
+
+def test_place_leader_tie_goes_to_the_party_earlier_in_the_feed() -> None:
+    place = make_place(parties=(make_party("F", 300), make_party("A", 300)))
+
+    assert place.leader is not None
+    assert place.leader.letter == "F"
+
+
+def test_place_leader_never_counts_uden_for_partier() -> None:
+    place = make_place(parties=(make_party("", 900), make_party("A", 100)))
+
+    assert place.leader == make_party("A", 100)
+
+
+@pytest.mark.parametrize(
+    "parties",
+    [
+        (),
+        (make_party("", 900),),
+        (make_party("A", 0), make_party("F", 0)),
+        (make_party("A", 0), make_party("", 50)),
+    ],
+    ids=["no parties", "only uden for partier", "all zero votes", "zero and non-party"],
+)
+def test_place_leader_is_none_when_nobody_has_votes_to_lead_with(
+    parties: tuple[PartyResult, ...],
+) -> None:
+    assert make_place(parties=parties).leader is None
+
+
+def test_place_leader_a_party_with_one_vote_leads_a_field_of_zeros() -> None:
+    place = make_place(parties=(make_party("A", 0), make_party("F", 1)))
+
+    assert place.leader is not None
+    assert place.leader.letter == "F"
+
+
+def test_place_leader_negative_votes_never_lead() -> None:
+    place = make_place(parties=(make_party("A", -5), make_party("F", 2)))
+
+    assert place.leader == make_party("F", 2)
+    assert make_place(parties=(make_party("A", -5),)).leader is None
+
+
+@pytest.mark.parametrize(
+    "status", [Status.NOT_AVAILABLE, Status.ERROR, Status.RECOUNT_PENDING]
+)
+def test_place_leader_is_none_without_a_result_even_if_parties_are_present(
+    status: Status,
+) -> None:
+    place = dataclasses.replace(
+        make_place(), status=status, parties=(make_party("A", 9),)
+    )
+
+    assert place.leader is None
+
+
+@pytest.mark.parametrize(
+    "status",
+    [Status.PRELIMINARY, Status.RECOUNT_PRELIMINARY, Status.RECOUNT_FINAL],
+)
+def test_place_leader_exists_for_every_status_with_a_result(status: Status) -> None:
+    place = make_place(status=status, parties=(make_party("A", 9),))
+
+    assert place.leader == make_party("A", 9)
+
+
+def test_place_leader_is_stable_across_calls() -> None:
+    place = make_place(parties=(make_party("A", 1), make_party("B", 2)))
+
+    assert place.leader is place.leader
