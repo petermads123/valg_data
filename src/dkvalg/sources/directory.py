@@ -3,11 +3,8 @@
 from collections.abc import Callable
 from pathlib import Path
 
-from dkvalg.adapters.folketingsvalg import (
-    parse_overview,
-    parse_place,
-    unreported_place,
-)
+from dkvalg.adapters.dst_feed import parse_place, unreported_place
+from dkvalg.adapters.registry import parse_any_overview
 from dkvalg.errors import FeedError
 from dkvalg.model import Election, Place
 
@@ -37,9 +34,9 @@ def build_election(overview_xml: bytes, read_feed: Callable[[str], bytes]) -> El
         lists as never reported becomes a placeholder place.
 
     Raises:
-        FeedError: If the overview or a feed is malformed or not a Folketingsvalg.
+        FeedError: If the overview or a feed is malformed or not a supported election type.
     """
-    overview = parse_overview(overview_xml)
+    overview = parse_any_overview(overview_xml)
     places: list[Place] = []
     for ref in overview.feeds:
         if ref.last_changed is None:
@@ -69,7 +66,7 @@ def load_election(directory: Path) -> Election:
 
     Raises:
         FeedError: If `valgdag.xml` or a listed feed is missing or unreadable,
-            or any feed is malformed or not a Folketingsvalg.
+            or any feed is malformed or not a supported election type.
     """
     return build_election(
         _read(directory / _OVERVIEW_NAME), lambda name: _read(directory / name)

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Europa-Parlamentsvalg søndag  9. juni 2024</ValgNavn>
+  <ValgDato>09-06-2024</ValgDato>
+  <Sted Id="41" Type="OpstKreds">2. Fredensborg</Sted>
+  <SenestRettet>09-06-2024 22:28:44</SenestRettet>
+  <SenestRettetIso>2024-06-09T22:28:44</SenestRettetIso>
+  <SenestDannet>10-06-2024 01:07:11</SenestDannet>
+  <SenestDannetIso>2024-06-10T01:07:11</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg2546524/valgopg/valgopgOpst41.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg2546524/valgopg/valgopg41.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>47234</Stemmeberettigede>
+  <DeltagelsePct>67.22</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" StemmerAntal="3452" StemmerPct="11" />
+    <Parti Id="5893" Bogstav="B" Navn="B. Radikale Venstre" StemmerAntal="2786" StemmerPct="8.9" />
+    <Parti Id="5895" Bogstav="C" Navn="C. Det Konservative Folkeparti" StemmerAntal="4507" StemmerPct="14.4" />
+    <Parti Id="5897" Bogstav="F" Navn="F. SF - Socialistisk Folkeparti" StemmerAntal="4426" StemmerPct="14.1" />
+    <Parti Id="5907" Bogstav="I" Navn="I. Liberal Alliance" StemmerAntal="3420" StemmerPct="10.9" />
+    <Parti Id="1962293" Bogstav="M" Navn="M. Moderaterne" StemmerAntal="2893" StemmerPct="9.2" />
+    <Parti Id="5899" Bogstav="O" Navn="O. Dansk Folkeparti" StemmerAntal="1515" StemmerPct="4.8" />
+    <Parti Id="5903" Bogstav="V" Navn="V. Venstre, Danmarks Liberale Parti" StemmerAntal="5522" StemmerPct="17.6" />
+    <Parti Id="1968075" Bogstav="Æ" Navn="Æ. Danmarksdemokraterne - Inger Støjberg" StemmerAntal="843" StemmerPct="2.7" />
+    <Parti Id="5905" Bogstav="Ø" Navn="Ø. Enhedslisten - De Rød-Grønne" StemmerAntal="1326" StemmerPct="4.2" />
+    <Parti Id="1487618" Bogstav="Å" Navn="Å. Alternativet" StemmerAntal="627" StemmerPct="2" />
+    <IAltGyldigeStemmer>31317</IAltGyldigeStemmer>
+    <BlankeStemmer>392</BlankeStemmer>
+    <AndreUgyldigeStemmer>40</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>432</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>31749</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -196,7 +196,7 @@ def _ep_directory(tmp_path: Path, fixture_dir: Path) -> Path:
     overview = target / "valgdag.xml"
     overview.write_bytes(
         overview.read_bytes().replace(
-            b"Folketingsvalg tirsdag 24. marts 2026", b"Europa-Parlamentsvalg 2024"
+            b"Folketingsvalg tirsdag 24. marts 2026", b"Folkeafstemning 2022"
         )
     )
     return target
@@ -242,7 +242,7 @@ def _no_feeds(tmp_path: Path, fixture_dir: Path) -> Path:
         (_empty, "valgdag.xml"),
         (_nowhere, "valgdag.xml"),
         (_a_file, ""),
-        (_ep_directory, "Europa-Parlamentsvalg"),
+        (_ep_directory, "Folkeafstemning"),
         (_malformed, "valgdag.xml"),
         (_missing_feed, "valgdag_20.xml"),
         (_no_feeds, "no result feeds"),

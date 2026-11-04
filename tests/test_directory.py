@@ -333,11 +333,11 @@ def test_load_election_an_ep_overview_is_refused(fixture_copy: Path) -> None:
     path = fixture_copy / "valgdag.xml"
     path.write_bytes(
         path.read_bytes().replace(
-            b"Folketingsvalg tirsdag 24. marts 2026", b"Europa-Parlamentsvalg 2024"
+            b"Folketingsvalg tirsdag 24. marts 2026", b"Folkeafstemning 2022"
         )
     )
 
-    with pytest.raises(FeedError, match="Europa-Parlamentsvalg"):
+    with pytest.raises(FeedError, match="Folkeafstemning"):
         load_election(fixture_copy)
 
 
