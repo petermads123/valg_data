@@ -7,6 +7,7 @@ import pytest
 from conftest import (
     BOM,
     PARTIES_XML,
+    ROOT,
     dt,
     entry,
     feed_xml,
@@ -1082,3 +1083,18 @@ def test_refusing_a_document_does_not_depend_on_what_the_ref_says() -> None:
 
     with pytest.raises(FeedError, match=r"valgdag_99\.xml"):
         parse_place(ENTITY_DOC.encode(), other)
+
+
+@pytest.mark.parametrize(
+    "heading",
+    [
+        "Harden XML parsing before live polling",
+        "Faithful replay needs recorded live captures",
+    ],
+)
+def test_development_notes_no_longer_list_the_entries_this_round_resolved(
+    heading: str,
+) -> None:
+    notes = (ROOT / "DEVELOPMENT.md").read_text(encoding="utf-8")
+
+    assert heading not in notes
