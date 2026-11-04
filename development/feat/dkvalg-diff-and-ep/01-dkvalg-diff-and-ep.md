@@ -1,6 +1,6 @@
 # dkvalg: EP-valg adapter and snapshot diff
 
-<!-- claude-plan step=7 status=active -->
+<!-- claude-plan step=8 status=active -->
 
 | Field | Value |
 |---|---|
@@ -20,8 +20,8 @@
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
 | 6 | Concept check | `/concept-check` | in `/build` | done |
-| 7 | Ship | `/ship` | in `/build` | in progress |
-| 8 | Recommend | `/recommend` | with the user | pending |
+| 7 | Ship | `/ship` | in `/build` | done |
+| 8 | Recommend | `/recommend` | with the user | in progress |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
 
@@ -331,8 +331,10 @@ First round on this branch; rounds 1 and 2 of the earlier branches are merged an
 
 | Field | Value |
 |---|---|
-| Commits | |
-| Pushed to | |
+| Commits | `2341047` Concept; `f5aaaf8` Plan draft; `045a540` Plan critique applied; `ae010db`, `7e47fe4`, `02fa8c7` WIP step 3; `074ebac` Implement; `f929f93` Verify; `b5642ad`, `c923ac2`, `f08d5db` WIP step 5; `f56695c` Test; `f4eb078` Concept check; then `Ship: dkvalg EP-valg adapter and snapshot diff` (this one). Every step left a commit. |
+| Pushed to | `origin/feat/dkvalg-diff-and-ep` |
+
+Ship checks: ruff, format, mypy clean; `1596 passed`; all showcases and CLI replays exit 0; `ep_2024` hashes OK; diff review found no stray files, secrets, debug prints (only showcase output), capture directories or `.tmp-*` leftovers; `pyproject.toml` still 1.1.0; `STRUCTURE.md` names every module.
 
 ---
 
