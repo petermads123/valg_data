@@ -354,12 +354,3 @@ None.
 |---|---|
 | URL | opened by step 9 — see the branch's pull request |
 | Opened as | ready for review |
-
----
-
-## Halted
-
-> Only if the build stopped. Written by `/build`: the step, the reason verbatim from the
-> step that halted, the question for the user — and, once answered, the answer and what
-> changed because of it. Never deleted; it is the record of where the plan was thinner
-> than the code needed.

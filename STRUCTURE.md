@@ -114,7 +114,7 @@ expands anything. Seat attributes are optional, so a feed without them (EP) give
 | `@dataclass(frozen=True, slots=True) class FeedRef` | `place_type`, `place_id`, `name`, `parent_id`, `last_changed: datetime \| None`, `file_name`: one feed as listed by the overview. |
 | `@dataclass(frozen=True, slots=True) class Overview` | `name`, `election_type`, `election_date`, `feeds: tuple[FeedRef, ...]`. |
 | `election_name(xml: bytes) -> str` | The stripped `ValgNavn` of an overview (hardened parse); `FeedError` for malformed XML, a DOCTYPE, or an absent or empty name (`valgdag.xml: no ValgNavn`). |
-| `parse_overview_for(xml: bytes, election_type: ElectionType, name_prefix: str) -> Overview` | Parse `valgdag.xml` as `election_type` when `ValgNavn` starts with `name_prefix` (case-sensitive); otherwise `FeedError("valgdag.xml: not a <name_prefix>, ValgNavn is <name>")`; also `FeedError` when malformed, without a date, or listing no feeds. |
+| `parse_overview_for(xml: bytes, election_type: ElectionType, name_prefix: str) -> Overview` | Parse `valgdag.xml` as `election_type` when `ValgNavn` starts with `name_prefix` (case-sensitive); otherwise `FeedError("valgdag.xml: not a <name_prefix>, ValgNavn is '<name>'")`; also `FeedError` when malformed, without a date, or listing no feeds. |
 | `parse_place(xml: bytes, ref: FeedRef) -> Place` | Parse one result feed; status 0, 9 and others without a result give a figure-free place; `FeedError` on malformed XML, an unknown status code, a result status without `Stemmer`, a `Parti` without `Id`, or a non-numeric figure. |
 | `unreported_place(ref: FeedRef) -> Place` | Placeholder for a feed the overview lists as never reported. |
 | `main() -> None` | Showcase. |
@@ -143,7 +143,7 @@ attributes); re-exports the same four shared names.
 
 | Signature | Description |
 |---|---|
-| `parse_any_overview(xml: bytes) -> Overview` | Read the name with `election_name` and call the matching adapter's `parse_overview`; any other name is `FeedError("valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg), ValgNavn is <name>")`. Used by `build_election` and `HttpSource`. |
+| `parse_any_overview(xml: bytes) -> Overview` | Read the name with `election_name` and call the matching adapter's `parse_overview`; any other name is `FeedError("valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg), ValgNavn is '<name>'")`. Used by `build_election` and `HttpSource`. |
 | `main() -> None` | Showcase. |
 
 ### `src/dkvalg/sources/__init__.py`
