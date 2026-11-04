@@ -1,6 +1,6 @@
 # dkvalg: EP-valg adapter and snapshot diff
 
-<!-- claude-plan step=6 status=active -->
+<!-- claude-plan step=7 status=active -->
 
 | Field | Value |
 |---|---|
@@ -19,8 +19,8 @@
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
-| 6 | Concept check | `/concept-check` | in `/build` | in progress |
-| 7 | Ship | `/ship` | in `/build` | pending |
+| 6 | Concept check | `/concept-check` | in `/build` | done |
+| 7 | Ship | `/ship` | in `/build` | in progress |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
@@ -297,11 +297,25 @@ Edge cases considered and deliberately skipped:
 
 | # | Criterion | Met | Evidence |
 |---|---|---|---|
-| A1 | | | |
+| A1 | EP fixtures and `load_election` figures | met | `sha256sum -c SHA256SUMS` in `tests/fixtures/ep_2024`: all OK; 109 XML files plus README and SHA256SUMS. Probe of `load_election(ep_2024)`: type `europaparlamentsvalg`, name `Europa-Parlamentsvalg søndag  9. juni 2024`, 107 places (COUNTRY 1, TALLY 1, LANDSDEL 3, STORKREDS 10, OPSTILLINGSKREDS 92), `92/92`, every seat field `None`, national 4301255 eligible, 58.23 %, SF 426367 votes at 17.4 %. `test_fixtures.py` ep tests (README needles, hashes, BOM) pass. |
+| A2 | Adapter chosen from `ValgNavn` | met | Probe: `parse_any_overview` gives EP and Folketingsvalg from their own overviews; `folketingsvalg.parse_overview(ep_overview)` raises `not a Folketingsvalg, ValgNavn is 'Europa-Parlamentsvalg ...'`, the EP adapter refuses the FV overview symmetrically; a Folkeafstemning overview raises `not a supported election (Folketingsvalg, Europa-Parlamentsvalg), ValgNavn is 'Folkeafstemning ...'`. `test_registry.py` 41 tests pass. |
+| A3 | EP across the stack | met | `test_europaparlamentsvalg.py` (44 tests) pass, including HttpSource first fetch equals `load_election`, recorded poll replays through `CaptureReplay` equal to last fetch, `ReplaySource` ends equal, CLI poll. `python -m dkvalg replay tests/fixtures/ep_2024 --speed inf`: rc 0, 120 lines = 107 place lines + blank + title + 11 party rows, last place line `92/92`, table seats all `-`. |
+| A4 | EP quirks | met | Double space in `ValgNavn` preserved in the probe output; the seven T4 tests (BOM and BOM-less equal, status 0, never reported, empty/absent party `Id`, DOCTYPE in overview and in a result feed naming the file) pass; `test_registry.py` covers DOCTYPE in UTF-8, BOM and UTF-16. |
+| A5 | diff contract | met | Probe: `diff_elections(f, f) == ()` and `(e, e) == ()`; `diff_elections(None, e)` is 107 PlaceCounted, 107 LeaderChanged, 1 ProgressChanged and is equal across two calls; `diff_elections(f, e)` raises `ValueError: cannot diff folketingsvalg 2026-03-24 against europaparlamentsvalg 2024-06-09`. `diff.py:122` makes `PlaceCounted` only from `NOT_AVAILABLE`. All five kinds produced (`test_every_one_of_the_five_kinds_can_be_produced`), purity test passes; 87 `test_diff.py` tests pass. |
+| A6 | Semantics on real data | met | Probe on 2026 with seats bumped at the national place (Å 5 to 6) and Københavns Storkreds (A 3 to 4): two `PartyResultChanged` with full before and after `PartyResult` (votes, percent, seats) and `seats_delta` 1 each. EP: no seats anywhere, `test_ep_changes_never_carry_a_seat_delta` passes. Leader: `diff(None, e)` gives `LeaderChanged` with `before None`; status 1 to 9 gives `StatusChanged(before=1, after=9)`; 9 to 1 gives `StatusChanged` plus `LeaderChanged(before None)`; progress change `91/92 -> 92/92` in the replay. All-zero votes: `Place.leader` is `None`. |
+| A7 | Replay consistency | met | Probe diffing each consecutive `ReplaySource` pair: 2026 yields 107 `PlaceCounted`, last `ProgressChanged 91/92 -> 92/92`, national leader `A`; EP 2024 also 107, 92/92, leader `F`. `test_diff.py` replay tests `[election-A]` and `[ep_election-F]` pass. |
+| A8 | `--diff` flag | met | `replay --speed inf --diff` on both fixtures: rc 0; plain 122 (FV) and 120 (EP) lines; with `--diff` 228 and 226 lines, the extra lines being 92 progress and 14 leader lines (1 country, 3 landsdel, 10 storkreds; none at opstillingskreds or tally), format `<time>  leader storkreds Bornholms Storkreds: - -> A` and `<time>  progress 0/92 -> 1/92`; no seat or status lines on the unchanged fixtures. Diff output with those lines removed is byte-identical to the plain output (`cmp`) for both. `test_cli.py` `--diff` tests (28) pass, covering poll, capture replay, seat first-appearance and failed cycle. |
+| A9 | Earlier rounds untouched | met | Whole suite `1596 passed`; `git diff main -U0 -- tests` removed lines: only the two retargets (`Europa-Parlamentsvalg 2024` to `Folkeafstemning 2022` in `test_directory.py` and `test_cli.py`, with their `match=` and parametrize labels) and import lines reflowed to include new helpers. `ruff check .` and `mypy` clean. |
 
-Drift found, and what was done about it:
+Out of scope holds: no AppDaemon/Home Assistant text in `src`, `tests/*.py` or `README.md` (grep empty); adapters are `dst_feed`, `folketingsvalg`, `europaparlamentsvalg`, `registry` only, and the only folkeafstemning text in `src` is the registry showcase's refused example name; no EP seat computation (all seats `None`); no personal votes or afstemningsomraader; no notification text or thresholds (diff only detects, CLI lines are the specified formats); `PollCycle` and `FetchResult` untouched (`git diff main` of `http_source.py` is the import swap and docstring only) and `cli.run`'s signature equals `main`'s; `dependencies = []`; the EP/diff tests use only fake transports and loopback.
+
+Plan decisions: `Place.leader` is `None` when no party has more than 0 votes (`model.py`, probe confirmed); `PlaceCounted` only from `NOT_AVAILABLE`; showcases exit 0 (run in step 4). structure-auditor report applied: `STRUCTURE.md` in sync, no further edits.
+
+Drift found, and what was done about it: none against section 1. Two behaviours the concept left open were decided in plan and tests and are consistent with it, so no halt: a place first counted with seats gives `PlaceCounted` and `LeaderChanged` but no `PartyResultChanged` (so no seat line), while seats arriving later print `seats ... - -> n`; a lost leader is never a `LeaderChanged`. Nothing was changed in this step.
 
 ### Earlier rounds still hold
+
+First round on this branch; rounds 1 and 2 of the earlier branches are merged and covered by A9.
 
 > Later rounds only. Re-check every acceptance criterion from every earlier round in this
 > folder: this round changed code they depend on, and their tests passing is necessary but
