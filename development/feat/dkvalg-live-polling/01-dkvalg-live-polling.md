@@ -7,7 +7,7 @@
 | Feature | `feat/dkvalg-live-polling` (the folder) |
 | Round | 1 |
 | Branch | `feat/dkvalg-live-polling` |
-| Version | `minor` — extends the existing sources and replay with live polling and recording; step 9 adds `1.0.0 → 1.1.0` (major, 2.0.0, was the alternative) |
+| Version | `minor` — extends the existing sources and replay with live polling and recording; `1.0.0 → 1.1.0` (major, 2.0.0, was the alternative) |
 | Started | 2026-11-04 |
 
 ## Progress
