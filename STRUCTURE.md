@@ -229,7 +229,7 @@ ignored; a place only in `current` is compared with its unreported form.
 
 | Signature | Description |
 |---|---|
-| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N] [--diff]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N] [--diff]`; `--diff` adds, after each step's place lines, one line per notable change (leader at country, landsdel or storkreds; seats; status; progress), and without it the output is unchanged; returns 0 ok, 1 on `FeedError` or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
+| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N] [--diff]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N] [--diff]`; `--diff` adds, after each step's place lines, one line per notable change (leader at country, landsdel or storkreds; seats; status; progress), and without it the output is unchanged; returns 0 ok, 1 on `FeedError` (a `--diff` over two different elections included) or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
 | `main() -> None` | `raise SystemExit(run())`. |
 
 ### `src/dkvalg/__main__.py`
@@ -280,6 +280,8 @@ fails on chosen calls), the `transport` fixture, `fixture_files`, `retime_feed`,
 `script(name, *outcomes)` and `write_to(directory)`; `Request.conditional` says whether a
 request carried a validator.
 
+Round 3 adds `EP_FIXTURES`, `EP_ELECTION_NAME` (double space kept) and `EP_BASE_URL`, the fixtures `ep_fixture_dir` (read-only), `ep_fixture_copy` (damageable) and session-wide `ep_election`, the `ep_transport` fixture (a `FakeTransport` serving `ep_2024` under its own election id), `ep_fixture_files()`, and the builders `make_party(letter, votes, *, percent, seats, constituency_seats, supplementary_seats, party_id)` (an empty letter is "Uden for partier") and `make_ep_election(*places)`; `make_place` and `make_election` serve the diff tests.
+
 ### `tests/test_errors.py`
 
 Covers `FeedError` and `FetchError`: message kept, not a `ValueError`/`KeyError`/`OSError`, cause preserved; a `FetchError` is a `FeedError`, not the reverse.
@@ -290,10 +292,14 @@ Covers `dkvalg.model`: `Status.has_result` per code, `PartyResult.is_party`, `Pl
 (identity kept, figures dropped, idempotent, pure), immutability and hashing, `Election.get` /
 `of_type` / `counting_progress` boundaries, `CountingProgress.__str__` (T4, T8), and `Election.changed_since`: `None`, equal, changed, new, removed, back-to-never (not reported), order, type-aware identity, purity (T11).
 
+Round 3 adds the EP `ElectionType` member and `Place.leader` (most votes, tie to the earlier party, "Uden for partier" and zero votes never lead, `None` without a result).
+
 ### `tests/test_package.py`
 
 Covers the package surface: `import dkvalg`, the re-exported names, adapter and CLI names kept
 out of the top level, and `valg_data`/`template_repo` not importable (T1, A1); the live-polling names re-exported and the transport pieces kept in their modules.
+
+Round 3 adds the seven diff names re-exported and the registry and adapter helpers kept out.
 
 ### `tests/test_folketingsvalg.py`
 
@@ -309,6 +315,8 @@ Covers `dkvalg.sources.directory.load_election`: the 107-place fixture election 
 seats summing to 175, no seats below storkreds, "Uden for partier"), placeholders for never
 reported feeds, missing/empty/malformed files and unreadable paths all as `FeedError`
 naming the file, purity and idempotency (T3, T7, T8, A3, A7); and `build_election`: equal to `load_election`, the reader called only for reported feeds in overview order, its exceptions propagated, hostile overviews refused before any read (T11, A9).
+
+Round 3 adds EP through `load_election` and `build_election` (adapter chosen from the overview name, unsupported names refused, a never-reported EP feed).
 
 ### `tests/test_replay.py`
 
@@ -326,6 +334,8 @@ subprocess with `PYTHONPATH=src`, independent of the editable install (T1, T6, A
 an injected transport, sleep and clock (lines, `--interval`, `--cycles`, `--record`, exit codes 0/1/2/130,
 bad arguments, errors on stderr only) and `replay` on a capture directory against a plain one (T9, A7).
 
+Round 3 adds `--diff` on `replay` (plain, capture, synthetic capture with exact line formats) and `poll` (failed cycles, seats appearing, EP), flag-less output equal to the diff output minus its lines, leader lines only at country, landsdel and storkreds, aware-UTC poll times against naive replay times, and a mixed-election run ending in `error:` and exit 1.
+
 ### `tests/test_http_source.py`
 
 Covers `dkvalg.sources.http_source` through `FakeTransport` and, for `urllib_transport`, a server bound
@@ -338,6 +348,8 @@ a failure at every stage leaving state and capture untouched, recorder and clock
 fetching at once, and `poll` (backoff schedule, call-time validation, one clock read per cycle, stop and
 `max_cycles`) (T1 to T6, T12, A1 to A5).
 
+Round 3 adds EP through `HttpSource` (EP overview URL, first fetch equal to `load_election`, varying ETags, never reported and back, an overview that becomes an unsupported election).
+
 ### `tests/test_capture.py`
 
 Covers `dkvalg.sources.capture`: `check_feed_name` (all 108 non-overview fixture names accepted,
@@ -348,6 +360,24 @@ entries, incomplete first capture, errors mid-iteration, restart) and an end-to-
 four fetches (full, partial with the national feed, identical 200, 304) checking steps, changed lists,
 earlier national figures, last step equal to the source's election and sleeps (T7, T8, T9, A6).
 
+Round 3 adds an EP record-then-replay round trip.
+
+### `tests/test_europaparlamentsvalg.py`
+
+Covers Europa-Parlamentsvalg across the stack (A1, A3, A4; T1, T3, T4): the real `ep_2024` fixtures through `load_election` (type, 107 places by type, 92/92, every seat field `None`, national figures, parent ids, SF leading), the EP adapter against the Folketingsvalg one, the quirks (BOM, double space, status 0 in DST's example shape, never reported, empty or absent `Id`, DOCTYPE in the overview and in a result feed), `HttpSource` through `FakeTransport`, a recorded poll replayed by `CaptureReplay`, `ReplaySource`, and the CLI `replay` and `poll` on EP (seats shown as `-`).
+
+### `tests/test_registry.py`
+
+Covers `parse_any_overview` (A2, T2): each real overview gives its own type, names accepted by prefix after stripping (a bare prefix and `Folketingsvalgxyz` pinned as accepted), other names refused naming the value and both supported types, absent or empty `ValgNavn`, malformed XML, a DOCTYPE refused before the name is read (BOM and UTF-16 too), a good name with a bad date or no feeds.
+
+### `tests/test_dst_feed.py`
+
+Covers `election_name`, `parse_overview_for` and the re-exports (T10): stripped names, `no ValgNavn` and malformed or hostile overviews naming `valgdag.xml`, the `not a <prefix>` refusal, equality with the Folketingsvalg adapter, and that both adapters re-export the same objects as `dst_feed` with the same `__all__`.
+
+### `tests/test_diff.py`
+
+Covers `diff_elections`, the five change kinds and `Place.leader` use in them (A5 to A7; T5 to T7): the `Change` alias via `typing.get_args(Change.__value__)`, frozen dataclasses and deltas, equal elections, `None` previous against an all-unreported copy, purity and idempotency, type and date mismatch, every status transition (`PlaceCounted` only from status 0), party-result changes on the real 2026 data (national and storkreds seats, percent only, seats `None` to a figure, new and vanished parties), leader rules (overtake, tie, reordered tie, "Uden for partier", all-zero votes, lost leader), a first count with seats giving no `PartyResultChanged`, place matching, ordering and progress, and the replay-consistency chain for 2026 (107 `PlaceCounted`, leader A) and EP 2024 (leader F).
+
 ### `tests/test_fixtures.py`
 
 Verifies the fixture directory: 109 XML files plus README and `SHA256SUMS`, every feed the
@@ -357,6 +387,8 @@ the README's source URLs and date, and `.gitattributes` (T2, A2).
 All tests live here and nowhere else — `testpaths = ["tests"]` in `pyproject.toml` means
 `pytest` collects nothing outside this directory, and the stop gate blocks on a test file
 found anywhere else.
+
+Round 3 adds the same checks for `tests/fixtures/ep_2024` (109 files, hashes, BOM, README needles).
 
 ### `tests/test_guard_git.py`
 

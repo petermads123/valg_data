@@ -1,6 +1,6 @@
 # dkvalg: EP-valg adapter and snapshot diff
 
-<!-- claude-plan step=5 status=active -->
+<!-- claude-plan step=6 status=active -->
 
 | Field | Value |
 |---|---|
@@ -18,8 +18,8 @@
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
-| 5 | Test | `/test` | in `/build` | in progress |
-| 6 | Concept check | `/concept-check` | in `/build` | pending |
+| 5 | Test | `/test` | in `/build` | done |
+| 6 | Concept check | `/concept-check` | in `/build` | in progress |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
@@ -255,10 +255,40 @@ structure-auditor: both edits were genuine and applied: the `build_election` row
 
 | Intent | Test names | Result |
 |---|---|---|
+| T1 (ep_2024 files, hashes, BOM, `load_election` figures, README needles) | `test_fixtures.py`: `test_ep_fixture_directory_holds_109_xml_files_a_readme_and_a_manifest`, `test_every_feed_the_ep_overview_lists_is_present`, `test_the_ep_manifest_lists_exactly_the_xml_files`, `test_every_ep_file_matches_its_sha256_in_the_manifest`, `test_every_ep_xml_file_keeps_its_utf8_byte_order_mark`, `test_the_ep_readme_names_the_source_and_the_retrieval_date`; `test_europaparlamentsvalg.py`: `test_load_election_ep_is_an_ep_election_with_the_real_name`, `test_load_election_ep_has_the_107_places_by_type` (5 params), `test_load_election_ep_counts_92_of_92`, `test_load_election_ep_has_no_seat_figures_anywhere`, `test_load_election_ep_national_figures_match_the_file`, `test_load_election_ep_parent_ids_follow_the_hierarchy`; `test_directory.py`: EP cases | pass |
+| T2 (`parse_any_overview`, adapter refusals, name matching, whitespace, empty name, double space) | `test_registry.py` (41 tests: accepted prefixes incl. whitespace, bare prefix, `Folketingsvalgxyz`; 8 refused names; `no ValgNavn`; malformed; DOCTYPE with and without BOM, UTF-16; bad date; no feeds); `test_europaparlamentsvalg.py`: `test_ep_adapter_refuses_a_folketingsvalg_overview`, `test_folketingsvalg_adapter_refuses_the_ep_overview`; `test_directory.py`: `test_load_election_refuses_unsupported_names_naming_them_and_the_supported_types` | pass |
+| T3 (EP through HttpSource, Recorder + CaptureReplay, ReplaySource, CLI replay and poll) | `test_europaparlamentsvalg.py`: `test_http_source_*` (4), `test_recorded_ep_poll_replays_through_capture_replay_ending_equal`, `test_replay_source_of_ep_ends_equal_to_the_loaded_election`, `test_cli_replay_of_ep_prints_107_lines_ending_92_of_92`, `test_cli_replay_of_ep_table_shows_dashes_for_every_seat`, `test_cli_poll_on_an_ep_fake_transport_prints_its_lines`; `test_http_source.py`, `test_capture.py`: EP round-three cases | pass |
+| T4 (EP quirks) | `test_europaparlamentsvalg.py`: `test_ep_overview_with_and_without_a_bom_parses_equal`, `test_ep_overview_keeps_the_double_space_in_the_name`, `test_ep_status_zero_feed_in_dsts_example_shape_is_figure_free`, `test_ep_never_reported_feed_becomes_a_placeholder`, `test_ep_empty_or_absent_party_id_behaves_as_for_folketingsvalg`, `test_ep_overview_with_a_doctype_is_refused_naming_the_file`, `test_ep_result_feed_with_a_doctype_is_refused_naming_the_file` | pass |
+| T5 (`diff_elections`: equal, purity, order, None, only-in-one-side, mismatch, five kinds, alias) | `test_diff.py`: `test_equal_elections_give_an_empty_tuple`, `test_none_previous_equals_diffing_against_an_all_unreported_copy`, `test_diff_elections_does_not_modify_its_inputs_and_is_idempotent`, `test_a_type_mismatch_raises_value_error_naming_both`, `test_a_date_mismatch_raises_value_error_naming_both`, `test_a_place_only_in_current_*`, `test_a_place_only_in_previous_*`, `test_output_follows_currents_order_*`, `test_changes_are_ordered_by_place_then_kind_*`, `test_every_one_of_the_five_kinds_can_be_produced`, `test_change_alias_is_the_union_of_the_five_kinds` | pass |
+| T6 (semantics on real data, leader rules, status transitions, progress, `Place.leader`) | `test_diff.py`: `test_a_national_seat_change_carries_seats_votes_and_percent_before_and_after`, `test_a_storkreds_seat_change_*`, `test_any_single_figure_change_*` (5), `test_a_new_party_has_before_none_*`, `test_status_transitions_give_the_documented_kinds` (13), `test_an_overtake_*`, `test_the_first_leader_of_a_newly_counted_place_*`, tie, reordered tie, Uden for partier, all-zero votes, `test_progress_*` (4), `test_ep_changes_never_carry_a_seat_delta`; `test_model.py`: ten `test_place_leader_*` cases | pass |
+| T7 (replay consistency) | `test_diff.py`: `test_diffing_every_replay_step_gives_one_place_counted_per_place_and_the_leader[election-A]` and `[ep_election-F]` | pass |
+| T8 (`--diff` formats, filter, flag-less equality, failed cycle) | `test_cli.py`: `test_replay_diff_on_a_synthetic_capture_prints_the_documented_lines_in_order`, `test_replay_output_without_the_flag_equals_the_diff_output_minus_the_diff_lines` (FV, EP), `test_replay_diff_leader_lines_are_only_country_landsdel_and_storkreds`, `test_replay_diff_of_a_recorded_capture_agrees_with_the_plain_replay`, `test_poll_diff_*` (7), `test_diff_misuse_exits_2_with_usage_on_err`, `test_replay_diff_of_a_capture_mixing_two_elections_exits_1_with_an_error`, `test_poll_diff_an_election_that_changes_type_mid_run_exits_1_with_an_error` | pass |
+| T9 (existing tests unchanged, FV imports and messages) | the whole existing suite, 1301 tests, passes unchanged; `git diff main -U0 -- tests` removes only the two A9 retargets and import lines; `test_dst_feed.py::test_parse_overview_for_equals_the_folketingsvalg_adapter`, `test_adapter_modules_re_export_the_very_same_objects` | pass |
+| T10 (`election_name`, `parse_overview_for`, re-exports, package names) | `test_dst_feed.py` (38 tests); `test_package.py`: `test_dkvalg_re_exports_the_diff_api_from_its_module` (7), `test_dkvalg_keeps_the_registry_and_adapter_helpers_out_of_the_top_level` (4), `test_election_type_exposes_the_ep_member_at_the_top_level` | pass |
 
-Edge cases considered and deliberately skipped, with reasons:
+Suite: `1596 passed` (1301 existing + 295 new: 44 `test_europaparlamentsvalg`, 41 `test_registry`, 38 `test_dst_feed`, 87 `test_diff`, 85 added across `test_model`, `test_directory`, `test_http_source`, `test_capture`, `test_fixtures`, `test_package`, `test_cli`). `ruff check .`, `ruff format --check .` and `mypy` clean.
 
----
+Production fixes this step (each found by weighing the two designers' reports and run against the code):
+
+- `Place.leader` (model.py): a party needs more than 0 votes to lead; a counted place where nobody has votes has no leader (C2). Reason: the first party of an all-zero place was reported as leader and would have produced a spurious `LeaderChanged` once real votes arrived. Docstring, `STRUCTURE.md`, README updated; tests `test_place_leader_is_none_when_nobody_has_votes_to_lead_with`, `test_an_all_zero_votes_place_has_no_leader_and_then_a_first_leader`.
+- `cli._diff_lines` (cli.py): `diff_elections`' `ValueError` for two different elections is now raised as `FeedError`, so `replay --diff` and `poll --diff` print `error: <message>` and exit 1 instead of a traceback (C5). Tests `test_replay_diff_of_a_capture_mixing_two_elections_exits_1_with_an_error`, `test_poll_diff_an_election_that_changes_type_mid_run_exits_1_with_an_error`. `STRUCTURE.md` `run` row updated; no signature changed.
+- `diff_elections` docstring and README document C1, C3 and C4 (below). No signature changed, so section 2's Public API table needs no edit.
+
+Pinned behaviours (documented, not changed):
+
+- C1: a place first counted with seats in the same snapshot gives `PlaceCounted` + `LeaderChanged` and no `PartyResultChanged` (`test_a_first_count_with_seats_gives_place_counted_and_leader_but_no_party_change`, `test_replay_diff_on_the_fixtures_prints_no_seats_or_status_lines`); an already-counted place whose seats go `None` to a figure prints `seats <type> <name>: <letter> - -> <n>` (`test_seats_arriving_after_the_count_are_a_party_result_change`, the synthetic capture test). DST computes seats after the first count, so live use reaches the none-to-figure path.
+- C3: duplicate `party_id` in one place, last wins, a spurious change for the first duplicate (`test_duplicate_party_ids_in_one_place_are_a_documented_limitation`).
+- C4: a lost leader (leader to none, or all votes gone) is never a `LeaderChanged` (`test_a_place_that_loses_its_leader_is_only_a_status_change`, `test_a_place_whose_votes_all_vanish_loses_its_leader_without_leader_changed`).
+- C6: `startswith` matching accepts `Folketingsvalgxyz` and a bare prefix, as round 1 did (`test_parse_any_overview_accepts_names_that_start_with_a_supported_prefix`).
+- `ProgressChanged` when the two totals differ (`test_progress_is_reported_when_the_totals_differ_between_snapshots`, `test_a_place_only_in_current_*`); poll prints aware UTC times and replay naive local time (`test_poll_uses_aware_utc_times_while_replay_prints_naive_local_time`); a tie reordered in the feed flips the leader (`test_reordering_a_tie_in_the_feed_flips_the_leader_pinned`).
+
+Edge cases considered and deliberately skipped:
+
+- Importing each module alone in a subprocess for import cycles (contract designer, item 10): the existing suite already imports every module and `python -m dkvalg.<module>` ran for all of them in step 4; a subprocess per module adds seconds for a risk already covered.
+- A 100,000-character `ValgNavn` was tested only for "FeedError, no crash"; truncating the message is a style choice outside section 1.
+- Wrong argument types to `diff_elections`, numeric overflow or float precision: the signatures are typed, `diff_elections` does arithmetic only as `int` subtraction, and percent comparison is exact equality of parsed figures (a deliberate choice, since DST rounds).
+- Negative votes beyond `Place.leader` never leading: DST never emits them.
+- A `load_election` of an EP directory using Folketingsvalg feed names (low priority in the input-space report): both types use the same file names, so it is the same code path.
 
 ## 6. Concept check
 
