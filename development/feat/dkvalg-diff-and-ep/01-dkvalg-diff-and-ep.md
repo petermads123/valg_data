@@ -91,47 +91,104 @@ None.
 
 ### Approach
 
-One paragraph on the chosen approach, and one on what was rejected and why.
+**EP.** The probe in the survey settles the design: pushed through the existing Folketingsvalg code (with only the election name swapped in memory), the real EP 2024 set parses into exactly the model the concept describes (107 places, no seat data, national figures as in A1). So almost nothing in the adapter is Folketingsvalg-specific; the only election-type logic is the `ValgNavn` check and the `ElectionType` it stamps in `parse_overview`. The plan therefore **moves the shared parsing into a new `adapters/dst_feed.py`** and leaves two thin per-type adapters on top of it, `folketingsvalg` and `europaparlamentsvalg`, each providing the type's `parse_overview` and re-exporting the shared names, which keeps the spec's "one adapter per type" (formats may diverge later) without duplicating 300 lines, and keeps every existing import from `dkvalg.adapters.folketingsvalg` working. A small `adapters/registry.py` chooses the adapter from `ValgNavn` and is what `build_election` and `HttpSource` now call, so `load_election`, `HttpSource`, `poll`, `CaptureReplay`, `Recorder` and the CLI work for EP with no further change. `parse_place` stays shared and election-type-independent; if a future type's result feeds diverge, the registry is where a type-specific `parse_place` would be routed (not built now).
+
+**diff.** One new module, `diff.py`, with five frozen dataclasses (one per kind of change), a `Change` union and one pure function, `diff_elections`. "Leader of a place" becomes a `Place.leader` property in the model so diff and the CLI share one definition. The function is named `diff_elections` rather than `diff` so that re-exporting it from the package cannot shadow the `dkvalg.diff` module. Detection is place by place, matched on place type and id, in the current election's order, with a single closing progress change.
+
+Rejected: (a) copying the Folketingsvalg adapter into an EP module, which would duplicate the parser and let the two drift; (b) one adapter accepting both names (it would break A2 and the existing test that the Folketingsvalg adapter refuses an EP overview); (c) putting diff on `Election` as a method (a different file from where the spec put it, and it would grow the model with presentation-adjacent types); (d) a notification-ready formatter in `diff.py`, which the concept rules out (the library only detects).
+
+Survey: `parse_place`, `unreported_place`, `FeedRef`, `Overview`, the hardening and all timestamp/number helpers live in `adapters/folketingsvalg.py` and nothing in them mentions the election type except lines 249 to 256. `directory.build_election` and `HttpSource` both import `parse_overview` from that module (the two places that must become type-aware); everything else, including `CaptureReplay`, goes through `build_election`. `Election.changed_since` is reused unchanged and diff does not call it. Existing tests import `FeedRef`, `Overview`, `parse_overview`, `parse_place`, `unreported_place` from `dkvalg.adapters.folketingsvalg` and use no private names, so a re-exporting wrapper keeps them valid; only two existing tests assert that an EP overview is refused (`test_load_election_an_ep_overview_is_refused` in `test_directory.py` and the EP case of the bad-directory replay test in `test_cli.py`) and A9 retargets exactly those.
 
 ### Modules
 
 | Path | New or changed | Purpose |
 |---|---|---|
+| `src/dkvalg/model.py` | changed | `ElectionType.EUROPAPARLAMENTSVALG`; `Place.leader` (A1, A5, A6) |
+| `src/dkvalg/adapters/dst_feed.py` | new | The election-type-independent DST feed parsing, moved out of the Folketingsvalg adapter (A1 to A4, A9) |
+| `src/dkvalg/adapters/folketingsvalg.py` | changed | Thin: `parse_overview` for Folketingsvalg plus re-exports of the shared names (A2, A9) |
+| `src/dkvalg/adapters/europaparlamentsvalg.py` | new | Thin: `parse_overview` for Europa-Parlamentsvalg plus the same re-exports (A1, A2, A4) |
+| `src/dkvalg/adapters/registry.py` | new | `parse_any_overview`: choose the adapter from `ValgNavn` (A2, A3) |
+| `src/dkvalg/sources/directory.py`, `sources/http_source.py` | changed | Call `parse_any_overview` instead of the Folketingsvalg `parse_overview`; no signature change (A3) |
+| `src/dkvalg/diff.py` | new | Change kinds, `Change`, `diff_elections` (A5 to A7) |
+| `src/dkvalg/cli.py` | changed | `--diff` on `poll` and `replay` (A8) |
+| `src/dkvalg/__init__.py` | changed | Re-export the new public names |
+| `tests/fixtures/ep_2024/` | new | The 109 unmodified real EP feeds, `README.md`, `SHA256SUMS` (A1) |
+| `tests/conftest.py` | changed | EP fixture path and helpers |
+| `tests/test_europaparlamentsvalg.py`, `test_registry.py`, `test_diff.py` | new | (step 5) |
+| `tests/test_model.py`, `test_folketingsvalg.py`, `test_directory.py`, `test_http_source.py`, `test_capture.py`, `test_cli.py`, `test_fixtures.py`, `test_package.py` | changed | New cases; the two retargeted tests named in A9 are the only existing cases edited (step 3 retargets them, step 5 adds the rest) |
+| `README.md`, `STRUCTURE.md`, `DEVELOPMENT.md` | changed | EP and `--diff` usage; structure map; the EP-seats note is already added |
+| `pyproject.toml` | untouched | Step 9 writes the version |
 
 ### Public API
 
-> Every public class and function, with its full signature as it will be written.
-> `Covers` links back to the acceptance criteria above.
+Existing signatures not listed here do not change. `FeedRef`, `Overview`, `parse_place` and `unreported_place` keep their signatures and are re-exported from `dkvalg.adapters.folketingsvalg` (as they were) and from `dkvalg.adapters.europaparlamentsvalg`; their definitions move to `dkvalg.adapters.dst_feed`.
 
 | Signature | Module | Purpose | Covers |
 |---|---|---|---|
+| `ElectionType.EUROPAPARLAMENTSVALG = "europaparlamentsvalg"` | `model` | The EP member of the existing `StrEnum` | A1, A2 |
+| `Place.leader` (property) `-> PartyResult \| None` | `model` | The party with the most votes at a place that has a result, "Uden for partier" never counted, ties to the party earlier in the feed; `None` without a result or a party | A5, A6 |
+| `class FeedRef`, `class Overview` (fields as today) | `adapters.dst_feed` | Moved, unchanged | A9 |
+| `election_name(xml: bytes) -> str` | `adapters.dst_feed` | The stripped `ValgNavn` of an overview (hardened parse); `FeedError` naming `valgdag.xml` when malformed or absent | A2 |
+| `parse_overview_for(xml: bytes, election_type: ElectionType, name_prefix: str) -> Overview` | `adapters.dst_feed` | Parse `valgdag.xml` as `election_type` when `ValgNavn` starts with `name_prefix`; otherwise `FeedError("valgdag.xml: not a <name_prefix>, ValgNavn is <name>")`; otherwise exactly today's behaviour | A1, A2, A9 |
+| `parse_place(xml: bytes, ref: FeedRef) -> Place`, `unreported_place(ref: FeedRef) -> Place` | `adapters.dst_feed` | Moved, unchanged | A4, A9 |
+| `parse_overview(xml: bytes) -> Overview` | `adapters.folketingsvalg` | `parse_overview_for(xml, ElectionType.FOLKETINGSVALG, "Folketingsvalg")`; behaviour and messages unchanged | A2, A9 |
+| `parse_overview(xml: bytes) -> Overview` | `adapters.europaparlamentsvalg` | `parse_overview_for(xml, ElectionType.EUROPAPARLAMENTSVALG, "Europa-Parlamentsvalg")` | A1, A2, A4 |
+| `parse_any_overview(xml: bytes) -> Overview` | `adapters.registry` | Read the name with `election_name` and call the matching adapter's `parse_overview`; anything else raises `FeedError("valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg), ValgNavn is <name>")` | A2, A3 |
+| `@dataclass(frozen=True, slots=True) class PlaceCounted`: `place: Place` | `diff` | A place that has a result now and had none before | A5, A6 |
+| `@dataclass(frozen=True, slots=True) class PartyResultChanged`: `place: Place`, `before: PartyResult \| None`, `after: PartyResult`; properties `votes_delta -> int \| None`, `seats_delta -> int \| None` | `diff` | A party's result at a place that had a result in both snapshots changed (votes, percent or any seat figure), or the party is new there (`before` is `None`); the deltas are `None` when `before` is `None`, and `seats_delta` is also `None` when either side has no seat figure | A5, A6 |
+| `@dataclass(frozen=True, slots=True) class LeaderChanged`: `place: Place`, `before: PartyResult \| None`, `after: PartyResult` | `diff` | The leader at a place is a different party, or the place now has a leader and had none | A5, A6 |
+| `@dataclass(frozen=True, slots=True) class StatusChanged`: `place: Place`, `before: Status`, `after: Status` | `diff` | A place's status changed in a way that is not a place being counted | A5, A6 |
+| `@dataclass(frozen=True, slots=True) class ProgressChanged`: `before: CountingProgress`, `after: CountingProgress` | `diff` | The counted-of-total opstillingskredse changed | A5, A6 |
+| `type Change = PlaceCounted \| PartyResultChanged \| LeaderChanged \| StatusChanged \| ProgressChanged` | `diff` | The union of the five | A5 |
+| `diff_elections(previous: Election \| None, current: Election) -> tuple[Change, ...]` | `diff` | The typed changes from `previous` to `current` (see Behaviour); `ValueError` naming both if the two differ in `election_type` or `election_date` | A5 to A7 |
+| `main() -> None` | `adapters.dst_feed`, `adapters.europaparlamentsvalg`, `adapters.registry`, `diff` | Showcases (the Folketingsvalg adapter keeps its own) | A9 |
+
+`dkvalg/__init__.py` additionally re-exports `diff_elections`, `Change`, `PlaceCounted`, `PartyResultChanged`, `LeaderChanged`, `StatusChanged` and `ProgressChanged`; the registry, `dst_feed` and the adapters stay in their modules. `run` and every other round 1 and 2 signature are unchanged.
+
+Behaviour the signatures do not carry:
+
+- **`diff_elections`.** `previous=None` behaves as if every place of `current` were present and unreported. Places are matched on `(place_type, place_id)`; a place only in `current` is compared with its own `unreported()` form, a place only in `previous` is ignored. For each place of `current`, in order: (1) `PlaceCounted` if it has a result now and had none; otherwise `StatusChanged` if the status differs (so 0 to 1 is a count, not a status change, while 1 to 9, 1 to 11 and 0 to 9 are status changes); (2) if it had a result in both snapshots, a `PartyResultChanged` for each party of `current`, in feed order, whose `votes`, `percent`, `seats`, `constituency_seats` or `supplementary_seats` differ from the same `party_id` in `previous` or which is absent there; a party that vanished is ignored; (3) `LeaderChanged(place, before, after)` if `current`'s leader exists and `previous`'s leader is `None` or a different `party_id`. After all places, one `ProgressChanged` if `counting_progress()` differs (the previous progress of `None` being 0 of the current total). Equal elections give `()`. Neither input is modified.
+- **Leader.** The `is_party` party with the most `votes`; on a tie the earlier in feed order; `None` if the place has no result or no party. A change of votes or percent alone never changes the leader's identity, so it is a `PartyResultChanged` only.
+- **Adapter choice.** `election_name` runs the same hardened parse as the adapters, so a DOCTYPE in an overview is refused before the name is read. Matching is `startswith` and case-sensitive, as for Folketingsvalg today, so `ValgNavn` `Europa-Parlamentsvalg søndag  9. juni 2024` (double space) matches and `Europaparlamentsvalg` would be refused with the supported types listed.
+- **CLI `--diff`.** On `poll` and `replay`, after each step's (or poll's) place lines and only when the flag is given, one line per *notable* change between the previous snapshot (`ReplaySource.initial()`, the previous `CaptureStep` or `PollCycle` election, `None` first) and the current one, using the same timestamp as the place lines. Notable: `LeaderChanged` at `COUNTRY`, `LANDSDEL` and `STORKREDS` places (not at opstillingskredse, not at the tally); `PartyResultChanged` with a non-zero `seats_delta`; `StatusChanged`; `ProgressChanged`. Formats: `<time>  leader <place type> <name>: <before letter or -> -> <after letter>`; `<time>  seats <place type> <name>: <party letter> <before> -> <after>`; `<time>  status <place type> <name>: <before.name> -> <after.name>`; `<time>  progress <before> -> <after>`. Without the flag nothing changes. A poll cycle that failed prints no diff lines.
 
 ### Implementation guide
 
-Ordered. Each entry small enough to finish and check.
-
-1.
-2.
+1. `model.py`: the EP member and `Place.leader`.
+2. Create `adapters/dst_feed.py` by moving the shared code out of `folketingsvalg.py` (everything except the type check), add `election_name` and `parse_overview_for`; make `folketingsvalg.py` the thin wrapper with `__all__`. **Run the whole existing suite: it must be green unchanged** before anything else.
+3. `adapters/europaparlamentsvalg.py`, `adapters/registry.py`; switch `directory.build_election` and `HttpSource` to `parse_any_overview`; retarget the two tests named in A9 to a folkeafstemning overview (they are the only existing tests edited) and run the suite green again.
+4. Fixtures: download `generel.xml`, `valgdag.xml` and every `filnavn` of `https://www.dst.dk/valg/Valg2546524/xml/valgdag.xml` unmodified into `tests/fixtures/ep_2024/` (109 files; `fintal.xml` is not part of it) with a `SHA256SUMS` and a `README.md` (source URLs, retrieval date). If the network refuses, halt.
+5. `diff.py` with its showcase.
+6. CLI `--diff` for `poll`, plain `replay` and capture `replay`.
+7. `__init__` re-exports, README (EP and `--diff`), `STRUCTURE.md`, showcases for the new modules.
 
 ### Test intents
 
-> High-level: what a test must prove, not how it is written. Step 5 turns each of these
-> into concrete cases, including the edge cases.
-
 | # | Must prove | Covers |
 |---|---|---|
-| T1 | | |
+| T1 | The `ep_2024` directory holds the 109 XML files plus README and `SHA256SUMS`, every file matches its hash with its BOM intact; `load_election` of it is an EP election with 107 places (1/1/3/10/92 by type), 92 of 92 counted, every seat field `None`, 4,301,255 eligible, 58.23 % turnout, SF 426,367 votes at 17.4 %, correct parent ids | A1 |
+| T2 | `parse_any_overview` gives each type from its own overview; the Folketingsvalg adapter refuses EP and the EP adapter refuses Folketingsvalg; folkeafstemning, kommunalvalg, lower-case, a name with a leading space and an empty name are refused with the name and the supported types in the message; the double-space name is accepted; `load_election` of each fixture set reports its own type | A2 |
+| T3 | EP through the stack: an `HttpSource` first fetch through a fake transport serving `ep_2024` equals `load_election`; a second fetch is unchanged; a recorded EP poll replays through `CaptureReplay` ending equal to the last fetch; `ReplaySource` of EP ends equal; the `replay` CLI on `ep_2024` prints 107 lines ending 92/92 and the table with `-` seats, exit 0; `poll` on an EP fake transport prints its lines | A3 |
+| T4 | EP quirks: BOM and BOM-less overviews parse equal; a status 0 feed (DST's own EP example shape) is figure-free; a never-reported feed is a placeholder; an absent or empty party `Id` behaves as for Folketingsvalg; a DOCTYPE or entity in an EP overview or result feed is refused naming the file | A4 |
+| T5 | `diff_elections`: equal elections give `()`; neither input is mutated; the order is deterministic; `None` previous equals diffing against an all-unreported copy; a place only in `current` and one only in `previous`; a mismatch in type or date is a `ValueError` naming both; every one of the five kinds can be produced | A5 |
+| T6 | Semantics on real data: a changed seat at the national place and at a storkreds in a modified copy of the 2026 election gives `PartyResultChanged` with before and after seats, votes and percent and the right deltas; a percent-only change counts; a new party has `before is None`; EP changes never carry a seat delta; `LeaderChanged` for an overtake, for the first leader of a newly counted place (`before is None`), tie rule, "Uden for partier" never leads, no leader change when only votes move; `StatusChanged` for 1 to 9, 1 to 11, 0 to 9 and not for 0 to 1; `ProgressChanged` with both pairs; `Place.leader` on its own | A6 |
+| T7 | Diffing each consecutive pair of `ReplaySource` snapshots of the 2026 election yields 107 `PlaceCounted` in total, ends the `ProgressChanged` chain at 92 of 92 and ends with the national leader Socialdemokratiet; the same for the EP election with SF as national leader | A7 |
+| T8 | `--diff` prints exactly the notable lines in the stated formats on `replay` (plain and capture) and on `poll`, restricts leader lines to country, landsdel and storkreds, and the output without the flag equals the output with the diff lines removed; a failed poll cycle prints no diff lines | A8 |
+| T9 | Every existing test passes unchanged except the two retargeted ones; `from dkvalg.adapters.folketingsvalg import FeedRef, Overview, parse_overview, parse_place, unreported_place` still works; Folketingsvalg messages unchanged | A9 |
 
 ### Risks
 
-What could make this harder than it looks, and what the build should do if it does —
-including whether it should halt.
+- **The adapter refactor can break round 1 and 2 behaviour.** The existing suite is the guard and runs green after step 2 of the guide before any EP code exists. If a failure other than the two retargeted tests appears, fix the code (not the test). If an existing test other than those two asserts that EP is refused, **halt**: A9 names exactly two.
+- **The real EP data could surprise the shared parser.** It did not in the probe (all 107 feeds parse, no seats). If the build finds a feed the parser rejects, that is an adapter bug to fix in `dst_feed`; if it would need a change to the model beyond the EP member, **halt**.
+- **Spelling of the election name.** DST writes `Europa-Parlamentsvalg`; a future spelling change is refused with a clear message rather than guessed at.
+- **`diff` can be noisy.** The function reports everything; the CLI filters to the notable kinds. Thresholds are the caller's business (out of scope).
+- **Module and function naming.** `diff_elections`, not `diff`, so that `dkvalg.diff` stays the module; `Change` uses the `type` statement (Python 3.12+, the project requires 3.13).
+- **Time kinds.** Unchanged from round 2: `Place.last_changed` is naive Danish local time, fetch and capture times are timezone-aware UTC; `diff` compares neither.
+- **Two election types, one parser.** If a later election type's result feeds differ, the registry is the place to route a type-specific `parse_place`; not built now.
 
 ### Critique
 
-> The `plan-critic`'s findings, each with what was done — applied, or rebutted in one
-> sentence — then its verdict, and one line saying how the plan was accepted:
-> `Accepted: clean critique, <date>` or `Accepted: by the user, <date>`.
+(Filled in after the plan-critic has read this plan.)
 
 ---
 
