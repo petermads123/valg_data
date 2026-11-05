@@ -1,4 +1,4 @@
-"""Poll DST's Folketingsvalg feeds over HTTPS into `Election` snapshots."""
+"""Poll DST's election feeds over HTTPS into `Election` snapshots."""
 
 import http.client
 import importlib.metadata
@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import IO, Final, Protocol
 from urllib.parse import urlsplit
 
-from dkvalg.adapters.folketingsvalg import parse_overview
+from dkvalg.adapters.registry import parse_any_overview
 from dkvalg.errors import FeedError, FetchError
 from dkvalg.model import Election, Place
 from dkvalg.sources.capture import Recorder, check_feed_name
@@ -311,7 +311,7 @@ class HttpSource:
         Raises:
             FetchError: On a network error, a timeout, an oversize body or an
                 HTTP status other than 200 and 304.
-            FeedError: If a body is malformed or not a Folketingsvalg, a listed
+            FeedError: If a body is malformed or not a supported election type, a listed
                 feed name is unsafe, or the capture cannot be written. The last
                 good election and the held bodies are left untouched.
         """
@@ -341,7 +341,7 @@ class HttpSource:
             self._overview_validators = validators
             return FetchResult(held_election, (), fetched_at)
 
-        overview = parse_overview(overview_body)
+        overview = parse_any_overview(overview_body)
         for ref in overview.feeds:
             check_feed_name(ref.file_name)
         accepted: dict[str, _Held] = {}

@@ -115,3 +115,49 @@ def test_the_helpers_stay_importable_from_their_own_modules(
     name: str, module: str
 ) -> None:
     assert hasattr(importlib.import_module(module), name)
+
+
+# --- round 3: the diff names and what stays out of the top level ---------------------
+
+DIFF_PUBLIC = [
+    "diff_elections",
+    "Change",
+    "PlaceCounted",
+    "PartyResultChanged",
+    "LeaderChanged",
+    "StatusChanged",
+    "ProgressChanged",
+]
+
+
+@pytest.mark.parametrize("name", DIFF_PUBLIC)
+def test_dkvalg_re_exports_the_diff_api_from_its_module(name: str) -> None:
+    assert getattr(dkvalg, name) is getattr(
+        importlib.import_module("dkvalg.diff"), name
+    )
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["parse_any_overview", "election_name", "parse_overview_for", "parse_overview"],
+)
+def test_dkvalg_keeps_the_registry_and_adapter_helpers_out_of_the_top_level(
+    name: str,
+) -> None:
+    assert not hasattr(dkvalg, name)
+
+
+def test_dkvalg_does_not_let_the_diff_function_shadow_the_diff_module() -> None:
+    import dkvalg.diff as diff_module
+
+    assert importlib.import_module("dkvalg.diff") is diff_module
+    assert callable(dkvalg.diff_elections)
+    assert diff_module is not dkvalg.diff_elections
+
+
+def test_election_type_exposes_the_ep_member_at_the_top_level() -> None:
+    assert dkvalg.ElectionType.EUROPAPARLAMENTSVALG.value == "europaparlamentsvalg"
+    assert {m.name for m in dkvalg.ElectionType} == {
+        "FOLKETINGSVALG",
+        "EUROPAPARLAMENTSVALG",
+    }

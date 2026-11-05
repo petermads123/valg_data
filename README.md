@@ -1,10 +1,11 @@
 # dkvalg
 
 Danish election data in one normalised model, built on the XML feeds DST (Danmarks Statistik)
-publishes for the Folketingsvalg. It reads a saved feed set and replays it through time at
-accelerated speed, polls DST's live feeds over HTTP, and records what a poll receives so a
+publishes for the Folketingsvalg and the Europa-Parlamentsvalg. It reads a saved feed set and
+replays it through time at accelerated speed, polls DST's live feeds over HTTP, and records what a poll receives so a
 live night can be replayed later with its true timing. The pipeline is developed against a
-real past election (24 March 2026). Standard library only.
+real past election (24 March 2026) and the EP election of 9 June 2024. Standard library
+only.
 
 ## Install as a dependency
 
@@ -43,6 +44,56 @@ landsdele, storkredse and opstillingskredse); a place with no result yet has sta
 `NOT_AVAILABLE`. A replay reveals each feed at its last-changed time, so landsdel, storkreds
 and national figures appear late: DST publishes only the latest version of each feed.
 
+### Europa-Parlamentsvalg
+
+The election type is read from the overview's `ValgNavn`, so EP feeds load, replay, poll and
+record exactly like Folketingsvalg ones (`election.election_type` says which). The EP feeds
+carry no seat attributes, so every seat field is `None` and the national table shows `-`.
+`tests/fixtures/ep_2024/` is the 9 June 2024 election.
+
+```python
+from pathlib import Path
+
+from dkvalg import load_election
+
+election = load_election(Path("tests/fixtures/ep_2024"))
+print(
+    election.election_type, election.counting_progress()
+)  # europaparlamentsvalg 92/92
+```
+
+### Detecting changes
+
+`diff_elections(previous, current)` compares two snapshots and returns typed changes, in a
+stable order (places in overview order, then the progress change): `PlaceCounted`,
+`PartyResultChanged` (with `votes_delta` and `seats_delta`), `LeaderChanged`, `StatusChanged`
+and `ProgressChanged`. `previous` may be `None`. The library only detects; what to do about a
+change, and any threshold, is the caller's.
+
+Things to know: DST calculates seats after a place is first counted, so live, a counted place
+gains its seats in a later snapshot and that shows as a `PartyResultChanged` (and a `seats`
+line under `--diff`); only a replay of finished files shows seats arriving together with the
+count, where a first count gives `PlaceCounted` and `LeaderChanged` but no `PartyResultChanged`.
+A place nobody has voted at has no leader, and a place that loses its leader (a status fall to
+0, 9 or 10) gives only a `StatusChanged`. Two snapshots of different elections raise `ValueError`
+(the CLI turns that into `error: ...` and exit 1).
+
+```python
+from pathlib import Path
+
+from dkvalg import LeaderChanged, ReplaySource, diff_elections, load_election
+
+source = ReplaySource(
+    load_election(Path("tests/fixtures/folketingsvalg_2026")), speed=float("inf")
+)
+before = source.initial()
+for step in source:
+    for change in diff_elections(before, step.election):
+        if isinstance(change, LeaderChanged):
+            print(change.place.name, change.before, change.after.name)
+    before = step.election
+```
+
 ### Replay command
 
 ```powershell
@@ -51,7 +102,10 @@ python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed 600
 
 Prints one line per place as it is revealed, with a running counted-of-92 progress, and ends
 with the national result table. `--speed` is a positive number (default 600) or `inf` for no
-waiting. A directory that is not a Folketingsvalg feed set prints `error: ...` to stderr and
+waiting. `--diff` adds a line after each step for every notable change: a new leader at the
+country, a landsdel or a storkreds, a seat change (or seats appearing), a status change and
+the counting progress. A directory that is not a Folketingsvalg or Europa-Parlamentsvalg feed
+set prints `error: ...` to stderr and
 exits 1. `python -m dkvalg` with no arguments prints usage.
 
 ### Live polling and recording
@@ -84,7 +138,7 @@ python -m dkvalg replay capture --speed 600
 
 `poll` takes an election id or the URL of its folder or `valgdag.xml`, an optional
 `--interval` (seconds, at least 15, default 60), `--record DIR` and `--cycles N` (stop after
-N polls; default no limit). It prints one line per changed place per poll and reports
+N polls; default no limit) and `--diff` (as for `replay`). It prints one line per changed place per poll and reports
 failures as `error: ...` on stderr (exit 1 if the last poll failed; exit 2 for a bad
 interval, cycle count or location; exit 130 on Ctrl-C). `replay` accepts either a plain feed
 directory or a capture directory. XML that declares a DOCTYPE or an entity is refused.

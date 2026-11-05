@@ -10,15 +10,19 @@ from pathlib import Path
 
 import pytest
 from conftest import (
+    EP_ELECTION_NAME,
+    LATER_ISO,
     NATIONAL,
     OVERVIEW,
     ROOT,
     FakeClock,
     FakeTransport,
+    entry,
     feed_xml,
     fixture_files,
     kreds_entry,
     overview_xml,
+    utc,
     write_directory,
 )
 
@@ -196,7 +200,7 @@ def _ep_directory(tmp_path: Path, fixture_dir: Path) -> Path:
     overview = target / "valgdag.xml"
     overview.write_bytes(
         overview.read_bytes().replace(
-            b"Folketingsvalg tirsdag 24. marts 2026", b"Europa-Parlamentsvalg 2024"
+            b"Folketingsvalg tirsdag 24. marts 2026", b"Folkeafstemning 2022"
         )
     )
     return target
@@ -242,7 +246,7 @@ def _no_feeds(tmp_path: Path, fixture_dir: Path) -> Path:
         (_empty, "valgdag.xml"),
         (_nowhere, "valgdag.xml"),
         (_a_file, ""),
-        (_ep_directory, "Europa-Parlamentsvalg"),
+        (_ep_directory, "Folkeafstemning"),
         (_malformed, "valgdag.xml"),
         (_missing_feed, "valgdag_20.xml"),
         (_no_feeds, "no result feeds"),
@@ -1070,3 +1074,493 @@ def test_replay_of_a_capture_directory_shows_the_earlier_national_figures_first(
     after = second.election.of_type(cli.PlaceType.COUNTRY)[0]
 
     assert before.valid_votes != after.valid_votes
+
+
+# --- round 3: --diff (A8, T8) and EP on the CLI ----------------------------------------
+
+DIFF_LINE = re.compile(r"^\S+ \S+  (leader|seats|status|progress) ")
+LEADER_LINE = re.compile(
+    r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\+00:00)?  leader (\S+) (.+): (\S+) -> (\S+)$"
+)
+PROGRESS_LINE = re.compile(
+    r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\+00:00)?  progress \d+/\d+ -> \d+/\d+$"
+)
+
+
+def _diff_lines(text: str) -> list[str]:
+    return [line for line in text.splitlines() if DIFF_LINE.match(line)]
+
+
+def _without_diff_lines(text: str) -> str:
+    return "".join(
+        line for line in text.splitlines(keepends=True) if not DIFF_LINE.match(line)
+    )
+
+
+def _stemmer(
+    a_votes: int, f_votes: int, a_seats: int | None = None, f_seats: int | None = None
+) -> str:
+    def party(party_id: str, letter: str, votes: int, seats: int | None) -> str:
+        seat_attr = "" if seats is None else f' Mandater="{seats}"'
+        return (
+            f'<Parti Id="{party_id}" Bogstav="{letter}" Navn="{letter}. Parti"'
+            f'{seat_attr} StemmerAntal="{votes}" StemmerPct="{votes / 10}" />\n'
+        )
+
+    total = a_votes + f_votes
+    return (
+        party("5891", "A", a_votes, a_seats)
+        + party("5897", "F", f_votes, f_seats)
+        + f"<IAltGyldigeStemmer>{total}</IAltGyldigeStemmer>\n"
+        "<BlankeStemmer>0</BlankeStemmer>\n"
+        "<AndreUgyldigeStemmer>0</AndreUgyldigeStemmer>\n"
+        "<IAltUgyldigeStemmer>0</IAltUgyldigeStemmer>\n"
+        f"<IAltAfgivneStemmer>{total}</IAltAfgivneStemmer>\n"
+    )
+
+
+def _synthetic_step(
+    recorder: Recorder,
+    at: str,
+    stamp: str,
+    country: tuple[int, int, int | None, int | None],
+    kreds: tuple[int, int] | None,
+    *,
+    name: str | None = None,
+) -> None:
+    """Record one capture folder: a country and (unless `None`) a kreds, both stamped."""
+    iso = f"2026-03-24T{stamp}"
+    entries = [
+        entry(
+            "Land", "Hele landet", "valgdag_0.xml", land_id="0", iso=iso, senest=None
+        ),
+        kreds_entry("20", "Østerbro", iso=iso, senest=None),
+    ]
+    feeds = {
+        "valgdag_0.xml": feed_xml(stemmer=_stemmer(*country), iso=iso, senest=None),
+        "valgdag_20.xml": (
+            feed_xml(
+                status="9",
+                status_text="Fejl",
+                stemmer=None,
+                eligible=None,
+                turnout=None,
+                iso=iso,
+                senest=None,
+            )
+            if kreds is None
+            else feed_xml(stemmer=_stemmer(*kreds), iso=iso, senest=None)
+        ),
+    }
+    overview = (
+        overview_xml(entries) if name is None else overview_xml(entries, name=name)
+    )
+    recorder.record(utc(f"2026-03-24T{at}"), {OVERVIEW: overview, **feeds})
+
+
+def _synthetic_capture(root: Path) -> Path:
+    """Three polls: a first count, seats appearing, then seats moving with a status fall."""
+    recorder = Recorder(root)
+    _synthetic_step(recorder, "20:00:00", "22:00:00", (600, 400, None, None), (60, 40))
+    _synthetic_step(recorder, "20:01:00", "22:05:00", (600, 400, 3, 2), (60, 40))
+    _synthetic_step(recorder, "20:02:00", "22:10:00", (600, 700, 4, 1), None)
+    return root
+
+
+def test_replay_diff_on_a_synthetic_capture_prints_the_documented_lines_in_order(
+    tmp_path: Path,
+) -> None:
+    capture = _synthetic_capture(tmp_path / "cap")
+
+    code, out, err = _run(["replay", str(capture), "--speed", "inf", "--diff"])
+
+    assert (code, err) == (0, "")
+    assert _diff_lines(out) == [
+        "2026-03-24 20:00:00+00:00  leader country Hele landet: - -> A",
+        "2026-03-24 20:00:00+00:00  progress 0/1 -> 1/1",
+        "2026-03-24 20:01:00+00:00  seats country Hele landet: A - -> 3",
+        "2026-03-24 20:01:00+00:00  seats country Hele landet: F - -> 2",
+        "2026-03-24 20:02:00+00:00  seats country Hele landet: A 3 -> 4",
+        "2026-03-24 20:02:00+00:00  seats country Hele landet: F 2 -> 1",
+        "2026-03-24 20:02:00+00:00  leader country Hele landet: A -> F",
+        "2026-03-24 20:02:00+00:00  status opstillingskreds Østerbro: PRELIMINARY -> ERROR",
+        "2026-03-24 20:02:00+00:00  progress 1/1 -> 0/1",
+    ]
+
+
+def test_replay_diff_places_the_diff_lines_after_each_steps_place_lines(
+    tmp_path: Path,
+) -> None:
+    capture = _synthetic_capture(tmp_path / "cap")
+
+    _, out, _ = _run(["replay", str(capture), "--speed", "inf", "--diff"])
+
+    lines = out.splitlines()
+    first_diff = next(i for i, line in enumerate(lines) if DIFF_LINE.match(line))
+    assert [bool(DIFF_LINE.match(line)) for line in lines[:first_diff]] == [
+        False
+    ] * first_diff
+    assert first_diff == 2  # the first step's two place lines come first
+
+
+def test_replay_diff_without_the_flag_prints_none_of_those_lines(
+    tmp_path: Path,
+) -> None:
+    capture = _synthetic_capture(tmp_path / "cap")
+
+    _, out, _ = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert _diff_lines(out) == []
+
+
+def test_replay_diff_a_votes_only_change_prints_no_line(tmp_path: Path) -> None:
+    recorder = Recorder(tmp_path / "cap")
+    _synthetic_step(recorder, "20:00:00", "22:00:00", (600, 400, 3, 2), (60, 40))
+    _synthetic_step(recorder, "20:01:00", "22:05:00", (650, 450, 3, 2), (60, 40))
+
+    _, out, _ = _run(["replay", str(tmp_path / "cap"), "--speed", "inf", "--diff"])
+
+    assert [line.split("  ", 1)[1] for line in _diff_lines(out)] == [
+        "leader country Hele landet: - -> A",
+        "progress 0/1 -> 1/1",
+    ]
+
+
+def test_replay_diff_a_dash_stands_for_an_empty_letter(tmp_path: Path) -> None:
+    recorder = Recorder(tmp_path / "cap")
+    iso = "2026-03-24T22:00:00"
+    stemmer = (
+        '<Parti Id="5891" Navn="Uden bogstav" StemmerAntal="9" StemmerPct="9.0" />\n'
+        "<IAltGyldigeStemmer>9</IAltGyldigeStemmer>\n"
+    )
+    recorder.record(
+        utc("2026-03-24T20:00:00"),
+        {
+            OVERVIEW: overview_xml(
+                [
+                    entry(
+                        "Land",
+                        "Hele landet",
+                        "valgdag_0.xml",
+                        land_id="0",
+                        iso=iso,
+                        senest=None,
+                    )
+                ]
+            ),
+            "valgdag_0.xml": feed_xml(stemmer=stemmer, iso=iso, senest=None),
+        },
+    )
+
+    _, out, _ = _run(["replay", str(tmp_path / "cap"), "--speed", "inf", "--diff"])
+
+    assert _diff_lines(out)[0].endswith("leader country Hele landet: - -> -")
+
+
+@pytest.mark.parametrize("flag_after", [True, False])
+def test_diff_flag_is_accepted_before_or_after_the_positional(
+    fixture_dir: Path, flag_after: bool
+) -> None:
+    argv = ["replay", str(fixture_dir), "--speed", "inf"]
+    argv = [*argv, "--diff"] if flag_after else ["replay", "--diff", *argv[1:]]
+
+    code, out, err = _run(argv)
+
+    assert (code, err) == (0, "")
+    assert _diff_lines(out)
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["--diff", "replay", "x"],
+        ["replay", "x", "--diff=1"],
+        ["poll", "Valg1", "--diff=1"],
+    ],
+)
+def test_diff_misuse_exits_2_with_usage_on_err(argv: list[str]) -> None:
+    code, out, err = _run(argv)
+
+    assert code == 2
+    assert out == ""
+    assert "usage:" in err
+
+
+def test_replay_and_poll_help_list_the_diff_option() -> None:
+    for command in ("replay", "poll"):
+        code, out, _ = _run([command, "--help"])
+
+        assert code == 0
+        assert "--diff" in out
+
+
+# --- --diff on the real fixtures --------------------------------------------------------
+
+
+@pytest.mark.parametrize("fixture_name", ["fixture_dir", "ep_fixture_dir"])
+def test_replay_output_without_the_flag_equals_the_diff_output_minus_the_diff_lines(
+    request: pytest.FixtureRequest, fixture_name: str
+) -> None:
+    directory: Path = request.getfixturevalue(fixture_name)
+    _, plain, _ = _run(["replay", str(directory), "--speed", "inf"])
+
+    code, with_diff, err = _run(["replay", str(directory), "--speed", "inf", "--diff"])
+
+    assert (code, err) == (0, "")
+    assert _without_diff_lines(with_diff) == plain
+    assert _diff_lines(plain) == []
+    assert len(_diff_lines(with_diff)) > 100
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "letter"), [("fixture_dir", "A"), ("ep_fixture_dir", "F")]
+)
+def test_replay_diff_leader_lines_are_only_country_landsdel_and_storkreds(
+    request: pytest.FixtureRequest, fixture_name: str, letter: str
+) -> None:
+    directory: Path = request.getfixturevalue(fixture_name)
+
+    _, out, _ = _run(["replay", str(directory), "--speed", "inf", "--diff"])
+
+    leaders = [m for line in _diff_lines(out) if (m := LEADER_LINE.match(line))]
+    assert {m.group(2) for m in leaders} == {"country", "landsdel", "storkreds"}
+    assert len(leaders) == 1 + 3 + 10
+    assert f"leader country Hele landet: - -> {letter}" in out
+    assert "leader opstillingskreds" not in out
+    assert "leader tally" not in out
+
+
+def test_replay_diff_ends_with_the_progress_line_92_of_92_before_the_table(
+    fixture_dir: Path,
+) -> None:
+    _, out, _ = _run(["replay", str(fixture_dir), "--speed", "inf", "--diff"])
+
+    progress = [line for line in out.splitlines() if " progress " in line]
+    assert len(progress) == 92
+    assert progress[0].endswith("progress 0/92 -> 1/92")
+    assert progress[-1].endswith("progress 91/92 -> 92/92")
+    assert all(PROGRESS_LINE.match(line) for line in progress)
+
+
+def test_replay_diff_on_the_fixtures_prints_no_seats_or_status_lines(
+    fixture_dir: Path,
+) -> None:
+    # In a replay of finished files seats arrive together with the count, which is
+    # PlaceCounted + LeaderChanged and no PartyResultChanged: no seats line (pinned).
+    _, out, _ = _run(["replay", str(fixture_dir), "--speed", "inf", "--diff"])
+
+    assert "  seats " not in out
+    assert "  status " not in out
+
+
+def test_replay_diff_on_ep_prints_no_seats_lines_and_ends_with_sf_nationally(
+    ep_fixture_dir: Path,
+) -> None:
+    _, out, _ = _run(["replay", str(ep_fixture_dir), "--speed", "inf", "--diff"])
+
+    assert "  seats " not in out
+    assert out.count("leader country") == 1
+    assert "leader country Hele landet: - -> F" in out
+
+
+def test_replay_diff_of_a_recorded_capture_agrees_with_the_plain_replay(
+    tmp_path: Path,
+) -> None:
+    capture = _capture(tmp_path)
+    _, plain, _ = _run(["replay", str(capture), "--speed", "inf"])
+
+    code, with_diff, err = _run(["replay", str(capture), "--speed", "inf", "--diff"])
+
+    assert (code, err) == (0, "")
+    assert _without_diff_lines(with_diff) == plain
+    progress = [line for line in with_diff.splitlines() if " progress " in line]
+    assert progress == [
+        "2026-03-24 20:00:00+00:00  progress 0/92 -> 92/92",
+    ]
+    assert "20:01:00+00:00  leader" not in with_diff
+
+
+# --- --diff on poll ---------------------------------------------------------------------
+
+
+def test_poll_diff_first_cycle_prints_progress_and_leaders_at_three_levels() -> None:
+    code, out, err, _, _ = _poll(["poll", "Valg2546527", "--cycles", "1", "--diff"])
+
+    diff = _diff_lines(out)
+    assert (code, err) == (0, "")
+    assert "2026-03-24 20:00:00+00:00  progress 0/92 -> 92/92" in diff
+    leaders = [m for line in diff if (m := LEADER_LINE.match(line))]
+    assert len(leaders) == 14
+    assert {m.group(2) for m in leaders} == {"country", "landsdel", "storkreds"}
+    assert all(line.startswith("2026-03-24 20:00:00+00:00") for line in diff)
+
+
+def test_poll_diff_output_minus_the_diff_lines_equals_the_plain_poll_output() -> None:
+    _, plain, _, _, _ = _poll(["poll", "Valg2546527", "--cycles", "2"])
+
+    _, with_diff, _, _, _ = _poll(["poll", "Valg2546527", "--cycles", "2", "--diff"])
+
+    assert _without_diff_lines(with_diff) == plain
+    assert _diff_lines(plain) == []
+
+
+def test_poll_diff_an_unchanged_cycle_prints_no_lines_at_all() -> None:
+    _, out, _, _, _ = _poll(["poll", "Valg2546527", "--cycles", "2", "--diff"])
+
+    assert "20:01:00" not in out
+
+
+def test_poll_diff_prints_a_seat_change_from_a_later_cycle() -> None:
+    transport = FakeTransport()
+    seen = {"n": 0}
+
+    def after_first_wait(_seconds: float) -> None:
+        seen["n"] += 1
+        if seen["n"] == 1:
+            body = transport.files[NATIONAL].replace(
+                b'Mandater="38"', b'Mandater="39"', 1
+            )
+            transport.publish(NATIONAL, body)
+            transport.touch([NATIONAL], bump=False)
+
+    _, out, _, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2", "--diff"],
+        transport,
+        sleep=after_first_wait,
+    )
+
+    assert _diff_lines(out)[-1] == (
+        "2026-03-24 20:01:00+00:00  seats country Hele landet: A 38 -> 39"
+    )
+    assert len([line for line in _diff_lines(out) if "20:01:00" in line]) == 1
+
+
+def test_poll_diff_a_failed_cycle_prints_no_diff_lines_and_the_next_diffs_against_the_last_good_one() -> (
+    None
+):
+    transport = FakeTransport()
+    steps = {"n": 0}
+
+    def script(_seconds: float) -> None:
+        steps["n"] += 1
+        if steps["n"] == 1:
+            transport.script(OVERVIEW, FetchError("down"))
+        elif steps["n"] == 2:
+            transport.touch(THREE)
+
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "3", "--diff"], transport, sleep=script
+    )
+
+    stamps = {line.split("  ")[0] for line in _diff_lines(out)}
+    assert (code, err) == (0, "error: down\n")
+    assert stamps == {
+        "2026-03-24 20:00:00+00:00"
+    }  # nothing for the failed or later cycles
+    assert "20:01:00" not in out
+    assert any(
+        line.startswith("2026-03-24 20:02:00+00:00") for line in out.splitlines()
+    )
+
+
+def test_poll_diff_a_first_cycle_failure_then_success_diffs_against_none() -> None:
+    transport = FakeTransport()
+    transport.script(OVERVIEW, FetchError("down"))
+
+    _, out, err, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2", "--diff"], transport
+    )
+
+    assert err == "error: down\n"
+    assert "2026-03-24 20:01:00+00:00  progress 0/92 -> 92/92" in out
+
+
+def test_poll_diff_ep_first_cycle_has_leader_f_and_no_seat_lines(
+    ep_transport: FakeTransport,
+) -> None:
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg2546524", "--cycles", "1", "--diff"], ep_transport
+    )
+
+    assert (code, err) == (0, "")
+    assert "leader country Hele landet: - -> F" in out
+    assert "  seats " not in out
+    assert "progress 0/92 -> 92/92" in out
+
+
+def test_poll_uses_aware_utc_times_while_replay_prints_naive_local_time(
+    fixture_dir: Path,
+) -> None:
+    _, polled, _, _, _ = _poll(["poll", "Valg2546527", "--cycles", "1", "--diff"])
+    _, replayed, _ = _run(["replay", str(fixture_dir), "--speed", "inf", "--diff"])
+
+    assert all(line.split("  ")[0].endswith("+00:00") for line in polled.splitlines())
+    assert not any(
+        "+00:00" in line.split("  ")[0] for line in replayed.splitlines()[:-20]
+    )
+
+
+# --- --diff with two elections in one run (decision C5) ---------------------------------
+
+
+def _mixed_capture(root: Path) -> Path:
+    recorder = Recorder(root)
+    _synthetic_step(recorder, "20:00:00", "22:00:00", (600, 400, None, None), (60, 40))
+    _synthetic_step(
+        recorder,
+        "20:01:00",
+        "22:05:00",
+        (600, 400, None, None),
+        (60, 40),
+        name=EP_ELECTION_NAME,
+    )
+    return root
+
+
+def test_replay_diff_of_a_capture_mixing_two_elections_exits_1_with_an_error(
+    tmp_path: Path,
+) -> None:
+    capture = _mixed_capture(tmp_path / "cap")
+
+    code, out, err = _run(["replay", str(capture), "--speed", "inf", "--diff"])
+
+    assert code == 1
+    assert err.startswith("error: cannot diff folketingsvalg 2026-03-24 against ")
+    assert "europaparlamentsvalg" in err
+    assert "Traceback" not in err
+    # the step's place lines print before its diff is attempted; no diff line follows
+    assert not [line for line in _diff_lines(out) if "20:01:00" in line]
+
+
+def test_replay_of_a_capture_mixing_two_elections_works_without_the_flag(
+    tmp_path: Path,
+) -> None:
+    capture = _mixed_capture(tmp_path / "cap")
+
+    code, _, err = _run(["replay", str(capture), "--speed", "inf"])
+
+    assert (code, err) == (0, "")
+
+
+def test_poll_diff_an_election_that_changes_type_mid_run_exits_1_with_an_error() -> (
+    None
+):
+    transport = FakeTransport()
+
+    def switch_election(_seconds: float) -> None:
+        overview = transport.files[OVERVIEW].replace(
+            b"Folketingsvalg tirsdag", b"Europa-Parlamentsvalg tirsdag"
+        )
+        transport.publish(OVERVIEW, overview)
+        transport.touch([NATIONAL], LATER_ISO, bump=False)
+
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg2546527", "--cycles", "2", "--diff"],
+        transport,
+        sleep=switch_election,
+    )
+
+    assert code == 1
+    assert err.startswith("error: cannot diff folketingsvalg ")
+    assert "Traceback" not in err
+    assert not [line for line in _diff_lines(out) if "20:01:00" in line]

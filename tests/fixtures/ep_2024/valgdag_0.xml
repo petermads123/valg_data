@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Europa-Parlamentsvalg søndag  9. juni 2024</ValgNavn>
+  <ValgDato>09-06-2024</ValgDato>
+  <Sted Id="" Type="HeleLandet">Hele landet</Sted>
+  <SenestRettet>10-06-2024 01:06:16</SenestRettet>
+  <SenestRettetIso>2024-06-10T01:06:16</SenestRettetIso>
+  <SenestDannet>10-06-2024 01:07:10</SenestDannet>
+  <SenestDannetIso>2024-06-10T01:07:10</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg2546524/valgopg/valgopgHL.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg2546524/valgopg/valgopg.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>4301255</Stemmeberettigede>
+  <DeltagelsePct>58.23</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" StemmerAntal="381494" StemmerPct="15.6" />
+    <Parti Id="5893" Bogstav="B" Navn="B. Radikale Venstre" StemmerAntal="173159" StemmerPct="7.1" />
+    <Parti Id="5895" Bogstav="C" Navn="C. Det Konservative Folkeparti" StemmerAntal="216249" StemmerPct="8.8" />
+    <Parti Id="5897" Bogstav="F" Navn="F. SF - Socialistisk Folkeparti" StemmerAntal="426367" StemmerPct="17.4" />
+    <Parti Id="5907" Bogstav="I" Navn="I. Liberal Alliance" StemmerAntal="170179" StemmerPct="7" />
+    <Parti Id="1962293" Bogstav="M" Navn="M. Moderaterne" StemmerAntal="145363" StemmerPct="5.9" />
+    <Parti Id="5899" Bogstav="O" Navn="O. Dansk Folkeparti" StemmerAntal="155875" StemmerPct="6.4" />
+    <Parti Id="5903" Bogstav="V" Navn="V. Venstre, Danmarks Liberale Parti" StemmerAntal="359556" StemmerPct="14.7" />
+    <Parti Id="1968075" Bogstav="Æ" Navn="Æ. Danmarksdemokraterne - Inger Støjberg" StemmerAntal="180666" StemmerPct="7.4" />
+    <Parti Id="5905" Bogstav="Ø" Navn="Ø. Enhedslisten - De Rød-Grønne" StemmerAntal="172009" StemmerPct="7" />
+    <Parti Id="1487618" Bogstav="Å" Navn="Å. Alternativet" StemmerAntal="65276" StemmerPct="2.7" />
+    <IAltGyldigeStemmer>2446193</IAltGyldigeStemmer>
+    <BlankeStemmer>52346</BlankeStemmer>
+    <AndreUgyldigeStemmer>5965</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>58311</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>2504504</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

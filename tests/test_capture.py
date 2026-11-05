@@ -5,10 +5,12 @@ from pathlib import Path
 
 import pytest
 from conftest import (
+    EP_BASE_URL,
     NATIONAL,
     OVERVIEW,
     FakeClock,
     FakeTransport,
+    ep_fixture_files,
     feed_xml,
     fixture_files,
     kreds_entry,
@@ -20,6 +22,7 @@ from conftest import (
 from dkvalg import (
     CaptureReplay,
     CaptureStep,
+    ElectionType,
     FeedError,
     FetchResult,
     HttpSource,
@@ -1003,3 +1006,66 @@ def test_replay_keeps_an_old_body_when_the_overview_claims_a_newer_one_nobody_ca
     assert len(steps) == 2
     assert steps[1].changed == ()  # a place's figures come from its feed body
     assert waits == [30.0]
+
+
+# --- round 3: Europa-Parlamentsvalg captures (A3, T3) ---------------------------------
+
+
+def _record_ep(directory: Path) -> tuple[HttpSource, list[FetchResult]]:
+    transport = FakeTransport(ep_fixture_files(), base_url=EP_BASE_URL)
+    source = HttpSource(
+        "Valg2546524",
+        transport=transport,
+        recorder=Recorder(directory),
+        clock=FakeClock(T1, 60.0),
+    )
+    results = [source.fetch()]
+    transport.touch([NATIONAL, "valgdag_20.xml"])
+    results.append(source.fetch())
+    return source, results
+
+
+def test_ep_record_then_replay_ends_equal_to_the_last_fetch(tmp_path: Path) -> None:
+    source, results = _record_ep(tmp_path / "cap")
+
+    steps = list(CaptureReplay(tmp_path / "cap", speed=INF))
+
+    assert len(steps) == 2
+    assert steps[-1].election == source.election == results[-1].election
+    assert steps[-1].election.election_type is ElectionType.EUROPAPARLAMENTSVALG
+
+
+def test_ep_replay_step_changed_lists_equal_the_live_ones(tmp_path: Path) -> None:
+    _, results = _record_ep(tmp_path / "cap")
+
+    steps = list(CaptureReplay(tmp_path / "cap", speed=INF))
+
+    assert [s.changed for s in steps] == [r.changed for r in results]
+    assert len(steps[0].changed) == 107
+    assert {p.place_id for p in steps[1].changed} == {"0", "20"}
+
+
+def test_ep_replay_shows_the_earlier_national_figures_first(tmp_path: Path) -> None:
+    _record_ep(tmp_path / "cap")
+
+    first, last = list(CaptureReplay(tmp_path / "cap", speed=INF))
+
+    national = (PlaceType.COUNTRY, "0")
+    assert (
+        first.election.get(*national).valid_votes
+        != last.election.get(*national).valid_votes
+    )
+
+
+def test_an_ep_capture_folder_holds_the_ep_overview_with_the_double_space(
+    tmp_path: Path,
+) -> None:
+    _record_ep(tmp_path / "cap")
+
+    first_folder = sorted((tmp_path / "cap").iterdir())[0]
+
+    assert (
+        "søndag  9. juni 2024".encode() in (first_folder / "valgdag.xml").read_bytes()
+    )
+    assert len(list(first_folder.glob("*.xml"))) == 108
+    assert is_capture_directory(tmp_path / "cap")

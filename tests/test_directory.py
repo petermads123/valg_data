@@ -7,6 +7,7 @@ from conftest import (
     feed_xml,
     kreds_entry,
     overview_xml,
+    retime_overview,
     write_directory,
 )
 from conftest import (
@@ -333,11 +334,11 @@ def test_load_election_an_ep_overview_is_refused(fixture_copy: Path) -> None:
     path = fixture_copy / "valgdag.xml"
     path.write_bytes(
         path.read_bytes().replace(
-            b"Folketingsvalg tirsdag 24. marts 2026", b"Europa-Parlamentsvalg 2024"
+            b"Folketingsvalg tirsdag 24. marts 2026", b"Folkeafstemning 2022"
         )
     )
 
-    with pytest.raises(FeedError, match="Europa-Parlamentsvalg"):
+    with pytest.raises(FeedError, match="Folkeafstemning"):
         load_election(fixture_copy)
 
 
@@ -559,3 +560,74 @@ def test_build_election_calls_the_reader_once_per_listing_of_a_shared_file_name(
 
     assert asked == ["valgdag_20.xml", "valgdag_20.xml"]
     assert [p.place_id for p in result.places] == ["20", "21"]
+
+
+# --- round 3: Europa-Parlamentsvalg through load_election and build_election --------
+
+
+def test_load_election_of_the_ep_fixtures_reports_the_ep_type(
+    ep_election: Election, election: Election
+) -> None:
+    assert ep_election.election_type is ElectionType.EUROPAPARLAMENTSVALG
+    assert election.election_type is ElectionType.FOLKETINGSVALG
+    assert len(ep_election.places) == len(election.places) == 107
+
+
+def test_build_election_picks_the_adapter_from_the_overview_name(
+    ep_fixture_dir: Path, fixture_dir: Path
+) -> None:
+    types = []
+    for directory in (ep_fixture_dir, fixture_dir):
+
+        def read(name: str, base: Path = directory) -> bytes:
+            return (base / name).read_bytes()
+
+        types.append(
+            build_election((directory / "valgdag.xml").read_bytes(), read).election_type
+        )
+
+    assert types == [ElectionType.EUROPAPARLAMENTSVALG, ElectionType.FOLKETINGSVALG]
+
+
+@pytest.mark.parametrize(
+    "name", ["Kommunalvalg 2025", "folketingsvalg", "x Folketingsvalg"]
+)
+def test_load_election_refuses_unsupported_names_naming_them_and_the_supported_types(
+    tmp_path: Path, name: str
+) -> None:
+    directory = write_directory(
+        tmp_path / "d", overview_xml([kreds_entry("20", "K")], name=name)
+    )
+
+    with pytest.raises(FeedError) as caught:
+        load_election(directory)
+
+    assert repr(name) in str(caught.value)
+    assert "Folketingsvalg, Europa-Parlamentsvalg" in str(caught.value)
+
+
+def test_build_election_hostile_ep_overview_is_refused_before_any_read() -> None:
+    xml = b'<!DOCTYPE d [<!ENTITY e "x">]><Data><ValgNavn>Europa-Parlamentsvalg</ValgNavn></Data>'
+
+    def reader(_name: str) -> bytes:
+        raise AssertionError("no feed may be read")
+
+    with pytest.raises(FeedError, match="DOCTYPE"):
+        build_election(xml, reader)
+
+
+def test_load_election_ep_with_a_never_reported_feed_gives_a_placeholder(
+    ep_fixture_copy: Path,
+) -> None:
+    overview = (ep_fixture_copy / "valgdag.xml").read_bytes()
+    never = retime_overview(
+        overview, "valgdag_20.xml", "0001-01-01T00:00:00", "01-01-0001 00:00:00"
+    )
+    (ep_fixture_copy / "valgdag.xml").write_bytes(never)
+    (ep_fixture_copy / "valgdag_20.xml").unlink()
+
+    election = load_election(ep_fixture_copy)
+
+    assert election.get(PlaceType.OPSTILLINGSKREDS, "20").status is Status.NOT_AVAILABLE
+    assert election.counting_progress() == CountingProgress(91, 92)
+    assert election.election_type is ElectionType.EUROPAPARLAMENTSVALG

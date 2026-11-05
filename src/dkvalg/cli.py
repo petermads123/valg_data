@@ -10,6 +10,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import TextIO
 
+from dkvalg.diff import (
+    LeaderChanged,
+    PartyResultChanged,
+    ProgressChanged,
+    StatusChanged,
+    diff_elections,
+)
 from dkvalg.errors import FeedError
 from dkvalg.model import CountingProgress, Election, Place, PlaceType
 from dkvalg.sources.capture import CaptureReplay, Recorder, is_capture_directory
@@ -27,6 +34,8 @@ from dkvalg.sources.http_source import (
 from dkvalg.sources.replay import ReplaySource
 
 _DEFAULT_SPEED = 600.0
+_LEADER_LEVELS = frozenset({PlaceType.COUNTRY, PlaceType.LANDSDEL, PlaceType.STORKREDS})
+_DIFF_HELP = "also print leader, seat and status changes and the counting progress"
 
 
 def _speed(text: str) -> float:
@@ -83,6 +92,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=_DEFAULT_SPEED,
         help="time compression, a positive number or inf (default: %(default)s)",
     )
+    replay.add_argument("--diff", action="store_true", help=_DIFF_HELP)
     live = commands.add_parser(
         "poll", help="poll DST's live feeds and print the places that change"
     )
@@ -102,6 +112,7 @@ def _build_parser() -> argparse.ArgumentParser:
     live.add_argument(
         "--cycles", type=_cycles, help="stop after this many polls (default: no limit)"
     )
+    live.add_argument("--diff", action="store_true", help=_DIFF_HELP)
     return parser
 
 
@@ -129,22 +140,65 @@ def _place_line(at: datetime, progress: CountingProgress, place: Place) -> str:
     return f"{stamp}  {counted:>5}  {place.place_type.value} {place.name}\n"
 
 
+def _diff_lines(at: datetime, previous: Election | None, current: Election) -> str:
+    """Format the notable changes between two snapshots, one line each.
+
+    Notable: a leader change at a country, landsdel or storkreds; a seat change,
+    including seats appearing; a status change; the counting progress.
+    """
+    stamp = at.isoformat(sep=" ")
+    lines: list[str] = []
+    try:
+        changes = diff_elections(previous, current)
+    except ValueError as error:
+        raise FeedError(str(error)) from error
+    for change in changes:
+        match change:
+            case LeaderChanged(place=place, before=before, after=after):
+                if place.place_type in _LEADER_LEVELS:
+                    old = "-" if before is None else before.letter or "-"
+                    new = after.letter or "-"
+                    lines.append(
+                        f"{stamp}  leader {place.place_type.value} {place.name}: "
+                        f"{old} -> {new}"
+                    )
+            case PartyResultChanged(place=place, before=before, after=after):
+                was = None if before is None else before.seats
+                if after.seats is not None and (was is None or after.seats != was):
+                    old_seats = "-" if was is None else str(was)
+                    lines.append(
+                        f"{stamp}  seats {place.place_type.value} {place.name}: "
+                        f"{after.letter or '-'} {old_seats} -> {after.seats}"
+                    )
+            case StatusChanged(place=place, before=before, after=after):
+                lines.append(
+                    f"{stamp}  status {place.place_type.value} {place.name}: "
+                    f"{before.name} -> {after.name}"
+                )
+            case ProgressChanged(before=before, after=after):
+                lines.append(f"{stamp}  progress {before} -> {after}")
+    return "".join(f"{line}\n" for line in lines)
+
+
 def _replay(
     directory: Path,
     speed: float,
     out: TextIO,
     sleep: Callable[[float], None],
+    show_diff: bool,
 ) -> None:
     """Load the directory, replay it, print each step and the final table."""
     if is_capture_directory(directory):
-        _replay_capture(directory, speed, out, sleep)
+        _replay_capture(directory, speed, out, sleep, show_diff)
         return
     election = load_election(directory)
     source = ReplaySource(election, speed=speed, sleep=sleep)
     final = source.initial()
     for step in source:
-        final = step.election
+        previous, final = final, step.election
         out.write(_place_line(step.at, step.progress, step.place))
+        if show_diff:
+            out.write(_diff_lines(step.at, previous, final))
         out.flush()
     _print_table(final, out)
 
@@ -154,13 +208,16 @@ def _replay_capture(
     speed: float,
     out: TextIO,
     sleep: Callable[[float], None],
+    show_diff: bool,
 ) -> None:
     """Replay a capture directory: a line per changed place, then the table."""
     final: Election | None = None
     for step in CaptureReplay(directory, speed=speed, sleep=sleep):
-        final = step.election
+        previous, final = final, step.election
         for place in step.changed:
             out.write(_place_line(step.at, step.progress, place))
+        if show_diff:
+            out.write(_diff_lines(step.at, previous, final))
         out.flush()
     if final is not None:
         _print_table(final, out)
@@ -185,6 +242,7 @@ def _poll(
         args.location, transport=transport, recorder=recorder, clock=clock
     )
     failed = False
+    previous: Election | None = None
     try:
         for cycle in poll(
             source, interval=args.interval, max_cycles=args.cycles, sleep=sleep
@@ -198,6 +256,9 @@ def _poll(
                 progress = cycle.election.counting_progress()
                 for place in cycle.changed:
                     out.write(_place_line(cycle.at, progress, place))
+                if args.diff:
+                    out.write(_diff_lines(cycle.at, previous, cycle.election))
+                previous = cycle.election
             out.flush()
     except KeyboardInterrupt:
         return 130
@@ -244,7 +305,7 @@ def run(
     try:
         if args.command == "poll":
             return _poll(args, out, err, sleep, transport, clock)
-        _replay(args.directory, args.speed, out, sleep)
+        _replay(args.directory, args.speed, out, sleep, args.diff)
     except FeedError as error:
         err.write(f"error: {error}\n")
         return 1

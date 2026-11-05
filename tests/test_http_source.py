@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 from conftest import (
+    EP_BASE_URL,
     NATIONAL,
     OVERVIEW,
     FakeClock,
@@ -18,6 +19,7 @@ from conftest import (
     FlakyRecorder,
     Request,
     entry,
+    ep_fixture_files,
     feed_xml,
     kreds_entry,
     overview_xml,
@@ -25,6 +27,7 @@ from conftest import (
 
 from dkvalg import (
     CaptureReplay,
+    ElectionType,
     FeedError,
     FetchError,
     FetchResult,
@@ -1622,3 +1625,77 @@ def test_poll_never_touches_the_network_or_the_real_sleep(
 
     assert len(cycles) == 3
     assert len(sleeps) == 2
+
+
+# --- round 3: Europa-Parlamentsvalg through HttpSource (A3, T3) -----------------------
+
+EP_ID = "Valg2546524"
+
+
+def test_overview_url_of_the_ep_election_id_and_folder_agree() -> None:
+    assert overview_url(EP_ID) == f"{EP_BASE_URL}valgdag.xml"
+    assert overview_url(EP_BASE_URL) == overview_url(EP_ID)
+
+
+def test_ep_first_fetch_equals_load_election_and_stamps_the_ep_type(
+    ep_transport: FakeTransport, tmp_path: Path
+) -> None:
+    result = HttpSource(EP_ID, transport=ep_transport, clock=FakeClock()).fetch()
+
+    assert result.election.election_type is ElectionType.EUROPAPARLAMENTSVALG
+    assert result.election == load_election(ep_transport.write_to(tmp_path / "ep"))
+
+
+def test_ep_with_a_varying_etag_still_sees_an_identical_refetch_as_unchanged() -> None:
+    transport = FakeTransport(ep_fixture_files(), vary_etag=True, base_url=EP_BASE_URL)
+    source = HttpSource(EP_ID, transport=transport, clock=FakeClock())
+    source.fetch()
+
+    second = source.fetch()
+
+    assert second.changed == ()
+
+
+def test_ep_feed_going_never_reported_and_back_is_a_placeholder_then_counted(
+    ep_transport: FakeTransport,
+) -> None:
+    source = HttpSource(EP_ID, transport=ep_transport, clock=FakeClock())
+    source.fetch()
+    ep_transport.never_reported("valgdag_20.xml")
+
+    dropped = source.fetch()
+    ep_transport.touch(["valgdag_20.xml"], bump=False)
+    back = source.fetch()
+
+    assert dropped.election.counting_progress().counted == 91
+    assert back.election.counting_progress().counted == 92
+    assert [p.place_id for p in back.changed] == ["20"]
+
+
+def test_an_overview_that_turns_into_an_unsupported_election_fails_and_keeps_state(
+    ep_transport: FakeTransport,
+) -> None:
+    source = HttpSource(EP_ID, transport=ep_transport, clock=FakeClock())
+    before = source.fetch().election
+    overview = ep_transport.files[OVERVIEW].replace(
+        b"Europa-Parlamentsvalg", b"Folkeafstemning"
+    )
+    ep_transport.publish(OVERVIEW, overview)
+
+    with pytest.raises(FeedError, match="Folkeafstemning"):
+        source.fetch()
+
+    assert source.election == before
+
+
+def test_ep_poll_yields_one_cycle_with_all_107_places_changed(
+    ep_transport: FakeTransport,
+) -> None:
+    source = HttpSource(EP_ID, transport=ep_transport, clock=FakeClock())
+
+    (cycle,) = poll(source, max_cycles=1, sleep=lambda _s: None)
+
+    assert cycle.error is None
+    assert len(cycle.changed) == 107
+    assert cycle.election is not None
+    assert cycle.election.election_type is ElectionType.EUROPAPARLAMENTSVALG

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/generel.xsd">
+  <OpstilledePartier>
+    <Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" />
+    <Parti Id="5893" Bogstav="B" Navn="B. Radikale Venstre" />
+    <Parti Id="5895" Bogstav="C" Navn="C. Det Konservative Folkeparti" />
+    <Parti Id="5897" Bogstav="F" Navn="F. SF - Socialistisk Folkeparti" />
+    <Parti Id="5907" Bogstav="I" Navn="I. Liberal Alliance" />
+    <Parti Id="1962293" Bogstav="M" Navn="M. Moderaterne" />
+    <Parti Id="5899" Bogstav="O" Navn="O. Dansk Folkeparti" />
+    <Parti Id="5903" Bogstav="V" Navn="V. Venstre, Danmarks Liberale Parti" />
+    <Parti Id="1968075" Bogstav="Æ" Navn="Æ. Danmarksdemokraterne - Inger Støjberg" />
+    <Parti Id="5905" Bogstav="Ø" Navn="Ø. Enhedslisten - De Rød-Grønne" />
+    <Parti Id="1487618" Bogstav="Å" Navn="Å. Alternativet" />
+  </OpstilledePartier>
+  <KandidaterUdenForPartier />
+</Data>
