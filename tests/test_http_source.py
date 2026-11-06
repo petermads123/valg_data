@@ -1678,11 +1678,11 @@ def test_an_overview_that_turns_into_an_unsupported_election_fails_and_keeps_sta
     source = HttpSource(EP_ID, transport=ep_transport, clock=FakeClock())
     before = source.fetch().election
     overview = ep_transport.files[OVERVIEW].replace(
-        b"Europa-Parlamentsvalg", b"Folkeafstemning"
+        b"Europa-Parlamentsvalg", b"Kommunalvalg"
     )
     ep_transport.publish(OVERVIEW, overview)
 
-    with pytest.raises(FeedError, match="Folkeafstemning"):
+    with pytest.raises(FeedError, match="Kommunalvalg"):
         source.fetch()
 
     assert source.election == before

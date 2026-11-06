@@ -384,6 +384,7 @@ def test_election_type_has_exactly_the_folketingsvalg_and_ep_members() -> None:
     assert {m.name: m.value for m in ElectionType} == {
         "FOLKETINGSVALG": "folketingsvalg",
         "EUROPAPARLAMENTSVALG": "europaparlamentsvalg",
+        "FOLKEAFSTEMNING": "folkeafstemning",
     }
     assert ElectionType("europaparlamentsvalg") is ElectionType.EUROPAPARLAMENTSVALG
     assert ElectionType.EUROPAPARLAMENTSVALG == "europaparlamentsvalg"

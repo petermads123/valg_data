@@ -1,12 +1,13 @@
 """Choose the adapter for an election overview from its name."""
 
-from dkvalg.adapters import europaparlamentsvalg, folketingsvalg
+from dkvalg.adapters import europaparlamentsvalg, folkeafstemning, folketingsvalg
 from dkvalg.adapters.dst_feed import Overview, election_name
 from dkvalg.errors import FeedError
 
 _PREFIXES = {
     "Folketingsvalg": folketingsvalg.parse_overview,
     "Europa-Parlamentsvalg": europaparlamentsvalg.parse_overview,
+    "Folkeafstemning": folkeafstemning.parse_overview,
 }
 
 
@@ -38,7 +39,8 @@ def main() -> None:
     names = (
         "Folketingsvalg tirsdag 24. marts 2026",
         "Europa-Parlamentsvalg søndag  9. juni 2024",
-        "Folkeafstemning 2022",
+        "Folkeafstemning torsdag  1. juni 2022",
+        "Kommunalvalg 2025",
     )
     template = (
         "<Valg><ValgNavn>{}</ValgNavn><ValgDato>09-06-2024</ValgDato>"

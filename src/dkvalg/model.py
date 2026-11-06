@@ -8,10 +8,15 @@ from enum import IntEnum, StrEnum
 
 
 class ElectionType(StrEnum):
-    """Which kind of election."""
+    """Which kind of election.
+
+    A referendum (`FOLKEAFSTEMNING`) is modelled like a party election: its
+    answers (JA, NEJ) are the entries of `Place.parties`.
+    """
 
     FOLKETINGSVALG = "folketingsvalg"
     EUROPAPARLAMENTSVALG = "europaparlamentsvalg"
+    FOLKEAFSTEMNING = "folkeafstemning"
 
 
 class PlaceType(StrEnum):
@@ -51,7 +56,8 @@ class Status(IntEnum):
 class PartyResult:
     """One party's result in one place.
 
-    `party_id == ""` is DST's "Uden for partier" entry, which is not a party.
+    `party_id == ""` is DST's "Uden for partier" entry, which is not a party. In a
+    referendum the entries are the answers (letter `JA` or `NEJ`), without seats.
 
     Attributes:
         party_id: DST's party id, empty for "Uden for partier".
@@ -98,7 +104,8 @@ class Place:
         other_invalid_votes: Other invalid votes, or None without a result.
         total_invalid_votes: All invalid votes, or None without a result.
         total_votes: All votes cast, or None without a result.
-        parties: Per-party results, empty without a result.
+        parties: Per-party results, empty without a result. For a referendum these
+            are the answers (JA, NEJ).
     """
 
     place_type: PlaceType

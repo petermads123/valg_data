@@ -64,7 +64,6 @@ def test_parse_any_overview_accepts_names_that_start_with_a_supported_prefix(
 @pytest.mark.parametrize(
     "name",
     [
-        "Folkeafstemning 2022",
         "Kommunalvalg 2025",
         "folketingsvalg 2026",
         "FOLKETINGSVALG 2026",

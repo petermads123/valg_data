@@ -160,4 +160,5 @@ def test_election_type_exposes_the_ep_member_at_the_top_level() -> None:
     assert {m.name for m in dkvalg.ElectionType} == {
         "FOLKETINGSVALG",
         "EUROPAPARLAMENTSVALG",
+        "FOLKEAFSTEMNING",
     }
