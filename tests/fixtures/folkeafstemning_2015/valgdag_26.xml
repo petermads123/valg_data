@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="26" Type="OpstKreds">7. Brønshøj</Sted>
+  <SenestRettet>03-12-2015 23:06:18</SenestRettet>
+  <SenestRettetIso>2015-12-03T23:06:18</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst26.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg26.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>54961</Stemmeberettigede>
+  <DeltagelsePct>67.75</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17319" StemmerPct="47.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="19071" StemmerPct="52.4" />
+    <IAltGyldigeStemmer>36390</IAltGyldigeStemmer>
+    <BlankeStemmer>738</BlankeStemmer>
+    <AndreUgyldigeStemmer>108</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>846</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>37236</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

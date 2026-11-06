@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="26" Type="OpstKreds">7. Brønshøj</Sted>
+  <SenestRettet>01-06-2022 23:20:15</SenestRettet>
+  <SenestRettetIso>2022-06-01T23:20:15</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:35</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:35</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst26.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg26.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>54624</Stemmeberettigede>
+  <DeltagelsePct>62.76</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22766" StemmerPct="67.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="10959" StemmerPct="32.5" />
+    <IAltGyldigeStemmer>33725</IAltGyldigeStemmer>
+    <BlankeStemmer>503</BlankeStemmer>
+    <AndreUgyldigeStemmer>53</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>556</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>34281</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

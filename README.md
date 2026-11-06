@@ -1,11 +1,11 @@
 # dkvalg
 
 Danish election data in one normalised model, built on the XML feeds DST (Danmarks Statistik)
-publishes for the Folketingsvalg and the Europa-Parlamentsvalg. It reads a saved feed set and
+publishes for the Folketingsvalg, the Europa-Parlamentsvalg and Danish referenda (Folkeafstemning). It reads a saved feed set and
 replays it through time at accelerated speed, polls DST's live feeds over HTTP, and records what a poll receives so a
 live night can be replayed later with its true timing. The pipeline is developed against a
-real past election (24 March 2026) and the EP election of 9 June 2024. Standard library
-only.
+real past election (24 March 2026), the EP election of 9 June 2024 and the referenda of
+2022, 2015 and 2009. Standard library only.
 
 ## Install as a dependency
 
@@ -62,6 +62,25 @@ print(
 )  # europaparlamentsvalg 92/92
 ```
 
+### Folkeafstemning (referenda)
+
+A referendum is read the same way (`ValgNavn` starts with `Folkeafstemning`;
+`election.election_type` is `folkeafstemning`). DST serves the two answers as party entries,
+so for a referendum the entries of `Place.parties` are the answers, with letter `JA` or
+`NEJ`, and every seat field is `None`. `Place.leader` is the winning answer, and `diff_elections`
+reports a flip as a `LeaderChanged`. `tests/fixtures/folkeafstemning_2022/`, `_2015/` and `_2009/`
+are the referenda of 1 June 2022, 3 December 2015 and 7 June 2009 (the 2009 set has 94
+opstillingskredse).
+
+```python
+from pathlib import Path
+
+from dkvalg import PlaceType, load_election
+
+election = load_election(Path("tests/fixtures/folkeafstemning_2022"))
+print(election.of_type(PlaceType.COUNTRY)[0].leader.letter)  # JA
+```
+
 ### Detecting changes
 
 `diff_elections(previous, current)` compares two snapshots and returns typed changes, in a
@@ -98,13 +117,14 @@ for step in source:
 
 ```powershell
 python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed 600
+python -m dkvalg replay tests/fixtures/folkeafstemning_2022 --speed inf --diff   # a referendum: the rows are JA and NEJ
 ```
 
-Prints one line per place as it is revealed, with a running counted-of-92 progress, and ends
+Prints one line per place as it is revealed, with a running counted-of-total progress, and ends
 with the national result table. `--speed` is a positive number (default 600) or `inf` for no
 waiting. `--diff` adds a line after each step for every notable change: a new leader at the
 country, a landsdel or a storkreds, a seat change (or seats appearing), a status change and
-the counting progress. A directory that is not a Folketingsvalg or Europa-Parlamentsvalg feed
+the counting progress. A directory that is not a Folketingsvalg, Europa-Parlamentsvalg or Folkeafstemning feed
 set prints `error: ...` to stderr and
 exits 1. `python -m dkvalg` with no arguments prints usage.
 

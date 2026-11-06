@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="24" Type="OpstKreds">5. Nørrebro</Sted>
+  <SenestRettet>07-06-2009 23:30:52</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:30</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst24.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg24.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50347</Stemmeberettigede>
+  <DeltagelsePct>55.69</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17883" StemmerPct="84.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3324" StemmerPct="15.7" />
+    <IAltGyldigeStemmer>21207</IAltGyldigeStemmer>
+    <BlankeStemmer>6229</BlankeStemmer>
+    <AndreUgyldigeStemmer>604</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>6833</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>28040</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

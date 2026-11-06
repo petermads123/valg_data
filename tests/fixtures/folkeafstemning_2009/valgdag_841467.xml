@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="841467" Type="OpstKreds">Færøerne</Sted>
+  <SenestRettet>07-06-2009 23:58:20</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:46</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst841467.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg841467.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35138</Stemmeberettigede>
+  <DeltagelsePct>11.8</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="3607" StemmerPct="88.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="481" StemmerPct="11.8" />
+    <IAltGyldigeStemmer>4088</IAltGyldigeStemmer>
+    <BlankeStemmer>51</BlankeStemmer>
+    <AndreUgyldigeStemmer>8</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>59</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>4147</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

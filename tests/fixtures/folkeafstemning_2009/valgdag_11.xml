@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="11" Type="StorKreds">Københavns Omegns Storkreds</Sted>
+  <SenestRettet>07-06-2009 23:23:21</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:28</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgStor11.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg11.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>359089</Stemmeberettigede>
+  <DeltagelsePct>61.14</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="164604" StemmerPct="84.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="31231" StemmerPct="15.9" />
+    <IAltGyldigeStemmer>195835</IAltGyldigeStemmer>
+    <BlankeStemmer>21997</BlankeStemmer>
+    <AndreUgyldigeStemmer>1702</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>23699</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>219534</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

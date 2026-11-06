@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="25" Type="OpstKreds">6. Bispebjerg</Sted>
+  <SenestRettet>03-12-2015 22:54:06</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:54:06</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst25.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg25.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36321</Stemmeberettigede>
+  <DeltagelsePct>62</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="9166" StemmerPct="42" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="12667" StemmerPct="58" />
+    <IAltGyldigeStemmer>21833</IAltGyldigeStemmer>
+    <BlankeStemmer>579</BlankeStemmer>
+    <AndreUgyldigeStemmer>107</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>686</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>22519</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

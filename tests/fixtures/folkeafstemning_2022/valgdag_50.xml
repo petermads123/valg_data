@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="50" Type="OpstKreds">3. Vordingborg</Sted>
+  <SenestRettet>01-06-2022 21:23:16</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:23:16</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst50.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg50.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35328</Stemmeberettigede>
+  <DeltagelsePct>68.39</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14956" StemmerPct="62.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="8901" StemmerPct="37.3" />
+    <IAltGyldigeStemmer>23857</IAltGyldigeStemmer>
+    <BlankeStemmer>257</BlankeStemmer>
+    <AndreUgyldigeStemmer>46</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>303</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>24160</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

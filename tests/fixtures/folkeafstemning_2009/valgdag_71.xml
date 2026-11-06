@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="71" Type="OpstKreds">4. Esbjerg By</Sted>
+  <SenestRettet>08-06-2009 01:17:10</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:39</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst71.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg71.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>47943</Stemmeberettigede>
+  <DeltagelsePct>51.41</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18646" StemmerPct="83.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3781" StemmerPct="16.9" />
+    <IAltGyldigeStemmer>22427</IAltGyldigeStemmer>
+    <BlankeStemmer>2086</BlankeStemmer>
+    <AndreUgyldigeStemmer>134</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2220</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>24647</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

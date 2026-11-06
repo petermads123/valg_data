@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="32" Type="OpstKreds">1. Gentofte</Sted>
+  <SenestRettet>03-12-2015 21:32:42</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:32:42</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst32.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg32.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50954</Stemmeberettigede>
+  <DeltagelsePct>76.14</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="24982" StemmerPct="65.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="13187" StemmerPct="34.5" />
+    <IAltGyldigeStemmer>38169</IAltGyldigeStemmer>
+    <BlankeStemmer>523</BlankeStemmer>
+    <AndreUgyldigeStemmer>103</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>626</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>38795</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="107" Type="OpstKreds">5. Himmerland</Sted>
+  <SenestRettet>03-12-2015 22:28:02</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:28:02</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:54</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:54</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst107.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg107.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>48763</Stemmeberettigede>
+  <DeltagelsePct>71.12</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15520" StemmerPct="45.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="18604" StemmerPct="54.5" />
+    <IAltGyldigeStemmer>34124</IAltGyldigeStemmer>
+    <BlankeStemmer>493</BlankeStemmer>
+    <AndreUgyldigeStemmer>65</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>558</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>34682</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

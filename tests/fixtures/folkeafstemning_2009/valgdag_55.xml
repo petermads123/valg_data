@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="55" Type="OpstKreds">8. Roskilde</Sted>
+  <SenestRettet>07-06-2009 23:26:41</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:36</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst55.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg55.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>59105</Stemmeberettigede>
+  <DeltagelsePct>64</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="28900" StemmerPct="85.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4874" StemmerPct="14.4" />
+    <IAltGyldigeStemmer>33774</IAltGyldigeStemmer>
+    <BlankeStemmer>3736</BlankeStemmer>
+    <AndreUgyldigeStemmer>317</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>4053</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>37827</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

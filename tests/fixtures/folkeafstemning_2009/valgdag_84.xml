@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="84" Type="OpstKreds">4. Århus Øst</Sted>
+  <SenestRettet>08-06-2009 00:06:44</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:41</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst84.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg84.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>59163</Stemmeberettigede>
+  <DeltagelsePct>64.64</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="29240" StemmerPct="88.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3891" StemmerPct="11.7" />
+    <IAltGyldigeStemmer>33131</IAltGyldigeStemmer>
+    <BlankeStemmer>4792</BlankeStemmer>
+    <AndreUgyldigeStemmer>319</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>5111</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>38242</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

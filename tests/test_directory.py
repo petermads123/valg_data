@@ -334,11 +334,11 @@ def test_load_election_an_ep_overview_is_refused(fixture_copy: Path) -> None:
     path = fixture_copy / "valgdag.xml"
     path.write_bytes(
         path.read_bytes().replace(
-            b"Folketingsvalg tirsdag 24. marts 2026", b"Folkeafstemning 2022"
+            b"Folketingsvalg tirsdag 24. marts 2026", b"Kommunalvalg 2025"
         )
     )
 
-    with pytest.raises(FeedError, match="Folkeafstemning"):
+    with pytest.raises(FeedError, match="Kommunalvalg"):
         load_election(fixture_copy)
 
 
@@ -631,3 +631,63 @@ def test_load_election_ep_with_a_never_reported_feed_gives_a_placeholder(
     assert election.get(PlaceType.OPSTILLINGSKREDS, "20").status is Status.NOT_AVAILABLE
     assert election.counting_progress() == CountingProgress(91, 92)
     assert election.election_type is ElectionType.EUROPAPARLAMENTSVALG
+
+
+# --- round 4: Folkeafstemning through load_election and build_election --------------------
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "kreds", "places"),
+    [("fa_2022", 92, 107), ("fa_2015", 92, 107), ("fa_2009", 94, 109)],
+)
+def test_load_election_of_the_referendum_fixtures_reports_the_referendum_type(
+    request: pytest.FixtureRequest, fixture_name: str, kreds: int, places: int
+) -> None:
+    referendum: Election = request.getfixturevalue(fixture_name)
+
+    assert referendum.election_type is ElectionType.FOLKEAFSTEMNING
+    assert len(referendum.places) == places
+    assert referendum.counting_progress() == CountingProgress(kreds, kreds)
+
+
+def test_build_election_picks_the_referendum_adapter_from_the_overview_name(
+    fa_2009_dir: Path, fa_2009: Election
+) -> None:
+    def read(name: str) -> bytes:
+        return (fa_2009_dir / name).read_bytes()
+
+    built = build_election((fa_2009_dir / "valgdag.xml").read_bytes(), read)
+
+    assert built == fa_2009
+    assert built.election_type is ElectionType.FOLKEAFSTEMNING
+
+
+def test_load_election_refuses_a_referendum_renamed_to_kommunalvalg_naming_both(
+    fa_2022_copy: Path,
+) -> None:
+    overview = (fa_2022_copy / "valgdag.xml").read_bytes()
+    renamed = overview.replace(b"Folkeafstemning onsdag", b"Kommunalvalg onsdag")
+    (fa_2022_copy / "valgdag.xml").write_bytes(renamed)
+
+    with pytest.raises(FeedError) as caught:
+        load_election(fa_2022_copy)
+
+    assert "Kommunalvalg onsdag" in str(caught.value)
+    assert "Folkeafstemning)" in str(caught.value)
+
+
+def test_load_election_referendum_with_a_never_reported_feed_gives_a_placeholder(
+    fa_2022_copy: Path,
+) -> None:
+    overview = (fa_2022_copy / "valgdag.xml").read_bytes()
+    never = retime_overview(
+        overview, "valgdag_20.xml", "0001-01-01T00:00:00", "01-01-0001 00:00:00"
+    )
+    (fa_2022_copy / "valgdag.xml").write_bytes(never)
+    (fa_2022_copy / "valgdag_20.xml").unlink()
+
+    election = load_election(fa_2022_copy)
+
+    assert election.get(PlaceType.OPSTILLINGSKREDS, "20").status is Status.NOT_AVAILABLE
+    assert election.counting_progress() == CountingProgress(91, 92)
+    assert election.election_type is ElectionType.FOLKEAFSTEMNING

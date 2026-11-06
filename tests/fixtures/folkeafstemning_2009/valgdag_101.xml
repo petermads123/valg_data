@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="101" Type="OpstKreds">10. Holstebro</Sted>
+  <SenestRettet>08-06-2009 00:16:51</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:44</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst101.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg101.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>42182</Stemmeberettigede>
+  <DeltagelsePct>59.1</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="19999" StemmerPct="85.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3320" StemmerPct="14.2" />
+    <IAltGyldigeStemmer>23319</IAltGyldigeStemmer>
+    <BlankeStemmer>1506</BlankeStemmer>
+    <AndreUgyldigeStemmer>103</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1609</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>24928</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

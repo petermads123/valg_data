@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="40" Type="OpstKreds">1. Helsingør</Sted>
+  <SenestRettet>07-06-2009 22:19:47</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:33</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst40.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg40.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>44110</Stemmeberettigede>
+  <DeltagelsePct>59.39</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="19783" StemmerPct="84.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3700" StemmerPct="15.8" />
+    <IAltGyldigeStemmer>23483</IAltGyldigeStemmer>
+    <BlankeStemmer>2535</BlankeStemmer>
+    <AndreUgyldigeStemmer>179</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2714</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26197</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

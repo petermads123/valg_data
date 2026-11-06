@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="59" Type="OpstKreds">12. Slagelse</Sted>
+  <SenestRettet>07-06-2009 23:37:23</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:36</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst59.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg59.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>57822</Stemmeberettigede>
+  <DeltagelsePct>55.75</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="25217" StemmerPct="84" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4806" StemmerPct="16" />
+    <IAltGyldigeStemmer>30023</IAltGyldigeStemmer>
+    <BlankeStemmer>2058</BlankeStemmer>
+    <AndreUgyldigeStemmer>155</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2213</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>32236</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

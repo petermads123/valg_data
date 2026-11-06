@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="37" Type="OpstKreds">6. Brøndby</Sted>
+  <SenestRettet>01-06-2022 22:08:46</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:08:46</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst37.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg37.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>47390</Stemmeberettigede>
+  <DeltagelsePct>57.27</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16113" StemmerPct="60.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="10717" StemmerPct="39.9" />
+    <IAltGyldigeStemmer>26830</IAltGyldigeStemmer>
+    <BlankeStemmer>232</BlankeStemmer>
+    <AndreUgyldigeStemmer>79</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>311</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>27141</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="21" Type="OpstKreds">2. Sundbyvester</Sted>
+  <SenestRettet>08-06-2009 00:18:05</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:29</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst21.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg21.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>39318</Stemmeberettigede>
+  <DeltagelsePct>53.8</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14892" StemmerPct="85.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2585" StemmerPct="14.8" />
+    <IAltGyldigeStemmer>17477</IAltGyldigeStemmer>
+    <BlankeStemmer>3417</BlankeStemmer>
+    <AndreUgyldigeStemmer>260</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3677</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21154</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

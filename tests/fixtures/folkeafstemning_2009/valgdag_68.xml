@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="68" Type="OpstKreds">1. Sønderborg</Sted>
+  <SenestRettet>08-06-2009 01:19:22</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:38</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst68.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg68.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>55908</Stemmeberettigede>
+  <DeltagelsePct>58.38</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="25548" StemmerPct="84.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4755" StemmerPct="15.7" />
+    <IAltGyldigeStemmer>30303</IAltGyldigeStemmer>
+    <BlankeStemmer>2174</BlankeStemmer>
+    <AndreUgyldigeStemmer>161</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2335</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>32638</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

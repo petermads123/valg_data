@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="51" Type="OpstKreds">4. Næstved</Sted>
+  <SenestRettet>07-06-2009 22:25:07</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:35</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst51.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg51.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>60739</Stemmeberettigede>
+  <DeltagelsePct>58.44</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="27888" StemmerPct="84.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4973" StemmerPct="15.1" />
+    <IAltGyldigeStemmer>32861</IAltGyldigeStemmer>
+    <BlankeStemmer>2466</BlankeStemmer>
+    <AndreUgyldigeStemmer>171</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2637</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>35498</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

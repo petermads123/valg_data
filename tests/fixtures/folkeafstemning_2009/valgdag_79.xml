@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="79" Type="OpstKreds">12. Kolding Syd</Sted>
+  <SenestRettet>07-06-2009 23:02:51</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:40</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst79.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg79.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>34126</Stemmeberettigede>
+  <DeltagelsePct>56.63</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15466" StemmerPct="86.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2434" StemmerPct="13.6" />
+    <IAltGyldigeStemmer>17900</IAltGyldigeStemmer>
+    <BlankeStemmer>1331</BlankeStemmer>
+    <AndreUgyldigeStemmer>93</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1424</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19324</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

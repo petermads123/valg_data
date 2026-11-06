@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="841466" Type="OpstKreds">Grønland</Sted>
+  <SenestRettet>08-06-2009 04:43:31</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:46</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst841466.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg841466.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>39804</Stemmeberettigede>
+  <DeltagelsePct>21.82</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="7876" StemmerPct="92.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="630" StemmerPct="7.4" />
+    <IAltGyldigeStemmer>8506</IAltGyldigeStemmer>
+    <BlankeStemmer>145</BlankeStemmer>
+    <AndreUgyldigeStemmer>35</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>180</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>8686</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

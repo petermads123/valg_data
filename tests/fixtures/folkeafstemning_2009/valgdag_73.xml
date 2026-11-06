@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="73" Type="OpstKreds">6. Varde</Sted>
+  <SenestRettet>07-06-2009 22:05:27</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:39</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst73.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg73.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36785</Stemmeberettigede>
+  <DeltagelsePct>57.69</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17366" StemmerPct="87.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2571" StemmerPct="12.9" />
+    <IAltGyldigeStemmer>19937</IAltGyldigeStemmer>
+    <BlankeStemmer>1206</BlankeStemmer>
+    <AndreUgyldigeStemmer>78</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1284</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21221</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

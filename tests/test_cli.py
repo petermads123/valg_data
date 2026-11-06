@@ -26,7 +26,17 @@ from conftest import (
     write_directory,
 )
 
-from dkvalg import CaptureReplay, FetchError, Recorder, ReplaySource, cli, load_election
+from dkvalg import (
+    CaptureReplay,
+    Election,
+    FetchError,
+    HttpSource,
+    PlaceType,
+    Recorder,
+    ReplaySource,
+    cli,
+    load_election,
+)
 from dkvalg.cli import main, run
 from dkvalg.sources.http_source import HttpResponse
 
@@ -200,7 +210,7 @@ def _ep_directory(tmp_path: Path, fixture_dir: Path) -> Path:
     overview = target / "valgdag.xml"
     overview.write_bytes(
         overview.read_bytes().replace(
-            b"Folketingsvalg tirsdag 24. marts 2026", b"Folkeafstemning 2022"
+            b"Folketingsvalg tirsdag 24. marts 2026", b"Kommunalvalg 2025"
         )
     )
     return target
@@ -246,7 +256,7 @@ def _no_feeds(tmp_path: Path, fixture_dir: Path) -> Path:
         (_empty, "valgdag.xml"),
         (_nowhere, "valgdag.xml"),
         (_a_file, ""),
-        (_ep_directory, "Folkeafstemning"),
+        (_ep_directory, "Kommunalvalg"),
         (_malformed, "valgdag.xml"),
         (_missing_feed, "valgdag_20.xml"),
         (_no_feeds, "no result feeds"),
@@ -1562,5 +1572,149 @@ def test_poll_diff_an_election_that_changes_type_mid_run_exits_1_with_an_error()
 
     assert code == 1
     assert err.startswith("error: cannot diff folketingsvalg ")
+    assert "Traceback" not in err
+    assert not [line for line in _diff_lines(out) if "20:01:00" in line]
+
+
+# --- round 4: referenda on the CLI (A4, A6; T4, T6) -------------------------------------
+
+
+def _row(
+    letter: str, width: int, name: str, percent: float, votes: int, seats: str
+) -> str:
+    return f"{letter:<{width}}{name:<48}{percent:>6.1f}%{votes:>11}{seats:>6}"
+
+
+def test_party_election_table_rows_keep_their_three_wide_letter_column(
+    fixture_dir: Path, election: Election
+) -> None:
+    _, out, _ = _run(["replay", str(fixture_dir), "--speed", "inf"])
+    country = election.get(PlaceType.COUNTRY, "0")
+    social = next(p for p in country.parties if p.letter == "A")
+    outside = next(p for p in country.parties if not p.is_party)
+
+    rows = out.splitlines()
+
+    assert (
+        _row("A", 3, social.name, social.percent, social.votes, str(social.seats))
+        in rows
+    )
+    assert outside.seats == 0  # DST gives the outside-parties entry 0 seats in 2026
+    assert (
+        _row("-", 3, outside.name, outside.percent, outside.votes, str(outside.seats))
+        in rows
+    )
+    assert [line for line in rows if line.startswith("A  A. Socialdemokratiet")]
+
+
+def test_ep_table_rows_keep_their_three_wide_letter_column(
+    ep_fixture_dir: Path, ep_election: Election
+) -> None:
+    _, out, _ = _run(["replay", str(ep_fixture_dir), "--speed", "inf"])
+    sf = next(
+        p for p in ep_election.get(PlaceType.COUNTRY, "0").parties if p.letter == "F"
+    )
+
+    assert _row("F", 3, sf.name, sf.percent, sf.votes, "-") in out.splitlines()
+
+
+def test_referendum_replay_output_without_the_flag_equals_the_diff_output_minus_the_diff_lines(
+    fa_2015_dir: Path,
+) -> None:
+    _, plain, _ = _run(["replay", str(fa_2015_dir), "--speed", "inf"])
+
+    code, with_diff, err = _run(
+        ["replay", str(fa_2015_dir), "--speed", "inf", "--diff"]
+    )
+
+    assert (code, err) == (0, "")
+    assert _without_diff_lines(with_diff) == plain
+    assert _diff_lines(plain) == []
+    assert len(_diff_lines(with_diff)) > 100
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "final"),
+    [("fa_2015_dir", "NEJ"), ("fa_2022_dir", "JA"), ("fa_2009_dir", "JA")],
+)
+def test_referendum_diff_leader_lines_are_only_country_landsdel_and_storkreds_with_ja_nej(
+    request: pytest.FixtureRequest, fixture_name: str, final: str
+) -> None:
+    directory: Path = request.getfixturevalue(fixture_name)
+
+    _, out, _ = _run(["replay", str(directory), "--speed", "inf", "--diff"])
+
+    leaders = [m for line in _diff_lines(out) if (m := LEADER_LINE.match(line))]
+    assert {m.group(2) for m in leaders} == {"country", "landsdel", "storkreds"}
+    assert {m.group(5) for m in leaders} <= {"JA", "NEJ"}
+    assert {m.group(4) for m in leaders} <= {"-", "JA", "NEJ"}
+    assert f"leader country Hele landet: - -> {final}" in out
+    assert "leader opstillingskreds" not in out
+    assert "leader tally" not in out
+
+
+def test_referendum_diff_prints_no_seat_lines_and_ends_with_the_progress_line(
+    fa_2015_dir: Path,
+) -> None:
+    _, out, _ = _run(["replay", str(fa_2015_dir), "--speed", "inf", "--diff"])
+
+    diff_lines = _diff_lines(out)
+    assert not [line for line in diff_lines if "  seats " in line]
+    assert not [line for line in diff_lines if "  status " in line]
+    assert PROGRESS_LINE.match(diff_lines[-1]) is not None or "leader" in diff_lines[-1]
+    assert any(line.endswith("progress 91/92 -> 92/92") for line in diff_lines)
+    assert any("-> NEJ" in line for line in diff_lines)
+
+
+def test_referendum_poll_diff_prints_a_leader_line_for_the_country(
+    fa_transport: FakeTransport,
+) -> None:
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg1962294", "--cycles", "1", "--diff"], fa_transport
+    )
+
+    assert (code, err) == (0, "")
+    assert "leader country Hele landet: - -> JA" in out
+    assert not [line for line in _diff_lines(out) if "  seats " in line]
+
+
+def test_replay_of_a_referendum_capture_prints_the_answers_in_the_table(
+    fa_transport: FakeTransport, tmp_path: Path
+) -> None:
+    capture = tmp_path / "cap"
+    source = HttpSource(
+        "Valg1962294",
+        transport=fa_transport,
+        recorder=Recorder(capture),
+        clock=FakeClock(),
+    )
+    source.fetch()
+
+    code, out, err = _run(["replay", str(capture), "--speed", "inf", "--diff"])
+
+    assert (code, err) == (0, "")
+    assert _row("JA", 4, "JA", 66.9, 1_848_738, "-") in out.splitlines()
+    assert "progress 0/92 -> 92/92" in out
+
+
+def test_poll_diff_a_referendum_that_changes_type_mid_run_exits_1_with_an_error(
+    fa_transport: FakeTransport,
+) -> None:
+    def switch_election(_seconds: float) -> None:
+        overview = fa_transport.files[OVERVIEW].replace(
+            b"Folkeafstemning onsdag", b"Europa-Parlamentsvalg onsdag"
+        )
+        fa_transport.publish(OVERVIEW, overview)
+        fa_transport.touch([NATIONAL], "2022-06-02T01:00:00", bump=False)
+
+    code, out, err, _, _ = _poll(
+        ["poll", "Valg1962294", "--cycles", "2", "--diff"],
+        fa_transport,
+        sleep=switch_election,
+    )
+
+    assert code == 1
+    assert err.startswith("error: cannot diff folkeafstemning ")
+    assert "europaparlamentsvalg" in err
     assert "Traceback" not in err
     assert not [line for line in _diff_lines(out) if "20:01:00" in line]

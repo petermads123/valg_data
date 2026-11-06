@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="60" Type="OpstKreds">1. Odense Øst</Sted>
+  <SenestRettet>01-06-2022 22:13:35</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:13:35</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst60.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg60.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>53388</Stemmeberettigede>
+  <DeltagelsePct>57.65</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="20148" StemmerPct="66.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="10090" StemmerPct="33.4" />
+    <IAltGyldigeStemmer>30238</IAltGyldigeStemmer>
+    <BlankeStemmer>473</BlankeStemmer>
+    <AndreUgyldigeStemmer>69</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>542</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>30780</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

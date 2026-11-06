@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="81" Type="OpstKreds">1. Århus Syd</Sted>
+  <SenestRettet>03-12-2015 21:56:24</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:56:24</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst81.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg81.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>57249</Stemmeberettigede>
+  <DeltagelsePct>75.11</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22916" StemmerPct="54.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="18997" StemmerPct="45.3" />
+    <IAltGyldigeStemmer>41913</IAltGyldigeStemmer>
+    <BlankeStemmer>992</BlankeStemmer>
+    <AndreUgyldigeStemmer>94</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1086</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>42999</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

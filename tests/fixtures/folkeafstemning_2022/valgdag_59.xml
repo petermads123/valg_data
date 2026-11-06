@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="59" Type="OpstKreds">12. Slagelse</Sted>
+  <SenestRettet>01-06-2022 21:59:41</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:59:41</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst59.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg59.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>60252</Stemmeberettigede>
+  <DeltagelsePct>62.35</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22598" StemmerPct="60.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="14557" StemmerPct="39.2" />
+    <IAltGyldigeStemmer>37155</IAltGyldigeStemmer>
+    <BlankeStemmer>346</BlankeStemmer>
+    <AndreUgyldigeStemmer>68</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>414</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>37569</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

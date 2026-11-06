@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="39" Type="OpstKreds">8. Ballerup</Sted>
+  <SenestRettet>01-06-2022 22:28:10</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:28:10</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst39.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg39.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50796</Stemmeberettigede>
+  <DeltagelsePct>64.47</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="20839" StemmerPct="64.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="11456" StemmerPct="35.5" />
+    <IAltGyldigeStemmer>32295</IAltGyldigeStemmer>
+    <BlankeStemmer>370</BlankeStemmer>
+    <AndreUgyldigeStemmer>83</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>453</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>32748</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

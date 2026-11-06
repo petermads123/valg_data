@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="47" Type="OpstKreds">2. Aakirkeby</Sted>
+  <SenestRettet>03-12-2015 21:12:18</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:12:18</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst47.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg47.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>15975</Stemmeberettigede>
+  <DeltagelsePct>71.24</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="5003" StemmerPct="44.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="6155" StemmerPct="55.2" />
+    <IAltGyldigeStemmer>11158</IAltGyldigeStemmer>
+    <BlankeStemmer>191</BlankeStemmer>
+    <AndreUgyldigeStemmer>31</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>222</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>11380</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

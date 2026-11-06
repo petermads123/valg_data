@@ -117,18 +117,23 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _print_table(election: Election, out: TextIO) -> None:
-    """Print the national result table, "Uden for partier" last."""
+    """Print the national result table, "Uden for partier" last.
+
+    The letter column is as wide as the longest letter plus one, at least 3, so
+    the answers `JA` and `NEJ` of a referendum do not run into their names.
+    """
     countries = election.of_type(PlaceType.COUNTRY)
     for country in countries:
         out.write(f"\n{country.name}: {country.status_text or country.status.name}\n")
         ordered = [p for p in country.parties if p.is_party] + [
             p for p in country.parties if not p.is_party
         ]
-        for party in ordered:
+        letters = [party.letter or "-" for party in ordered]
+        width = max([3, *(len(letter) + 1 for letter in letters)])
+        for party, letter in zip(ordered, letters, strict=True):
             seats = "-" if party.seats is None else str(party.seats)
-            letter = party.letter or "-"
             out.write(
-                f"{letter:<3}{party.name:<48}{party.percent:>6.1f}%"
+                f"{letter:<{width}}{party.name:<48}{party.percent:>6.1f}%"
                 f"{party.votes:>11}{seats:>6}\n"
             )
 

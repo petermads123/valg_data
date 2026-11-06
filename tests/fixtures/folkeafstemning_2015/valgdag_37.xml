@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="37" Type="OpstKreds">6. Brøndby</Sted>
+  <SenestRettet>03-12-2015 22:01:39</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:01:39</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst37.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg37.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>47630</Stemmeberettigede>
+  <DeltagelsePct>66.34</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="12827" StemmerPct="41.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="18354" StemmerPct="58.9" />
+    <IAltGyldigeStemmer>31181</IAltGyldigeStemmer>
+    <BlankeStemmer>342</BlankeStemmer>
+    <AndreUgyldigeStemmer>76</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>418</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>31599</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

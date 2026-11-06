@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="108" Type="OpstKreds">6. Mariagerfjord</Sted>
+  <SenestRettet>01-06-2022 21:20:14</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:20:14</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst108.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg108.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>31650</Stemmeberettigede>
+  <DeltagelsePct>63.67</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="12233" StemmerPct="61.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="7680" StemmerPct="38.6" />
+    <IAltGyldigeStemmer>19913</IAltGyldigeStemmer>
+    <BlankeStemmer>196</BlankeStemmer>
+    <AndreUgyldigeStemmer>43</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>239</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>20152</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

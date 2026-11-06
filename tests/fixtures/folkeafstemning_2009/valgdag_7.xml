@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="7" Type="Landsdel">Hovedstaden</Sted>
+  <SenestRettet>08-06-2009 10:22:56</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:27</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgLand7.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg7.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>1192237</Stemmeberettigede>
+  <DeltagelsePct>60.39</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="529211" StemmerPct="84.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="95971" StemmerPct="15.4" />
+    <IAltGyldigeStemmer>625182</IAltGyldigeStemmer>
+    <BlankeStemmer>86937</BlankeStemmer>
+    <AndreUgyldigeStemmer>7921</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>94858</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>720040</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="109" Type="OpstKreds">7. Aalborg Øst</Sted>
+  <SenestRettet>01-06-2022 22:07:27</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:07:27</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst109.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg109.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>64214</Stemmeberettigede>
+  <DeltagelsePct>60.63</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="25419" StemmerPct="66.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="12954" StemmerPct="33.8" />
+    <IAltGyldigeStemmer>38373</IAltGyldigeStemmer>
+    <BlankeStemmer>503</BlankeStemmer>
+    <AndreUgyldigeStemmer>54</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>557</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>38930</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

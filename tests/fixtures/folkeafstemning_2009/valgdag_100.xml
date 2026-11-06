@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="100" Type="OpstKreds">9. Herning Nord</Sted>
+  <SenestRettet>07-06-2009 23:02:54</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:44</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst100.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg100.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>31378</Stemmeberettigede>
+  <DeltagelsePct>62.16</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15951" StemmerPct="86.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2489" StemmerPct="13.5" />
+    <IAltGyldigeStemmer>18440</IAltGyldigeStemmer>
+    <BlankeStemmer>1002</BlankeStemmer>
+    <AndreUgyldigeStemmer>61</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1063</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19503</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

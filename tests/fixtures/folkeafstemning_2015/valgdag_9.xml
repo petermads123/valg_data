@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="9" Type="Landsdel">Midtjylland-Nordjylland</Sted>
+  <SenestRettet>03-12-2015 22:40:48</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:40:48</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgLand9.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg9.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>1388194</Stemmeberettigede>
+  <DeltagelsePct>71.74</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="455092" StemmerPct="46.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="521701" StemmerPct="53.4" />
+    <IAltGyldigeStemmer>976793</IAltGyldigeStemmer>
+    <BlankeStemmer>16982</BlankeStemmer>
+    <AndreUgyldigeStemmer>2099</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>19081</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>995874</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

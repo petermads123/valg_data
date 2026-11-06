@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="16" Type="StorKreds">Sydjyllands Storkreds</Sted>
+  <SenestRettet>03-12-2015 22:53:55</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:53:55</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgStor16.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg16.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>524899</Stemmeberettigede>
+  <DeltagelsePct>72.22</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="166498" StemmerPct="44.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="206333" StemmerPct="55.3" />
+    <IAltGyldigeStemmer>372831</IAltGyldigeStemmer>
+    <BlankeStemmer>5233</BlankeStemmer>
+    <AndreUgyldigeStemmer>1035</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>6268</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>379099</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

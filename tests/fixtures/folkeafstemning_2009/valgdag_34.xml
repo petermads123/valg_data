@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="34" Type="OpstKreds">3. Gladsaxe</Sted>
+  <SenestRettet>07-06-2009 22:53:17</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:32</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst34.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg34.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>44912</Stemmeberettigede>
+  <DeltagelsePct>62.68</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="21059" StemmerPct="84.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3851" StemmerPct="15.5" />
+    <IAltGyldigeStemmer>24910</IAltGyldigeStemmer>
+    <BlankeStemmer>3003</BlankeStemmer>
+    <AndreUgyldigeStemmer>236</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3239</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>28149</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

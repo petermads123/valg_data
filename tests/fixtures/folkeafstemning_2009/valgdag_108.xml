@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="108" Type="OpstKreds">6. Mariagerfjord</Sted>
+  <SenestRettet>07-06-2009 23:04:28</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:45</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst108.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg108.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>31650</Stemmeberettigede>
+  <DeltagelsePct>56.09</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14334" StemmerPct="86.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2322" StemmerPct="13.9" />
+    <IAltGyldigeStemmer>16656</IAltGyldigeStemmer>
+    <BlankeStemmer>1023</BlankeStemmer>
+    <AndreUgyldigeStemmer>75</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1098</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>17754</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

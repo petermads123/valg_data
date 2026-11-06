@@ -6,11 +6,16 @@ from pathlib import Path
 import pytest
 from conftest import (
     EP_BASE_URL,
+    FA_2009_FIXTURES,
+    FA_2015_BASE_URL,
+    FA_2015_FIXTURES,
+    FA_2022_FIXTURES,
     NATIONAL,
     OVERVIEW,
     FakeClock,
     FakeTransport,
     ep_fixture_files,
+    fa_fixture_files,
     feed_xml,
     fixture_files,
     kreds_entry,
@@ -1069,3 +1074,71 @@ def test_an_ep_capture_folder_holds_the_ep_overview_with_the_double_space(
     )
     assert len(list(first_folder.glob("*.xml"))) == 108
     assert is_capture_directory(tmp_path / "cap")
+
+
+# --- round 4: Folkeafstemning captures (A4, T4; 2015, which has iso stamps) ---------------
+
+
+def _record_fa(directory: Path) -> tuple[HttpSource, list[FetchResult]]:
+    transport = FakeTransport(
+        fa_fixture_files(FA_2015_FIXTURES), base_url=FA_2015_BASE_URL
+    )
+    source = HttpSource(
+        "Valg1664255",
+        transport=transport,
+        recorder=Recorder(directory),
+        clock=FakeClock(T1, 60.0),
+    )
+    results = [source.fetch()]
+    transport.touch([NATIONAL, "valgdag_20.xml"])
+    results.append(source.fetch())
+    results.append(source.fetch())  # identical: nothing received that differs
+    return source, results
+
+
+def test_referendum_record_then_replay_ends_equal_to_the_last_fetch(
+    tmp_path: Path,
+) -> None:
+    source, results = _record_fa(tmp_path / "cap")
+
+    steps = list(CaptureReplay(tmp_path / "cap", speed=INF))
+
+    assert len(steps) == 2
+    assert steps[-1].election == source.election == results[-1].election
+    assert steps[-1].election.election_type is ElectionType.FOLKEAFSTEMNING
+    assert steps[-1].election.get(PlaceType.COUNTRY, "0").leader.letter == "NEJ"  # type: ignore[union-attr]  # a result is present
+
+
+def test_referendum_replay_changed_lists_equal_the_live_ones_and_replay_is_repeatable(
+    tmp_path: Path,
+) -> None:
+    _, results = _record_fa(tmp_path / "cap")
+
+    steps = list(CaptureReplay(tmp_path / "cap", speed=INF))
+    again = list(CaptureReplay(tmp_path / "cap", speed=INF))
+
+    assert [s.changed for s in steps] == [r.changed for r in results[:2]]
+    assert len(steps[0].changed) == 107
+    assert {p.place_id for p in steps[1].changed} == {"0", "20"}
+    assert [s.election for s in again] == [s.election for s in steps]
+
+
+def test_a_referendum_capture_folder_holds_the_overview_and_every_feed_under_dst_names(
+    tmp_path: Path,
+) -> None:
+    _record_fa(tmp_path / "cap")
+
+    first_folder = sorted((tmp_path / "cap").iterdir())[0]
+
+    assert b"torsdag 3. december 2015" in (first_folder / "valgdag.xml").read_bytes()
+    assert len(list(first_folder.glob("*.xml"))) == 108
+    assert is_capture_directory(tmp_path / "cap")
+
+
+def test_check_feed_name_accepts_every_referendum_feed_name_except_the_overview() -> (
+    None
+):
+    for directory in (FA_2015_FIXTURES, FA_2022_FIXTURES, FA_2009_FIXTURES):
+        names = [n for n in fa_fixture_files(directory) if n != OVERVIEW]
+
+        assert [check_feed_name(name) for name in names] == names

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="50" Type="OpstKreds">3. Vordingborg</Sted>
+  <SenestRettet>03-12-2015 21:38:32</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:38:32</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst50.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg50.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35418</Stemmeberettigede>
+  <DeltagelsePct>74.43</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="10743" StemmerPct="41.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="15244" StemmerPct="58.7" />
+    <IAltGyldigeStemmer>25987</IAltGyldigeStemmer>
+    <BlankeStemmer>335</BlankeStemmer>
+    <AndreUgyldigeStemmer>41</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>376</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26363</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,6 +1,7 @@
 """Compare two election snapshots and report what changed, as typed changes.
 
-The library only detects: nothing here formats or delivers a notification.
+The library only detects: nothing here formats or delivers a notification. A
+"party" is whatever `Place.parties` holds: for a referendum, an answer (JA, NEJ).
 """
 
 from dataclasses import dataclass, replace
@@ -30,7 +31,7 @@ class PlaceCounted:
 
 @dataclass(frozen=True, slots=True)
 class PartyResultChanged:
-    """A party's result changed at a place that had a result in both snapshots.
+    """A party's (or referendum answer's) result changed at a place that had a result in both snapshots.
 
     Attributes:
         place: The place as it is now.
@@ -59,7 +60,7 @@ class PartyResultChanged:
 
 @dataclass(frozen=True, slots=True)
 class LeaderChanged:
-    """The party with most votes at a place is a different one.
+    """The party (or referendum answer) with most votes at a place is a different one.
 
     Attributes:
         place: The place as it is now.

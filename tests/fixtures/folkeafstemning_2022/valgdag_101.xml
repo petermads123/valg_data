@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="101" Type="OpstKreds">10. Holstebro</Sted>
+  <SenestRettet>01-06-2022 21:45:33</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:45:33</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst101.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg101.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>43143</Stemmeberettigede>
+  <DeltagelsePct>65.83</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18521" StemmerPct="66.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="9476" StemmerPct="33.8" />
+    <IAltGyldigeStemmer>27997</IAltGyldigeStemmer>
+    <BlankeStemmer>341</BlankeStemmer>
+    <AndreUgyldigeStemmer>64</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>405</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>28402</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

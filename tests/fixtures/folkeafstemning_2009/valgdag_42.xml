@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="42" Type="OpstKreds">3. Hillerød</Sted>
+  <SenestRettet>07-06-2009 23:42:00</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:33</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst42.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg42.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>63604</Stemmeberettigede>
+  <DeltagelsePct>63.65</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="31608" StemmerPct="86" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="5142" StemmerPct="14" />
+    <IAltGyldigeStemmer>36750</IAltGyldigeStemmer>
+    <BlankeStemmer>3465</BlankeStemmer>
+    <AndreUgyldigeStemmer>271</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3736</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>40486</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

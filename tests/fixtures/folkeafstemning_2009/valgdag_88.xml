@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="88" Type="OpstKreds">8. Favrskov</Sted>
+  <SenestRettet>07-06-2009 23:00:12</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:42</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst88.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg88.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>32939</Stemmeberettigede>
+  <DeltagelsePct>64.03</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17195" StemmerPct="87.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2420" StemmerPct="12.3" />
+    <IAltGyldigeStemmer>19615</IAltGyldigeStemmer>
+    <BlankeStemmer>1380</BlankeStemmer>
+    <AndreUgyldigeStemmer>96</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1476</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21091</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

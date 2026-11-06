@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="81" Type="OpstKreds">1. Århus Syd</Sted>
+  <SenestRettet>01-06-2022 22:27:13</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:27:13</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:38</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:38</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst81.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg81.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>58083</Stemmeberettigede>
+  <DeltagelsePct>70.79</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="30342" StemmerPct="75.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="10084" StemmerPct="24.9" />
+    <IAltGyldigeStemmer>40426</IAltGyldigeStemmer>
+    <BlankeStemmer>599</BlankeStemmer>
+    <AndreUgyldigeStemmer>91</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>690</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>41116</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

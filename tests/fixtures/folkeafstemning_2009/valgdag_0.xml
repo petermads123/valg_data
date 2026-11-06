@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="" Type="HeleLandet">Hele riget</Sted>
+  <SenestRettet>08-06-2009 10:22:56</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:27</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgHL.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>4114395</Stemmeberettigede>
+  <DeltagelsePct>58.26</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="1858008" StemmerPct="85.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="317711" StemmerPct="14.6" />
+    <IAltGyldigeStemmer>2175719</IAltGyldigeStemmer>
+    <BlankeStemmer>204712</BlankeStemmer>
+    <AndreUgyldigeStemmer>16761</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>221473</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>2397192</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

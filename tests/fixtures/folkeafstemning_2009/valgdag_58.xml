@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="58" Type="OpstKreds">11. Ringsted</Sted>
+  <SenestRettet>07-06-2009 23:44:26</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:36</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst58.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg58.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>45358</Stemmeberettigede>
+  <DeltagelsePct>59.27</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="21269" StemmerPct="85.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3693" StemmerPct="14.8" />
+    <IAltGyldigeStemmer>24962</IAltGyldigeStemmer>
+    <BlankeStemmer>1783</BlankeStemmer>
+    <AndreUgyldigeStemmer>137</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1920</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26882</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

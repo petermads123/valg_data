@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="63" Type="OpstKreds">4. Assens</Sted>
+  <SenestRettet>07-06-2009 22:55:27</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:37</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst63.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg63.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>31160</Stemmeberettigede>
+  <DeltagelsePct>61.66</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15360" StemmerPct="85.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2579" StemmerPct="14.4" />
+    <IAltGyldigeStemmer>17939</IAltGyldigeStemmer>
+    <BlankeStemmer>1190</BlankeStemmer>
+    <AndreUgyldigeStemmer>84</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1274</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19213</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

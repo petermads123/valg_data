@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="56" Type="OpstKreds">9. Holbæk</Sted>
+  <SenestRettet>07-06-2009 22:11:42</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:36</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst56.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg56.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50856</Stemmeberettigede>
+  <DeltagelsePct>58.44</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="23432" StemmerPct="85.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4011" StemmerPct="14.6" />
+    <IAltGyldigeStemmer>27443</IAltGyldigeStemmer>
+    <BlankeStemmer>2130</BlankeStemmer>
+    <AndreUgyldigeStemmer>148</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2278</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>29721</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

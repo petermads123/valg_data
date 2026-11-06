@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="21" Type="OpstKreds">2. Sundbyvester</Sted>
+  <SenestRettet>01-06-2022 23:29:03</SenestRettet>
+  <SenestRettetIso>2022-06-01T23:29:03</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:35</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:35</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst21.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg21.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>53837</Stemmeberettigede>
+  <DeltagelsePct>58.51</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="21493" StemmerPct="69.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="9503" StemmerPct="30.7" />
+    <IAltGyldigeStemmer>30996</IAltGyldigeStemmer>
+    <BlankeStemmer>428</BlankeStemmer>
+    <AndreUgyldigeStemmer>77</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>505</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>31501</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

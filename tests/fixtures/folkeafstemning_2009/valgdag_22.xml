@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="22" Type="OpstKreds">3. Indre By</Sted>
+  <SenestRettet>07-06-2009 23:48:53</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:30</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst22.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg22.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35716</Stemmeberettigede>
+  <DeltagelsePct>60.72</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14012" StemmerPct="84.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2616" StemmerPct="15.7" />
+    <IAltGyldigeStemmer>16628</IAltGyldigeStemmer>
+    <BlankeStemmer>4631</BlankeStemmer>
+    <AndreUgyldigeStemmer>429</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>5060</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21688</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

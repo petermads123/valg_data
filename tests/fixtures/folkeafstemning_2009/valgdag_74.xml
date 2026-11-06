@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="74" Type="OpstKreds">7. Vejen</Sted>
+  <SenestRettet>07-06-2009 22:09:23</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:39</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst74.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg74.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50042</Stemmeberettigede>
+  <DeltagelsePct>56.73</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="23216" StemmerPct="86.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3485" StemmerPct="13.1" />
+    <IAltGyldigeStemmer>26701</IAltGyldigeStemmer>
+    <BlankeStemmer>1572</BlankeStemmer>
+    <AndreUgyldigeStemmer>115</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1687</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>28388</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

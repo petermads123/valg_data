@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="16" Type="StorKreds">Sydjyllands Storkreds</Sted>
+  <SenestRettet>08-06-2009 01:19:22</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:29</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgStor16.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg16.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>522823</Stemmeberettigede>
+  <DeltagelsePct>57.14</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="237548" StemmerPct="85.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="40032" StemmerPct="14.4" />
+    <IAltGyldigeStemmer>277580</IAltGyldigeStemmer>
+    <BlankeStemmer>19701</BlankeStemmer>
+    <AndreUgyldigeStemmer>1468</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>21169</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>298749</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

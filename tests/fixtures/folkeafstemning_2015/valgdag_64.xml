@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="64" Type="OpstKreds">5. Middelfart</Sted>
+  <SenestRettet>03-12-2015 21:34:43</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:34:43</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst64.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg64.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50259</Stemmeberettigede>
+  <DeltagelsePct>74.89</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17461" StemmerPct="47.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="19575" StemmerPct="52.9" />
+    <IAltGyldigeStemmer>37036</IAltGyldigeStemmer>
+    <BlankeStemmer>525</BlankeStemmer>
+    <AndreUgyldigeStemmer>77</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>602</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>37638</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

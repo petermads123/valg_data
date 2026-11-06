@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="54" Type="OpstKreds">7. Greve</Sted>
+  <SenestRettet>01-06-2022 21:56:51</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:56:51</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst54.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg54.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>52540</Stemmeberettigede>
+  <DeltagelsePct>66.95</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="23484" StemmerPct="67.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="11332" StemmerPct="32.5" />
+    <IAltGyldigeStemmer>34816</IAltGyldigeStemmer>
+    <BlankeStemmer>283</BlankeStemmer>
+    <AndreUgyldigeStemmer>79</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>362</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>35178</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

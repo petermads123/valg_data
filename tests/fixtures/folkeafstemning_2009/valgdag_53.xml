@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="53" Type="OpstKreds">6. Køge</Sted>
+  <SenestRettet>07-06-2009 23:00:47</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:35</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst53.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg53.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>60294</Stemmeberettigede>
+  <DeltagelsePct>61.33</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="28794" StemmerPct="85" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="5098" StemmerPct="15" />
+    <IAltGyldigeStemmer>33892</IAltGyldigeStemmer>
+    <BlankeStemmer>2879</BlankeStemmer>
+    <AndreUgyldigeStemmer>206</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3085</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>36977</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>
