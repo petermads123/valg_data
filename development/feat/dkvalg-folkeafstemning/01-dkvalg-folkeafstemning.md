@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=2 status=active -->
+<!-- claude-plan step=3 status=active -->
 
 | Field | Value |
 |---|---|
@@ -15,8 +15,8 @@
 | # | Step | Skill | Runs | Status |
 |---|---|---|---|---|
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
-| 2 | Plan | `/plan` | with the user, unless the critique is clean | in progress |
-| 3 | Implement | `/implement` | in `/build` | pending |
+| 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
+| 3 | Implement | `/implement` | in `/build` | in progress |
 | 4 | Verify | `/verify` | in `/build` | pending |
 | 5 | Test | `/test` | in `/build` | pending |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
@@ -177,7 +177,9 @@ Plan-critic findings (verdict: back to step 1 for two factual corrections to sec
 7. **`dst_feed.py` missing from the Modules table.** Applied: row added.
 8. **The DOCTYPE stub case in `test_registry.py` needs no retargeting.** Applied: dropped from A7 and the survey; it stays as a stronger test.
 
-Not accepted yet: the verdict is "back to step 1" because findings 1 and 2 correct section 1; they are factual (a file count and a test list), not design choices, and are shown to the user for confirmation.
+The verdict was "back to step 1" because findings 1 and 2 correct section 1 (a file count and a test list); the user confirmed those corrections and the plan.
+
+Accepted: by the user, 2026-11-06
 
 ---
 
