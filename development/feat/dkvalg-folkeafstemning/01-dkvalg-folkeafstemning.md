@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=5 status=active -->
+<!-- claude-plan step=6 status=active -->
 
 | Field | Value |
 |---|---|
@@ -18,8 +18,8 @@
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
-| 5 | Test | `/test` | in `/build` | in progress |
-| 6 | Concept check | `/concept-check` | in `/build` | pending |
+| 5 | Test | `/test` | in `/build` | done |
+| 6 | Concept check | `/concept-check` | in `/build` | in progress |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
@@ -230,10 +230,31 @@ Section 3 notes judged: none needs a plan correction (the registry row deletion 
 
 > Written in step 5: the dynamic half.
 
-| Intent | Test names | Result |
+Result: `ruff check .`, `ruff format --check .` and `mypy` clean; `pytest` 1824 passed (1595 before this step; the new tests are `tests/test_folkeafstemning.py`, 145 cases, plus additions to the ten other files). The tests found no bug in `src/`: nothing in `src/` changed in this step.
+
+| Intent | Test names (file: group) | Result |
 |---|---|---|
+| T1 | `test_fixtures.py`: `test_fa_fixture_directory_holds_its_xml_files_a_readme_and_a_manifest`, `test_every_feed_a_fa_overview_lists_is_present_and_nothing_else_but_two_overviews`, `test_every_fa_file_matches_its_sha256_and_keeps_its_bom`, `test_the_fa_readme_names_the_source_and_the_retrieval_date`, `test_no_fa_xml_file_had_its_line_endings_rewritten`, `test_the_2009_set_lists_the_oddly_numbered_feeds_the_plan_names` (109/109/111 files, hashes, BOM, README needles). `test_folkeafstemning.py`: `test_load_election_referendum_is_a_referendum_with_the_real_name_and_date`, `..._has_the_places_by_type_and_counts_all_districts`, `..._national_figures_match_the_files`, `test_referendum_answers_are_parties_with_no_seats_and_no_outside_party_entry`, `test_referendum_2009_dangling_parents_are_kept_as_served`, `test_referendum_2009_feeds_carry_no_iso_timestamp_and_parse_from_the_dst_form`, `test_referendum_2009_place_names_come_from_the_overview_not_the_feed`, `test_referendum_names_keep_or_lack_the_double_space_as_served`, idempotency, a missing feed named, `build_election` equal and in overview order. `test_directory.py`: round 4 group | pass |
+| T2 | `test_folkeafstemning.py::test_referendum_national_leader_is_the_winning_answer` (JA, NEJ, JA), the answers test above (both `is_party`, no "Uden for partier"), the progress tests (`94/94`; total from the overview for 94, 92, 1 and 0 districts; 2 of 3 with a never-reported one). `test_model.py`: `test_a_referendum_place_leader_*`, `test_referendum_answers_are_parties_keyed_on_the_id_not_the_letter` | pass |
+| T3 | `test_registry.py`: real overviews, accepted names, exact three-type refusal message, registry equal to the adapter. `test_folkeafstemning.py`: the 3 by 3 adapter matrix, name boundaries and whitespace, missing name, bad or missing date, no feeds, BOM, UTF-16, re-exports and `__all__`, `test_the_showcases_run_and_show_the_referendum`. `test_dst_feed.py`: round 4 group. `test_package.py`, `test_model.py`: the member | pass |
+| T4 | `test_folkeafstemning.py`: `HttpSource` first fetch equal for 2022 and 2009, unchanged second fetch, touched and retimed feeds, never reported, Kommunalvalg refused with state kept, recorded poll through `CaptureReplay`, `ReplaySource` for 2022 and 2009, the CLI on all three sets with exact rows, `poll`, speed and interval boundaries, the letter-column tests. `test_http_source.py`, `test_capture.py`, `test_cli.py`: round 4 groups (exact 2026 and EP rows, the capture round trip on 2015) | pass |
+| T5 | `test_folkeafstemning.py`: status 0 in DST's example shape, status 1 with the two answers, statuses 9, 10, 11 and 12, unknown or missing status code, answers 0 to 3, ties and zero votes, an answer without an `Id` or with an empty one, bad figures, a never-reported feed, DOCTYPE and entity in the overview, a result feed and a directory | pass |
+| T6 | `test_diff.py`: flip JA to NEJ with deltas, tie, percent-only move, first count, type mismatch, replay chain for the three sets (109, 107, 107 counted; final leaders JA, NEJ, JA). `test_cli.py`: `--diff` on the three sets, flag-less equality, `poll --diff`, a referendum changing type mid-run | pass |
+| T7 | `git diff main -U0 -- tests` removes only the lines of A7's list (and the import lines that gained a name); `test_folketingsvalg.py` is untouched | pass |
+
+Designer cases merged (`contract` C1 to C15, `input-space` I1 to I20), applied or rebutted:
+
+- Applied: C1 (3 by 3 matrix), C2 (exact refusal message, in `test_registry.py`), C3 (prefix matches), C4 (exact rows; see the wrong expectation below), C5 (`--diff` leader levels, no seat lines), C6 (replay chain, the expected count also compared with `has_result`), C7 (flip, tie, first count), C8 (type mismatch `ValueError` and the mid-run CLI error), C9 (record then replay on 2015, repeatable), C10, C11, C12 (in `test_model.py` and `test_folkeafstemning.py`), C13 (re-exports and `__all__`), C14 (purity and a missing feed named), C15 (both showcases). I1 to I5 (letter width per country, boundaries 1 to 5 letters, the longest letter and not the first row, the dash counts as one character, status 0 header only), I6 to I10, I11 (UTF-16 with a matching declaration equal, under a UTF-8 declaration a `FeedError` naming the file), I12, I13 to I15, I16 (progress totals from the overview), I17 (the timestamp fallback; `1-6-2022 21:30` and an offset refused), I18 (a missing storkreds id gives `None`), I19 (speeds `0`, `-1`, `nan` exit 2, `inf` and `1e-300` exit 0), I20 (one interval parametrisation).
+- Applied with a note: C4's expectation of a `-  Uden for partier` row with `-` seats is wrong for 2026: DST gives that entry `Mandater="0"`, so the row ends in `0`. The test builds the row from the model (`outside.seats == 0` is asserted) and the EP row keeps `-`. A wrong expectation in the plan's T4 wording and in the designer's case, not a code bug.
+- Dropped, with reason: I6's `Folkeafstemning` preceded by a BOM inside the text (a stray character is just another non-matching name, covered by `x Folkeafstemning`); I12 (a hostile `<!ENTITY` variant) duplicates the DOCTYPE-plus-entity injection already used; contradictions 1 and 4 to 5 (cosmetic showcase comment, docstring wording of `is_party`, the `parse_place` docstring) are wording notes with no behaviour to test; contradiction 2 (`Folkeafstemninger` accepted) is pinned in `test_folkeafstemning.py` and `test_registry.py` (`Folkeafstemningxyz`); contradiction 3 (a wide letter shifts all rows rather than truncating) is pinned by the width tests; the `_print_table` docstring says "longest letter", the width is per country: only observable with two countries, which a real feed never has, and pinned in `test_table_width_is_computed_per_country`; the A6 wording for 2009 is garbled in section 1, the tests assert 109 `PlaceCounted` and 94/94 separately (no amendment needed: the counts are right).
 
 Edge cases considered and deliberately skipped, with reasons:
+
+- Mutation tests (touch, retime, never-reported, record-then-replay) on 2009: its feeds have no `SenestRettetIso`, which the conftest helpers need (plan T4); 2022 and 2015 carry them.
+- Table rows for `--speed` below a positive float's range other than `1e-300`: covered by the validator's own tests in round 2.
+- A referendum with more than two answers through the CLI: the table width is tested with 5-letter letters, and the parser with three answers; a real feed with more is not available.
+- Network-level behaviour (redirects, truncation, size caps): round 2's loopback tests, nothing referendum-specific.
+- An EP `Uden for partier` row assertion in the new CLI test: the round 3 tests already pin the EP table.
 
 ---
 

@@ -303,6 +303,8 @@ request carried a validator.
 
 Round 3 adds `EP_FIXTURES`, `EP_ELECTION_NAME` (double space kept) and `EP_BASE_URL`, the fixtures `ep_fixture_dir` (read-only), `ep_fixture_copy` (damageable) and session-wide `ep_election`, the `ep_transport` fixture (a `FakeTransport` serving `ep_2024` under its own election id), `ep_fixture_files()`, and the builders `make_party(letter, votes, *, percent, seats, constituency_seats, supplementary_seats, party_id)` (an empty letter is "Uden for partier") and `make_ep_election(*places)`; `make_place` and `make_election` serve the diff tests.
 
+Round 4 adds the three referendum fixture paths `FA_2022_FIXTURES`, `FA_2015_FIXTURES` and `FA_2009_FIXTURES`, the names `FA_2022_NAME`, `FA_2015_NAME` and `FA_2009_NAME` (copied verbatim from each `valgdag.xml`; `FA_ELECTION_NAME` is the 2022 one) and `FA_2022_BASE_URL`, `FA_2015_BASE_URL` and `FA_2009_BASE_URL`, the fixtures `fa_2022_dir`, `fa_2015_dir`, `fa_2009_dir` (read-only), `fa_2022_copy` (damageable), session-wide `fa_2022`, `fa_2015` and `fa_2009`, the `fa_transport` (2022) and `fa_2009_transport` fixtures (a `FakeTransport` under each set's own election id), `fa_fixture_files(directory=FA_2022_FIXTURES)`, and the builders `make_fa_election(*places)` and `make_answer(letter, votes, *, percent)` (a referendum answer as a seat-free `PartyResult`).
+
 ### `tests/test_errors.py`
 
 Covers `FeedError` and `FetchError`: message kept, not a `ValueError`/`KeyError`/`OSError`, cause preserved; a `FetchError` is a `FeedError`, not the reverse.
@@ -315,12 +317,16 @@ Covers `dkvalg.model`: `Status.has_result` per code, `PartyResult.is_party`, `Pl
 
 Round 3 adds the EP `ElectionType` member and `Place.leader` (most votes, tie to the earlier party, "Uden for partier" and zero votes never lead, `None` without a result).
 
+Round 4 adds the `FOLKEAFSTEMNING` member and referendum answers (leader, ties, zero votes, `is_party` keyed on the id).
+
 ### `tests/test_package.py`
 
 Covers the package surface: `import dkvalg`, the re-exported names, adapter and CLI names kept
 out of the top level, and `valg_data`/`template_repo` not importable (T1, A1); the live-polling names re-exported and the transport pieces kept in their modules.
 
 Round 3 adds the seven diff names re-exported and the registry and adapter helpers kept out.
+
+Round 4 adds the referendum member at the top level and the referendum adapter kept out.
 
 ### `tests/test_folketingsvalg.py`
 
@@ -338,6 +344,8 @@ reported feeds, missing/empty/malformed files and unreadable paths all as `FeedE
 naming the file, purity and idempotency (T3, T7, T8, A3, A7); and `build_election`: equal to `load_election`, the reader called only for reported feeds in overview order, its exceptions propagated, hostile overviews refused before any read (T11, A9).
 
 Round 3 adds EP through `load_election` and `build_election` (adapter chosen from the overview name, unsupported names refused, a never-reported EP feed).
+
+Round 4 adds the same for referenda (type and counts per set, adapter chosen for 2009, a referendum renamed to Kommunalvalg refused, a never-reported feed).
 
 ### `tests/test_replay.py`
 
@@ -357,6 +365,8 @@ bad arguments, errors on stderr only) and `replay` on a capture directory agains
 
 Round 3 adds `--diff` on `replay` (plain, capture, synthetic capture with exact line formats) and `poll` (failed cycles, seats appearing, EP), flag-less output equal to the diff output minus its lines, leader lines only at country, landsdel and storkreds, aware-UTC poll times against naive replay times, and a mixed-election run ending in `error:` and exit 1.
 
+Round 4 pins the national table rows exactly (3-wide letter column for 2026 and EP, 4-wide `JA`/`NEJ` rows for referenda) and adds `--diff` on the three referenda (flag-less equality, leader lines at the three levels with `JA`/`NEJ`, no seat lines), a referendum `poll --diff`, a recorded referendum capture and a referendum that changes type mid-run ending in `error:` and exit 1.
+
 ### `tests/test_http_source.py`
 
 Covers `dkvalg.sources.http_source` through `FakeTransport` and, for `urllib_transport`, a server bound
@@ -371,6 +381,8 @@ fetching at once, and `poll` (backoff schedule, call-time validation, one clock 
 
 Round 3 adds EP through `HttpSource` (EP overview URL, first fetch equal to `load_election`, varying ETags, never reported and back, an overview that becomes an unsupported election).
 
+Round 4 adds referenda (varying ETags, the 2009 set whole and unchanged, the overview URL, a poll cycle, a Kommunalvalg overview refused before any feed is requested).
+
 ### `tests/test_capture.py`
 
 Covers `dkvalg.sources.capture`: `check_feed_name` (all 108 non-overview fixture names accepted,
@@ -383,6 +395,8 @@ earlier national figures, last step equal to the source's election and sleeps (T
 
 Round 3 adds an EP record-then-replay round trip.
 
+Round 4 adds the same round trip for the 2015 referendum (changed lists equal the live ones, repeatable replay, folder contents) and the all-feed-names allowlist check for the three referendum sets.
+
 ### `tests/test_europaparlamentsvalg.py`
 
 Covers Europa-Parlamentsvalg across the stack (A1, A3, A4; T1, T3, T4): the real `ep_2024` fixtures through `load_election` (type, 107 places by type, 92/92, every seat field `None`, national figures, parent ids, SF leading), the EP adapter against the Folketingsvalg one, the quirks (BOM, double space, status 0 in DST's example shape, never reported, empty or absent `Id`, DOCTYPE in the overview and in a result feed), `HttpSource` through `FakeTransport`, a recorded poll replayed by `CaptureReplay`, `ReplaySource`, and the CLI `replay` and `poll` on EP (seats shown as `-`).
@@ -391,13 +405,23 @@ Covers Europa-Parlamentsvalg across the stack (A1, A3, A4; T1, T3, T4): the real
 
 Covers `parse_any_overview` (A2, T2): each real overview gives its own type, names accepted by prefix after stripping (a bare prefix and `Folketingsvalgxyz` pinned as accepted), other names refused naming the value and both supported types, absent or empty `ValgNavn`, malformed XML, a DOCTYPE refused before the name is read (BOM and UTF-16 too), a good name with a bad date or no feeds.
 
+Round 4 adds the three real referendum overviews, referendum names accepted (double space kept, bare prefix, `Folkeafstemningxyz` pinned as accepted), other names refused with the exact three-type message, and the registry equal to the matching adapter.
+
+### `tests/test_folkeafstemning.py`
+
+Covers Folkeafstemning across the stack (A1 to A6; T1 to T6): the three real sets through `load_election` (type, name, date, places by type, 92/92 and 94/94 progress, the national figures, the winning answer, answers as seat-free parties with ids 434284 and 434285 and no "Uden for partier", the 2009 dangling parents of Grønland and Færøerne kept, no `SenestRettetIso` in 2009, overview names winning over feed names), `build_election` and the progress total taken from the overview (94, 92, 1, 0 districts), the adapter (the 3 by 3 refusal matrix, name boundaries, whitespace, bad or missing date, no feeds, BOM, UTF-16, the `SenestRettet` fallback, a missing storkreds id), `parse_place` shapes (status 0 in DST's example shape, status 1 with two answers, 0 to 3 answers, ties, all-zero votes, an answer without or with an empty `Id`, bad figures, a missing `Stemmer`), DOCTYPE and entity refusal naming the file, the showcases, `HttpSource` (equal to `load_election`, unchanged refetch, touched and retimed feeds, never reported, a Kommunalvalg overview refused with state kept), a recorded poll replayed by `CaptureReplay`, `ReplaySource`, and the CLI (`replay` on 2022, 2015 and 2009 with exact `JA`/`NEJ` table rows, `poll`, speed and interval boundaries, and the letter column width: per country, boundaries 1 to 5 letters, an empty letter, a country without a result).
+
 ### `tests/test_dst_feed.py`
 
 Covers `election_name`, `parse_overview_for` and the re-exports (T10): stripped names, `no ValgNavn` and malformed or hostile overviews naming `valgdag.xml`, the `not a <prefix>` refusal, equality with the Folketingsvalg adapter, and that both adapters re-export the same objects as `dst_feed` with the same `__all__`.
 
+Round 4 adds `election_name` on the three referendum overviews, `parse_overview_for` with the referendum type, and the third adapter's re-exports.
+
 ### `tests/test_diff.py`
 
 Covers `diff_elections`, the five change kinds and `Place.leader` use in them (A5 to A7; T5 to T7): the `Change` alias via `typing.get_args(Change.__value__)`, frozen dataclasses and deltas, equal elections, `None` previous against an all-unreported copy, purity and idempotency, type and date mismatch, every status transition (`PlaceCounted` only from status 0), party-result changes on the real 2026 data (national and storkreds seats, percent only, seats `None` to a figure, new and vanished parties), leader rules (overtake, tie, reordered tie, "Uden for partier", all-zero votes, lost leader), a first count with seats giving no `PartyResultChanged`, place matching, ordering and progress, and the replay-consistency chain for 2026 (107 `PlaceCounted`, leader A) and EP 2024 (leader F).
+
+Round 4 adds referenda: `LeaderChanged` from JA to NEJ with votes deltas and `seats_delta` `None`, ties keeping the earlier answer, a percent-only move, a first count, the type-mismatch `ValueError`, and the replay-consistency chain for 2022, 2015 and 2009 (107, 107 and 109 `PlaceCounted`, final leaders JA, NEJ and JA).
 
 ### `tests/test_fixtures.py`
 
@@ -410,6 +434,8 @@ All tests live here and nowhere else — `testpaths = ["tests"]` in `pyproject.t
 found anywhere else.
 
 Round 3 adds the same checks for `tests/fixtures/ep_2024` (109 files, hashes, BOM, README needles).
+
+Round 4 adds them for the three referendum sets (109, 109 and 111 files, overview-listed feeds all present, hashes, BOM, line endings, README needles, the 2009 oddly numbered feeds, the `conftest` paths).
 
 ### `tests/test_guard_git.py`
 

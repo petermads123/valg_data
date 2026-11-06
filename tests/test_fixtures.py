@@ -2,7 +2,13 @@ import hashlib
 from pathlib import Path
 
 import pytest
-from conftest import EP_FIXTURES, ROOT
+from conftest import (
+    EP_FIXTURES,
+    FA_2009_FIXTURES,
+    FA_2015_FIXTURES,
+    FA_2022_FIXTURES,
+    ROOT,
+)
 
 from dkvalg.adapters.folketingsvalg import parse_overview
 from dkvalg.adapters.registry import parse_any_overview
@@ -181,3 +187,106 @@ def test_the_ep_readme_names_the_source_and_the_retrieval_date(
 def test_the_ep_fixture_directory_is_the_one_conftest_points_at() -> None:
     assert EP_FIXTURES == ROOT / "tests" / "fixtures" / "ep_2024"
     assert EP_FIXTURES.is_dir()
+
+
+# --- round 4: the folkeafstemning fixtures (A1, T1) -----------------------------------
+
+FA_SETS = [
+    # directory, XML files, overview feeds, source id, election name part
+    (FA_2022_FIXTURES, 109, 107, "Valg1962294", "1 June 2022"),
+    (FA_2015_FIXTURES, 109, 107, "Valg1664255", "3 December 2015"),
+    (FA_2009_FIXTURES, 111, 109, "Valg1191213", "7 June 2009"),
+]
+FA_IDS = ["2022", "2015", "2009"]
+
+
+@pytest.mark.parametrize(
+    ("directory", "xml_count", "_feeds", "_id", "_when"), FA_SETS, ids=FA_IDS
+)
+def test_fa_fixture_directory_holds_its_xml_files_a_readme_and_a_manifest(
+    directory: Path, xml_count: int, _feeds: int, _id: str, _when: str
+) -> None:
+    xml = sorted(p.name for p in directory.glob("*.xml"))
+
+    assert len(xml) == xml_count
+    assert "generel.xml" in xml
+    assert "valgdag.xml" in xml
+    assert "fintal.xml" not in xml
+    assert sorted(p.name for p in directory.iterdir() if p.suffix != ".xml") == [
+        "README.md",
+        "SHA256SUMS",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("directory", "_n", "feeds", "_id", "_when"), FA_SETS, ids=FA_IDS
+)
+def test_every_feed_a_fa_overview_lists_is_present_and_nothing_else_but_two_overviews(
+    directory: Path, _n: int, feeds: int, _id: str, _when: str
+) -> None:
+    overview = parse_any_overview((directory / "valgdag.xml").read_bytes())
+
+    listed = {f.file_name for f in overview.feeds}
+
+    assert len(listed) == feeds
+    assert all((directory / name).is_file() for name in listed)
+    assert {p.name for p in directory.glob("*.xml")} == listed | {
+        "generel.xml",
+        "valgdag.xml",
+    }
+
+
+@pytest.mark.parametrize("directory", [f[0] for f in FA_SETS], ids=FA_IDS)
+def test_every_fa_file_matches_its_sha256_and_keeps_its_bom(directory: Path) -> None:
+    manifest = _manifest(directory)
+
+    mismatched = [
+        name
+        for name, digest in manifest.items()
+        if hashlib.sha256((directory / name).read_bytes()).hexdigest() != digest
+    ]
+    without_bom = [
+        p.name
+        for p in directory.glob("*.xml")
+        if not p.read_bytes().startswith(b"\xef\xbb\xbf")
+    ]
+
+    assert sorted(manifest) == sorted(p.name for p in directory.glob("*.xml"))
+    assert mismatched == []
+    assert without_bom == []
+
+
+@pytest.mark.parametrize(
+    ("directory", "_n", "_feeds", "source_id", "when"), FA_SETS, ids=FA_IDS
+)
+def test_the_fa_readme_names_the_source_and_the_retrieval_date(
+    directory: Path, _n: int, _feeds: int, source_id: str, when: str
+) -> None:
+    readme = (directory / "README.md").read_text(encoding="utf-8")
+
+    assert f"https://www.dst.dk/valg/{source_id}/xml/" in readme
+    assert "2026-11-06" in readme
+    assert "Folkeafstemning" in readme
+    assert when in readme
+
+
+@pytest.mark.parametrize("directory", [f[0] for f in FA_SETS], ids=FA_IDS)
+def test_no_fa_xml_file_had_its_line_endings_rewritten(directory: Path) -> None:
+    crlf = [p.name for p in directory.glob("*.xml") if b"\r\n" in p.read_bytes()]
+    lf_only = [p.name for p in directory.glob("*.xml") if b"\r\n" not in p.read_bytes()]
+
+    assert not (crlf and lf_only)
+
+
+def test_the_fa_fixture_directories_are_the_ones_conftest_points_at() -> None:
+    root = ROOT / "tests" / "fixtures"
+
+    assert root / "folkeafstemning_2022" == FA_2022_FIXTURES
+    assert root / "folkeafstemning_2015" == FA_2015_FIXTURES
+    assert root / "folkeafstemning_2009" == FA_2009_FIXTURES
+
+
+def test_the_2009_set_lists_the_oddly_numbered_feeds_the_plan_names() -> None:
+    names = {p.name for p in FA_2009_FIXTURES.glob("*.xml")}
+
+    assert {"valgdag_999.xml", "valgdag_841466.xml", "valgdag_841467.xml"} <= names

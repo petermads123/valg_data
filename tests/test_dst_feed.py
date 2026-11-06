@@ -3,14 +3,29 @@
 from pathlib import Path
 
 import pytest
-from conftest import BOM, ELECTION_NAME, EP_ELECTION_NAME, kreds_entry, overview_xml
+from conftest import (
+    BOM,
+    ELECTION_NAME,
+    EP_ELECTION_NAME,
+    FA_2009_NAME,
+    FA_2015_NAME,
+    FA_2022_NAME,
+    kreds_entry,
+    overview_xml,
+)
 
 from dkvalg import ElectionType, FeedError
-from dkvalg.adapters import dst_feed, europaparlamentsvalg, folketingsvalg
+from dkvalg.adapters import (
+    dst_feed,
+    europaparlamentsvalg,
+    folkeafstemning,
+    folketingsvalg,
+)
 from dkvalg.adapters.dst_feed import election_name, parse_overview_for
 
 FV = ElectionType.FOLKETINGSVALG
 EP = ElectionType.EUROPAPARLAMENTSVALG
+FA = ElectionType.FOLKEAFSTEMNING
 
 
 def _overview(name: str | None, **kwargs: object) -> bytes:
@@ -179,3 +194,44 @@ def test_adapter_modules_declare_their_public_names_in_all(module: object) -> No
 
 def test_the_two_adapters_have_their_own_parse_overview() -> None:
     assert folketingsvalg.parse_overview is not europaparlamentsvalg.parse_overview
+
+
+# --- round 4: Folkeafstemning ------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("directory_name", "name"),
+    [
+        ("fa_2022_dir", FA_2022_NAME),
+        ("fa_2015_dir", FA_2015_NAME),
+        ("fa_2009_dir", FA_2009_NAME),
+    ],
+)
+def test_election_name_returns_the_name_of_each_referendum_overview(
+    request: pytest.FixtureRequest, directory_name: str, name: str
+) -> None:
+    xml = (request.getfixturevalue(directory_name) / "valgdag.xml").read_bytes()
+
+    assert election_name(xml) == name
+
+
+def test_parse_overview_for_the_referendum_type_and_prefix_gives_the_referendum() -> (
+    None
+):
+    overview = parse_overview_for(_overview(FA_2022_NAME), FA, "Folkeafstemning")
+
+    assert overview.election_type is FA
+    assert overview.name == FA_2022_NAME
+
+
+def test_parse_overview_for_refuses_a_referendum_name_under_another_prefix() -> None:
+    with pytest.raises(FeedError, match="not a Folketingsvalg"):
+        parse_overview_for(_overview(FA_2022_NAME), FV, "Folketingsvalg")
+
+
+def test_the_referendum_adapter_re_exports_the_same_objects_as_the_other_two() -> None:
+    for name in ("FeedRef", "Overview", "parse_place", "unreported_place"):
+        assert getattr(folkeafstemning, name) is getattr(dst_feed, name)
+    assert folkeafstemning.__all__ == europaparlamentsvalg.__all__
+    assert folkeafstemning.parse_overview is not europaparlamentsvalg.parse_overview
+    assert folkeafstemning.parse_overview is not folketingsvalg.parse_overview

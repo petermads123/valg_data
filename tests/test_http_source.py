@@ -12,6 +12,8 @@ from pathlib import Path
 import pytest
 from conftest import (
     EP_BASE_URL,
+    FA_2009_BASE_URL,
+    FA_2022_BASE_URL,
     NATIONAL,
     OVERVIEW,
     FakeClock,
@@ -20,6 +22,7 @@ from conftest import (
     Request,
     entry,
     ep_fixture_files,
+    fa_fixture_files,
     feed_xml,
     kreds_entry,
     overview_xml,
@@ -1699,3 +1702,69 @@ def test_ep_poll_yields_one_cycle_with_all_107_places_changed(
     assert len(cycle.changed) == 107
     assert cycle.election is not None
     assert cycle.election.election_type is ElectionType.EUROPAPARLAMENTSVALG
+
+
+# --- round 4: Folkeafstemning through HttpSource (A4, T4) --------------------------------
+
+FA_ID = "Valg1962294"
+
+
+def test_a_referendum_with_a_varying_etag_still_sees_an_identical_refetch_as_unchanged() -> (
+    None
+):
+    transport = FakeTransport(
+        fa_fixture_files(), vary_etag=True, base_url=FA_2022_BASE_URL
+    )
+    source = HttpSource(FA_ID, transport=transport, clock=FakeClock())
+    first = source.fetch()
+
+    second = source.fetch()
+
+    assert first.election.election_type is ElectionType.FOLKEAFSTEMNING
+    assert second.changed == ()
+
+
+def test_the_2009_referendum_set_without_iso_stamps_is_fetched_whole_and_stays_unchanged(
+    fa_2009_transport: FakeTransport,
+) -> None:
+    source = HttpSource("Valg1191213", transport=fa_2009_transport, clock=FakeClock())
+
+    first = source.fetch()
+    second = source.fetch()
+
+    assert len(first.changed) == 109
+    assert first.election.counting_progress().total == 94
+    assert second.changed == ()
+    assert (
+        len(fa_2009_transport.requests) == 110 + 1
+    )  # first fetch: overview + 109 feeds; second: the overview again
+    assert all(r.url.startswith(FA_2009_BASE_URL) for r in fa_2009_transport.requests)
+
+
+def test_a_referendum_overview_url_is_accepted_like_an_election_id() -> None:
+    assert overview_url("Valg1962294") == FA_2022_BASE_URL + "valgdag.xml"
+    assert overview_url(FA_2022_BASE_URL) == FA_2022_BASE_URL + "valgdag.xml"
+
+
+def test_referendum_poll_yields_one_cycle_with_all_107_places_changed(
+    fa_transport: FakeTransport,
+) -> None:
+    source = HttpSource(FA_ID, transport=fa_transport, clock=FakeClock())
+
+    (cycle,) = poll(source, max_cycles=1, sleep=lambda _s: None)
+
+    assert cycle.error is None
+    assert len(cycle.changed) == 107
+    assert cycle.election is not None
+    assert cycle.election.election_type is ElectionType.FOLKEAFSTEMNING
+
+
+def test_a_kommunalvalg_overview_is_refused_before_any_feed_is_requested() -> None:
+    files = fa_fixture_files()
+    files[OVERVIEW] = files[OVERVIEW].replace(b"Folkeafstemning", b"Kommunalvalg")
+    transport = FakeTransport(files, base_url=FA_2022_BASE_URL)
+
+    with pytest.raises(FeedError, match="Kommunalvalg"):
+        HttpSource(FA_ID, transport=transport, clock=FakeClock()).fetch()
+
+    assert transport.names == [OVERVIEW]

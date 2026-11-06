@@ -2,7 +2,14 @@ import dataclasses
 from datetime import date
 
 import pytest
-from conftest import dt, make_election, make_party, make_place
+from conftest import (
+    dt,
+    make_answer,
+    make_election,
+    make_fa_election,
+    make_party,
+    make_place,
+)
 
 from dkvalg import (
     CountingProgress,
@@ -478,3 +485,59 @@ def test_place_leader_is_stable_across_calls() -> None:
     place = make_place(parties=(make_party("A", 1), make_party("B", 2)))
 
     assert place.leader is place.leader
+
+
+# --- round 4: the Folkeafstemning member and answers as parties (A2) -------------------
+
+
+def test_election_type_exposes_the_referendum_member_as_a_string_enum() -> None:
+    assert ElectionType("folkeafstemning") is ElectionType.FOLKEAFSTEMNING
+    assert ElectionType.FOLKEAFSTEMNING == "folkeafstemning"
+    assert ElectionType.FOLKEAFSTEMNING.value == "folkeafstemning"
+    assert len(ElectionType) == 3
+
+
+def test_an_election_can_hold_the_referendum_type() -> None:
+    election = make_fa_election()
+
+    assert election.election_type is ElectionType.FOLKEAFSTEMNING
+    assert election.counting_progress() == CountingProgress(0, 0)
+
+
+def test_a_referendum_place_leader_is_the_answer_with_the_most_votes() -> None:
+    place = make_place(parties=(make_answer("JA", 400), make_answer("NEJ", 600)))
+
+    assert place.leader is not None
+    assert place.leader.letter == "NEJ"
+
+
+@pytest.mark.parametrize(
+    ("ja", "nej", "leader"),
+    [(500, 500, "JA"), (0, 0, None), (5, 0, "JA"), (0, 1, "NEJ")],
+)
+def test_a_referendum_place_leader_ties_go_to_ja_and_zero_votes_lead_nobody(
+    ja: int, nej: int, leader: str | None
+) -> None:
+    place = make_place(parties=(make_answer("JA", ja), make_answer("NEJ", nej)))
+
+    assert (place.leader.letter if place.leader else None) == leader
+
+
+def test_referendum_answers_are_parties_keyed_on_the_id_not_the_letter() -> None:
+    answer = make_answer("JA", 1)
+    no_id = PartyResult("", "JA", "JA", 1, 0.1)
+
+    assert answer.is_party
+    assert not no_id.is_party
+    assert (
+        answer.seats is answer.constituency_seats is answer.supplementary_seats is None
+    )
+
+
+def test_a_referendum_place_without_a_result_has_no_leader() -> None:
+    place = make_place(
+        status=Status.NOT_AVAILABLE,
+        parties=(make_answer("JA", 9), make_answer("NEJ", 1)),
+    )
+
+    assert place.leader is None
