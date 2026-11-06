@@ -403,7 +403,7 @@ Covers Europa-Parlamentsvalg across the stack (A1, A3, A4; T1, T3, T4): the real
 
 ### `tests/test_registry.py`
 
-Covers `parse_any_overview` (A2, T2): each real overview gives its own type, names accepted by prefix after stripping (a bare prefix and `Folketingsvalgxyz` pinned as accepted), other names refused naming the value and both supported types, absent or empty `ValgNavn`, malformed XML, a DOCTYPE refused before the name is read (BOM and UTF-16 too), a good name with a bad date or no feeds.
+Covers `parse_any_overview` (A2, T2): each real overview gives its own type, names accepted by prefix after stripping (a bare prefix and `Folketingsvalgxyz` pinned as accepted), other names refused naming the value and the supported types, absent or empty `ValgNavn`, malformed XML, a DOCTYPE refused before the name is read (BOM and UTF-16 too), a good name with a bad date or no feeds.
 
 Round 4 adds the three real referendum overviews, referendum names accepted (double space kept, bare prefix, `Folkeafstemningxyz` pinned as accepted), other names refused with the exact three-type message, and the registry equal to the matching adapter.
 
@@ -413,7 +413,7 @@ Covers Folkeafstemning across the stack (A1 to A6; T1 to T6): the three real set
 
 ### `tests/test_dst_feed.py`
 
-Covers `election_name`, `parse_overview_for` and the re-exports (T10): stripped names, `no ValgNavn` and malformed or hostile overviews naming `valgdag.xml`, the `not a <prefix>` refusal, equality with the Folketingsvalg adapter, and that both adapters re-export the same objects as `dst_feed` with the same `__all__`.
+Covers `election_name`, `parse_overview_for` and the re-exports (T10): stripped names, `no ValgNavn` and malformed or hostile overviews naming `valgdag.xml`, the `not a <prefix>` refusal, equality with the Folketingsvalg adapter, and that each adapter re-exports the same objects as `dst_feed` with the same `__all__`.
 
 Round 4 adds `election_name` on the three referendum overviews, `parse_overview_for` with the referendum type, and the third adapter's re-exports.
 

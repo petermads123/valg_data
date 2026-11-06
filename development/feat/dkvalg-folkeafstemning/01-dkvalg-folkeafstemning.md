@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=6 status=active -->
+<!-- claude-plan step=7 status=active -->
 
 | Field | Value |
 |---|---|
@@ -19,8 +19,8 @@
 | 3 | Implement | `/implement` | in `/build` | done |
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
-| 6 | Concept check | `/concept-check` | in `/build` | in progress |
-| 7 | Ship | `/ship` | in `/build` | pending |
+| 6 | Concept check | `/concept-check` | in `/build` | done |
+| 7 | Ship | `/ship` | in `/build` | in progress |
 | 8 | Recommend | `/recommend` | with the user | pending |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
@@ -265,19 +265,25 @@ Edge cases considered and deliberately skipped, with reasons:
 
 | # | Criterion | Met | Evidence |
 |---|---|---|---|
-| A1 | | | |
+| A1 | Three complete real fixture sets, `load_election` figures right | yes | `load_election` on each (run in this step): 2022 type `folkeafstemning`, 107 places (COUNTRY 1, TALLY 1, LANDSDEL 3, STORKREDS 10, OPSTILLINGSKREDS 92), 92/92, 4,260,944 eligible, turnout 65.76, blank 32,807, JA 1,848,738 (66.9), NEJ 914,829 (33.1); 2015 JA 1,377,538, NEJ 1,556,582 (53.1); 2009 109 places with 94 opstillingskredse, 94/94, JA 1,858,008 (85.3), 4,114,395 eligible. No `Parti` of any place has a seat figure (checked over every place of every set). `git diff main --stat` shows `tests/fixtures/folkeafstemning_{2022,2015,2009}/` added; the verification log records 109/109/111 XML files and `sha256sum -c` clean; README and SHA256SUMS present |
+| A2 | Answers in the existing model, leader, `is_party`, progress | yes | No new model type: `git diff main --stat` has only the `ElectionType` member and docstrings in `model.py`. National `leader.letter`: 2022 JA, 2015 NEJ, 2009 JA; both answers `is_party` True; the national parties are exactly JA and NEJ (no "Uden for partier"); 2009 progress `94/94` from the overview. Tests: `test_referendum_national_leader_is_the_winning_answer`, `test_referendum_answers_are_parties_with_no_seats_and_no_outside_party_entry` |
+| A3 | Adapter chosen from `ValgNavn`, refusals | yes | `parse_any_overview` on the 2022 overview gives `folkeafstemning`; `folketingsvalg.parse_overview` and `europaparlamentsvalg.parse_overview` refuse it (`not a Folketingsvalg, ValgNavn is 'Folkeafstemning onsdag  1. juni 2022'`, likewise EP); `folkeafstemning.parse_overview` refuses the 2026 and EP 2024 overviews; a `Kommunalvalg` name gives `valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg, Folkeafstemning), ValgNavn is 'Kommunalvalg onsdag  1. juni 2022'`. Thin adapter `src/dkvalg/adapters/folkeafstemning.py` (77 lines with showcase) |
+| A4 | Works across the stack | yes | `python -m dkvalg replay tests/fixtures/folkeafstemning_2022 --speed inf`: exit 0, empty stderr, 111 lines, 107 place lines ending `92/92`, table rows `JA  JA ... 66.9%  1848738  -` and `NEJ NEJ ... 33.1%  914829  -`; 2015 the same shape (NEJ 53.1 %); 2009 ends `94/94` (113 lines). `HttpSource` first fetch equal to `load_election`, `CaptureReplay` ending equal to the last fetch, `ReplaySource`, and `poll` on a fake transport are covered by `tests/test_folkeafstemning.py` (145 cases) and `test_capture.py` / `test_http_source.py` / `test_cli.py` round 4 groups, all in the 1824 passed run of this step. The CLI width fix is the only `src/cli.py` change (13 lines) |
+| A5 | Feed quirks | yes | Double space (2022, 2009) and single space (2015) pinned by `test_referendum_names_keep_or_lack_the_double_space_as_served`; BOM, status 0 in DST's shape, status 1 with two answers, never reported, an answer without `Id`, DOCTYPE and entity in overview, result feed and directory: `test_folkeafstemning.py` groups listed in section 5 T5, all green (1824 passed). The hardening is the shared `dst_feed` code, unchanged by this round (`dst_feed.py` diff is docstring and comments, 5 lines) |
+| A6 | `diff_elections` and `--diff` correct | yes | Run here: chaining `diff_elections` over every consecutive `ReplaySource` snapshot gives `PlaceCounted` 107 / 107 / 109 and final national leader JA / NEJ / JA for 2022 / 2015 / 2009. `replay tests/fixtures/folkeafstemning_2015 --speed inf --diff` prints e.g. `leader storkreds Bornholms Storkreds: - -> NEJ` and `... Nordsjællands Storkreds: - -> JA`. Flip, percent-only move and seats_delta `None`: `test_diff.py` round 4 group. `diff.py` change is docstrings only (7 lines) |
+| A7 | Earlier rounds untouched | yes | `git diff main -U0 -- tests` removals (non-fixture): `test_cli.py` (import line gaining a name, `Folkeafstemning 2022` in the `_ep_directory` helper, the `(_ep_directory, "Folkeafstemning")` case), `test_directory.py` (helper name, `match="Folkeafstemning"`), `test_http_source.py` (case name, `match`), `test_registry.py` (the `"Folkeafstemning 2022"` row, an import line), `test_model.py` / `test_package.py` / `test_diff.py` / `test_dst_feed.py` / `test_fixtures.py` (import lines gaining names, the member-set assertions gaining `FOLKEAFSTEMNING`); `test_folketingsvalg.py` has no diff. This is A7's list plus import-line widening. `pytest`: 1824 passed; `ruff check .` clean; `mypy`: no issues in 41 files. Party tables unchanged: `replay` of folketingsvalg_2026 still prints `A  A. Socialdemokratiet ... 38`; step 4 compared 2026 and EP output byte-for-byte with `main` |
 
 Drift found, and what was done about it:
 
+- **Step 5's test-expectation correction (2026 "Uden for partier" row ends in `0`, not `-`).** Checked and not a conflict: A4 concerns referendum tables (`JA`/`NEJ` rows with `-` seats) and the letter column width; A7 says earlier tests pass unchanged. DST gives that 2026 entry `Mandater="0"`, so the real output is `-  Uden for partier  0.1%  2420  0`, and the new test builds its expectation from the model (`seats == 0`). Neither criterion says anything about that row. No halt.
+- **Scope.** No AppDaemon or Home Assistant text in `src/` or the README (grep). `pyproject.toml` untouched, no new dependencies. `src/dkvalg/__init__.py` has no diff: no unplanned public names (the only new public names are `ElectionType.FOLKEAFSTEMNING`, `adapters.folkeafstemning.parse_overview` and `main`). README section "Folkeafstemning (referenda)" says that the entries of `Place.parties` are the answers, names the three fixture sets and the 94-district 2009 oddity; `DEVELOPMENT.md` records the `PartyResult` naming note. Nothing from the out-of-scope list was built (no fintal, no thresholds, no answer type, no 2014 fixtures).
+- **STRUCTURE.md.** The auditor found two wording-only stale spots, both fixed: `### tests/test_registry.py` ("the supported types" instead of "both supported types") and `### tests/test_dst_feed.py` ("each adapter re-exports" instead of "both adapters re-export"). Nothing else drifted.
+- **Showcase.** `python -m dkvalg.adapters.folkeafstemning` and the registry showcase were run in step 4 and read as worked examples (name, call, `JA: 1848738 votes (66.9 %)`).
+- No code was wrong; nothing sent back to step 3.
+
 ### Earlier rounds still hold
 
-> Later rounds only. Re-check every acceptance criterion from every earlier round in this
-> folder: this round changed code they depend on, and their tests passing is necessary but
-> not sufficient — a criterion can be satisfied by tests that no longer describe what the
-> feature does.
-
-| Round | # | Criterion | Still met | Evidence |
-|---|---|---|---|---|
+Not applicable: this is the first round of the branch. Earlier PRs (#2 to #4) are on `main`; their suites pass unchanged except A7's list.
 
 ---
 
