@@ -50,3 +50,7 @@ by heading is updated in the same change.
 ## diff on a finished election shows seats arriving with the count
 
 2026-11-04, `feat/dkvalg-diff-and-ep` round 1. In live feeds DST computes seats after a place is first counted, so `--diff` prints a `seats ... - -> n` line when they arrive; replaying a finished election's end-state files reveals a place with its seats already present, so no seat line appears at that step (documented and pinned by tests). Next step: if end-state replays should also show seat lines, derive them from `PlaceCounted` places that carry seats, or wait for a recorded live capture, which shows the real order.
+
+## Referendum answers are carried as party results
+
+2026-11-06, `feat/dkvalg-folkeafstemning` round 1. DST encodes a referendum's answers (JA, NEJ) as `Parti` entries, so the model reuses `PartyResult` and `Place.parties` for them and the docs say so; the names `PartyResult` and `is_party` read oddly for a referendum. Next step: if a non-party kind of result needs a clearer name, rename `PartyResult` and `Place.parties` to a neutral term in a deliberate, breaking round; not worth doing for one more election type.
