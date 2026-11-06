@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=4 status=active -->
+<!-- claude-plan step=5 status=active -->
 
 | Field | Value |
 |---|---|
@@ -17,8 +17,8 @@
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
 | 3 | Implement | `/implement` | in `/build` | done |
-| 4 | Verify | `/verify` | in `/build` | in progress |
-| 5 | Test | `/test` | in `/build` | pending |
+| 4 | Verify | `/verify` | in `/build` | done |
+| 5 | Test | `/test` | in `/build` | in progress |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
 | 8 | Recommend | `/recommend` | with the user | pending |
@@ -209,12 +209,20 @@ Built as planned, with these small notes (none touches section 1):
 
 | Check | Result |
 |---|---|
-| `ruff check .` | |
-| `ruff format --check .` | |
-| `mypy` | |
-| Plan completeness | every signature in the Public API table exists as written |
-| `STRUCTURE.md` | in sync |
-| `python -m <package>.<module>` | |
+| `ruff check .` | `All checks passed!` |
+| `ruff format --check .` | `76 files already formatted` |
+| `mypy` | `Success: no issues found in 40 source files` |
+| `pytest` | `1595 passed in 20.88s` |
+| Plan completeness | every Public API row exists as written: `ElectionType.FOLKEAFSTEMNING == "folkeafstemning"` (third member); `folkeafstemning.parse_overview(xml: bytes) -> Overview`; `__all__` = FeedRef, Overview, main, parse_overview, parse_place, unreported_place (same list as the EP adapter); the four shared names are the same objects as in `dst_feed`; registry refusal message lists Folketingsvalg, Europa-Parlamentsvalg, Folkeafstemning. No unplanned public names (module-level extras are only imports) |
+| `STRUCTURE.md` | in sync (auditor: no drift); applied nit 1 ("EP, referenda"); skipped nit 2 (duplicates the ElectionType row and the answers note); README replay example for `folkeafstemning_2022` added (nit 3) |
+| `python -m dkvalg.<module>` | errors, model, diff, adapters.dst_feed, adapters.folketingsvalg, adapters.europaparlamentsvalg, adapters.folkeafstemning, adapters.registry, sources.directory, sources.http_source, sources.capture, sources.replay: all exit 0 with output (only the expected runpy RuntimeWarning); folkeafstemning prints `Folkeafstemning onsdag  1. juni 2022 (2022-06-01): 107 feeds`, `JA: 1848738 votes (66.9 %)`, `NEJ: 914829 votes (33.1 %)`; registry prints three accepted types and `refused: ... (Folketingsvalg, Europa-Parlamentsvalg, Folkeafstemning), ValgNavn is 'Kommunalvalg 2025'` |
+| `python -m dkvalg` / `replay ... --speed inf` | help exit 0; folketingsvalg_2026 122 lines, ep_2024 120, folkeafstemning_2022 111 (ends `92/92`, rows `JA  JA ... 66.9% 1848738 -`, `NEJ NEJ ... 33.1% 914829 -`), 2015 111, 2009 113 (ends `94/94`); all exit 0, empty stderr; 2015 with `--diff` exit 0, 216 lines, leader lines such as `storkreds Bornholms Storkreds: - -> NEJ` |
+| Party tables unchanged | `replay` of folketingsvalg_2026 and ep_2024 compared with the same command run on `git archive main src`: byte-identical (`cmp`) |
+| Fixtures | `sha256sum -c`: 0 failures in each of the three; XML counts 109 / 109 / 111 (2022 / 2015 / 2009) |
+| 2009 dangling parents | `get(OPSTILLINGSKREDS, "841466").parent_id == "841466"`, `"841467"` likewise; progress `94/94` |
+| `git diff main -U0 -- tests` | removed lines only: test_cli (`Folkeafstemning 2022` in the helper, the `_ep_directory` case), test_directory (name in helper, `match="Folkeafstemning"`), test_http_source (name in the case, `match`), test_registry (the `"Folkeafstemning 2022"` row), plus the one-line changes in test_model and test_package (member sets gain FOLKEAFSTEMNING). Exactly A7's list; the deleted-not-retargeted registry row is sound because `"Kommunalvalg 2025"` already exists in that list |
+
+Section 3 notes judged: none needs a plan correction (the registry row deletion is covered above; the per-place letter width is computed from printed rows and verified byte-identical).
 
 ---
 

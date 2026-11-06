@@ -107,7 +107,7 @@ I/O. Timestamps are naive Danish local time as served (a UTC offset is refused; 
 either spelling is None); a BOM is accepted; figures must be plain numbers (no `nan`, `inf`,
 `1_000`). Both parsers refuse a document that declares a DOCTYPE or an entity (an `expat`
 pre-scan, so UTF-16 is covered) with a `FeedError` naming the file, before `ElementTree`
-expands anything. Seat attributes are optional, so a feed without them (EP) gives `None` seats.
+expands anything. Seat attributes are optional, so a feed without them (EP, referenda) gives `None` seats.
 
 | Signature | Description |
 |---|---|

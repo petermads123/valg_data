@@ -117,6 +117,7 @@ for step in source:
 
 ```powershell
 python -m dkvalg replay tests/fixtures/folketingsvalg_2026 --speed 600
+python -m dkvalg replay tests/fixtures/folkeafstemning_2022 --speed inf --diff   # a referendum: the rows are JA and NEJ
 ```
 
 Prints one line per place as it is revealed, with a running counted-of-total progress, and ends
