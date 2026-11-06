@@ -45,7 +45,7 @@ by heading is updated in the same change.
 
 ## Election type is recognised by a name prefix
 
-2026-11-04, `feat/dkvalg-diff-and-ep` round 1. `parse_any_overview` picks the adapter by `startswith` on `ValgNavn` (`Folketingsvalg`, `Europa-Parlamentsvalg`), case-sensitive, so a bare prefix or `Folketingsvalgxyz` is accepted and a respelling by DST (for example `Europaparlamentsvalg`) is refused with the supported types listed. Next step: if DST ever changes the spelling, add the new prefix in the registry; there is no feed field that states the election type.
+2026-11-04, `feat/dkvalg-diff-and-ep` round 1. `parse_any_overview` picks the adapter by `startswith` on `ValgNavn` (`Folketingsvalg`, `Europa-Parlamentsvalg`, `Folkeafstemning`), case-sensitive, so a bare prefix or `Folketingsvalgxyz` is accepted and a respelling by DST (for example `Europaparlamentsvalg`) is refused with the supported types listed. Next step: if DST ever changes the spelling, add the new prefix in the registry; there is no feed field that states the election type.
 
 ## diff on a finished election shows seats arriving with the count
 

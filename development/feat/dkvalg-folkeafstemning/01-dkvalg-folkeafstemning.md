@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=8 status=active -->
+<!-- claude-plan step=9 status=active -->
 
 | Field | Value |
 |---|---|
@@ -21,8 +21,8 @@
 | 5 | Test | `/test` | in `/build` | done |
 | 6 | Concept check | `/concept-check` | in `/build` | done |
 | 7 | Ship | `/ship` | in `/build` | done |
-| 8 | Recommend | `/recommend` | with the user | next |
-| 9 | Pull request | `/create-pr` | with the user | pending |
+| 8 | Recommend | `/recommend` | with the user | done |
+| 9 | Pull request | `/create-pr` | with the user | in progress |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
 
 Statuses: `pending`, `in progress`, `done`.
@@ -307,9 +307,7 @@ Not applicable: this is the first round of the branch. Earlier PRs (#2 to #4) ar
 > section 1 promised, such as a class member it put out of scope, is a recommendation here,
 > and its round opens through `/fix`.
 
-| # | Recommendation | Why it is critical | Effort | Decision |
-|---|---|---|---|---|
-| R1 | | | | |
+None.
 
 Decisions: `deferred`, `rejected`, or `next round` — a new numbered file in this folder,
 taken back through steps 1 to 7 on the same branch.
