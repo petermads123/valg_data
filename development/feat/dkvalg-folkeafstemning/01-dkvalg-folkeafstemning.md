@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=7 status=active -->
+<!-- claude-plan step=8 status=active -->
 
 | Field | Value |
 |---|---|
@@ -20,8 +20,8 @@
 | 4 | Verify | `/verify` | in `/build` | done |
 | 5 | Test | `/test` | in `/build` | done |
 | 6 | Concept check | `/concept-check` | in `/build` | done |
-| 7 | Ship | `/ship` | in `/build` | in progress |
-| 8 | Recommend | `/recommend` | with the user | pending |
+| 7 | Ship | `/ship` | in `/build` | done |
+| 8 | Recommend | `/recommend` | with the user | next |
 | 9 | Pull request | `/create-pr` | with the user | pending |
 | 10 | Review | `/watch-pr` | on the pull request | pending |
 
@@ -291,8 +291,10 @@ Not applicable: this is the first round of the branch. Earlier PRs (#2 to #4) ar
 
 | Field | Value |
 |---|---|
-| Commits | |
-| Pushed to | |
+| Commits | 11 before this one, oldest first: `b521a73` Concept; `f156ec1` Plan draft; `a760eac` Plan: apply plan-critic findings; `4228200` Plan accepted by the user; `7e466ad` WIP step 3 (type, adapter, registry, retargeted tests); `84dac8d` WIP step 3 (three fixture sets); `ef5d931` Implement; `39bce22` Verify; `c130652` WIP step 5; `9be3764` Test; `768f720` Concept check; then `Ship: dkvalg Folkeafstemning (referendum) adapter` (this step). Every step 1 to 6 left a commit. |
+| Gates on the whole tree | `ruff check .` clean; `ruff format --check .` 77 files formatted; `mypy` no issues in 41 source files; `pytest` 1824 passed in 21.99s |
+| Review | `git diff main...HEAD --name-only`: only the planned files (src: model, dst_feed, registry, cli, diff, new adapter; the tests named in the plan; README, STRUCTURE, DEVELOPMENT; the plan file; 335 fixture files under `tests/fixtures/folkeafstemning_{2022,2015,2009}/`). No scratch paths, debug output, secrets or AppDaemon/HA text; `pyproject.toml` untouched |
+| Pushed to | `origin/feat/dkvalg-folkeafstemning` |
 
 ---
 
