@@ -41,14 +41,17 @@ def parse_overview(xml: bytes) -> Overview:
         FeedError: If the XML is malformed, a required field is missing, the
             overview is not a Folkeafstemning, or it lists no result feeds.
     """
-    return parse_overview_for(
-        xml, ElectionType.FOLKEAFSTEMNING, "Folkeafstemning"
-    )
+    return parse_overview_for(xml, ElectionType.FOLKEAFSTEMNING, "Folkeafstemning")
 
 
 def main() -> None:
     """Showcase this module's functionality."""
-    fixtures = Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "folkeafstemning_2022"
+    fixtures = (
+        Path(__file__).resolve().parents[3]
+        / "tests"
+        / "fixtures"
+        / "folkeafstemning_2022"
+    )
     if not fixtures.is_dir():
         print(f"fixtures not found at {fixtures}; run from a repository checkout")
         return

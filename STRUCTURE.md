@@ -41,7 +41,7 @@ src/                    everything installable; nothing outside it is packaged
   dkvalg/               the package: model, diff, adapters, sources (files, HTTP, captures) and the CLI
 docs/                   reference documents (DST's XML-feeds PDF)
 tests/                  pytest suite, one test_<module>.py per module
-  fixtures/             unmodified real DST feeds used as test data (Folketingsvalg 2026, EP 2024)
+  fixtures/             unmodified real DST feeds used as test data (Folketingsvalg 2026, EP 2024, Folkeafstemning 2022, 2015 and 2009)
 development/            one folder per branch, one file per round: the pipeline's state
 .claude/                Claude Code configuration: rules, skills, agents, hooks
 .vscode/                editor config (Ruff as formatter, format on save)
@@ -54,7 +54,7 @@ STRUCTURE.md            this file
 
 ## Package: `src/dkvalg/`
 
-Reads DST's Folketingsvalg and Europa-Parlamentsvalg XML feeds into one normalised, immutable
+Reads DST's Folketingsvalg, Europa-Parlamentsvalg and Folkeafstemning (referendum) XML feeds into one normalised, immutable
 model, compares two snapshots (`diff`), polls them live over HTTP, records what a poll receives and replays a saved feed set or a recording through
 time. Standard library only. Subpackages: `adapters/` (bytes in, model out: the shared `dst_feed`, a thin
 module per election type and a `registry` choosing between them) and `sources/` (where an `Election` comes from: a directory, a time-scaled
@@ -87,7 +87,7 @@ Normalised, immutable election model. Seat fields are `None` where DST gives non
 
 | Signature | Description |
 |---|---|
-| `class ElectionType(StrEnum)` | `FOLKETINGSVALG = "folketingsvalg"`, `EUROPAPARLAMENTSVALG = "europaparlamentsvalg"`. |
+| `class ElectionType(StrEnum)` | `FOLKETINGSVALG = "folketingsvalg"`, `EUROPAPARLAMENTSVALG = "europaparlamentsvalg"`, `FOLKEAFSTEMNING = "folkeafstemning"`. For a referendum the entries of `Place.parties` are the answers (letter `JA` or `NEJ`, no seats, no "Uden for partier"). |
 | `class PlaceType(StrEnum)` | `COUNTRY`, `TALLY` (DST's seatless preliminary "optalling" total), `LANDSDEL`, `STORKREDS`, `OPSTILLINGSKREDS`. |
 | `class Status(IntEnum)` | DST status code: `NOT_AVAILABLE` 0, `PRELIMINARY` 1, `ERROR` 9, `RECOUNT_PENDING` 10, `RECOUNT_PRELIMINARY` 11, `RECOUNT_FINAL` 12; property `has_result` (true for 1, 11, 12). |
 | `@dataclass(frozen=True, slots=True) class PartyResult` | `party_id: str`, `letter: str`, `name: str`, `votes: int`, `percent: float`, `seats: int \| None = None`, `constituency_seats: int \| None = None`, `supplementary_seats: int \| None = None`; property `is_party` (false for "Uden for partier", `party_id == ""`). |
@@ -139,11 +139,21 @@ attributes); re-exports the same four shared names.
 | `parse_overview(xml: bytes) -> Overview` | `parse_overview_for(xml, ElectionType.EUROPAPARLAMENTSVALG, "Europa-Parlamentsvalg")`. |
 | `main() -> None` | Showcase (reads `tests/fixtures/ep_2024` by a repo-relative path). |
 
+### `src/dkvalg/adapters/folkeafstemning.py`
+
+Thin adapter for Folkeafstemning (referendum) feeds: the answers are `Parti` entries (`JA`,
+`NEJ`), there are no seat attributes; re-exports the same four shared names.
+
+| Signature | Description |
+|---|---|
+| `parse_overview(xml: bytes) -> Overview` | `parse_overview_for(xml, ElectionType.FOLKEAFSTEMNING, "Folkeafstemning")`; `FeedError` when malformed, not a Folkeafstemning, or listing no feeds. |
+| `main() -> None` | Showcase (reads `tests/fixtures/folkeafstemning_2022` by a repo-relative path). |
+
 ### `src/dkvalg/adapters/registry.py`
 
 | Signature | Description |
 |---|---|
-| `parse_any_overview(xml: bytes) -> Overview` | Read the name with `election_name` and call the matching adapter's `parse_overview`; any other name is `FeedError("valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg), ValgNavn is '<name>'")`. Used by `build_election` and `HttpSource`. |
+| `parse_any_overview(xml: bytes) -> Overview` | Read the name with `election_name` and call the matching adapter's `parse_overview`; any other name is `FeedError("valgdag.xml: not a supported election (Folketingsvalg, Europa-Parlamentsvalg, Folkeafstemning), ValgNavn is '<name>'")`. Used by `build_election` and `HttpSource`. |
 | `main() -> None` | Showcase. |
 
 ### `src/dkvalg/sources/__init__.py`
@@ -229,7 +239,7 @@ ignored; a place only in `current` is compared with its unreported form.
 
 | Signature | Description |
 |---|---|
-| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N] [--diff]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N] [--diff]`; `--diff` adds, after each step's place lines, one line per notable change (leader at country, landsdel or storkreds; seats; status; progress), and without it the output is unchanged; returns 0 ok, 1 on `FeedError` (a `--diff` over two different elections included) or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
+| `run(argv: Sequence[str] \| None = None, *, out: TextIO \| None = None, err: TextIO \| None = None, sleep: Callable[[float], None] = time.sleep, transport: Transport = urllib_transport, clock: Callable[[], datetime] = utc_now) -> int` | `replay <dir> [--speed N] [--diff]` (a plain feed directory or a capture directory) and `poll <id-or-url> [--interval N] [--record DIR] [--cycles N] [--diff]`; `--diff` adds, after each step's place lines, one line per notable change (leader at country, landsdel or storkreds; seats; status; progress), and without it the output is unchanged; the national table's letter column is `max(3, longest letter + 1)` wide, so the referendum answers `JA` and `NEJ` do not run into their names; returns 0 ok, 1 on `FeedError` (a `--diff` over two different elections included) or a `poll` whose last cycle failed (`error: <message>` on `err`), 2 on bad arguments or location, 130 on Ctrl-C in `poll`; no subcommand prints help and returns 0. |
 | `main() -> None` | `raise SystemExit(run())`. |
 
 ### `src/dkvalg/__main__.py`
@@ -257,6 +267,17 @@ The unmodified Europa-Parlamentsvalg 9 June 2024 feeds retrieved 2026-11-04 from
 `https://www.dst.dk/valg/Valg2546524/xml/`: `generel.xml`, `valgdag.xml` and the 107 result
 feeds it lists (109 XML files, BOM intact, no seat attributes), plus `README.md` and
 `SHA256SUMS`. `.gitattributes` marks it `-text` like the other fixture directory.
+
+### `tests/fixtures/folkeafstemning_2022/`, `_2015/` and `_2009/`
+
+The unmodified Folkeafstemning feeds retrieved 2026-11-06 from
+`https://www.dst.dk/valg/Valg1962294/xml/` (1 June 2022), `.../Valg1664255/xml/` (3 December
+2015) and `.../Valg1191213/xml/` (7 June 2009): `generel.xml`, `valgdag.xml` and every result
+feed the overview lists (109 XML files each for 2022 and 2015, 111 for 2009, BOM intact, no
+`fintal.xml`), each with a `README.md` and `SHA256SUMS`. The answers are `Parti` entries `JA`
+and `NEJ` without seats. 2009 has 94 opstillingskredse; two (Grønland, Færøerne) name a parent
+id that no storkreds has, kept as served, and its feeds carry no `SenestRettetIso`. 2015 has
+a single space in `ValgNavn`, 2022 and 2009 a double one.
 
 ## Tests: `tests/`
 

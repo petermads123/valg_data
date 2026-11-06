@@ -2,7 +2,7 @@
 
 The parsing every DST election type shares: the overview's feed list, the result
 feeds, the hardening against DOCTYPE and entity declarations. The per-type
-adapters (`folketingsvalg`, `europaparlamentsvalg`) add only the check that an
+adapters (`folketingsvalg`, `europaparlamentsvalg`, `folkeafstemning`) add only the check that an
 overview names their election type. Bytes in, model out: nothing here touches the
 disk.
 """
@@ -406,7 +406,8 @@ def main() -> None:
         return
     overview_xml = (fixtures / "valgdag.xml").read_bytes()
     election_type = ElectionType.FOLKETINGSVALG  # FOLKETINGSVALG, EUROPAPARLAMENTSVALG
-    name_prefix = "Folketingsvalg"  # "Folketingsvalg", "Europa-Parlamentsvalg"
+    # (FOLKEAFSTEMNING is the third member)
+    name_prefix = "Folketingsvalg"  # "Folketingsvalg", "Europa-Parlamentsvalg", ...
 
     name = election_name(overview_xml)
     overview = parse_overview_for(overview_xml, election_type, name_prefix)

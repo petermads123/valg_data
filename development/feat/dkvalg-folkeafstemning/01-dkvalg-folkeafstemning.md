@@ -1,6 +1,6 @@
 # dkvalg: Folkeafstemning (referendum) adapter
 
-<!-- claude-plan step=3 status=active -->
+<!-- claude-plan step=4 status=active -->
 
 | Field | Value |
 |---|---|
@@ -16,8 +16,8 @@
 |---|---|---|---|---|
 | 1 | Conceptualize | `/conceptualize` | with the user | done |
 | 2 | Plan | `/plan` | with the user, unless the critique is clean | done |
-| 3 | Implement | `/implement` | in `/build` | in progress |
-| 4 | Verify | `/verify` | in `/build` | pending |
+| 3 | Implement | `/implement` | in `/build` | done |
+| 4 | Verify | `/verify` | in `/build` | in progress |
 | 5 | Test | `/test` | in `/build` | pending |
 | 6 | Concept check | `/concept-check` | in `/build` | pending |
 | 7 | Ship | `/ship` | in `/build` | pending |
@@ -188,6 +188,18 @@ Accepted: by the user, 2026-11-06
 > Written in step 3. Only deviations from the plan above, each with its reason. "Built as
 > planned" is a complete and good entry. On a fix round, also the reproduction test's red
 > run, pasted here before the fix was written — step 6 cites it.
+
+Built as planned, with these small notes (none touches section 1):
+
+- Fixtures were downloaded fresh from DST on 2026-11-06 (the network was available) and are
+  byte-identical to the planner's copies; retrieval date 2026-11-06.
+- The `"Folkeafstemning 2022"` row of the refused names in `test_registry.py` was deleted
+  rather than retargeted: the list already holds `"Kommunalvalg 2025"`, so a retargeted row
+  would duplicate it. The two ElectionType member-set tests keep their names.
+- `cli._print_table` computes the letter width per national place from its printed rows;
+  party-election output is byte-identical to before (checked for 2026 and EP 2024).
+- The registry showcase gained a Folkeafstemning name (the real 2022 one) next to the
+  `Kommunalvalg 2025` refused example.
 
 ---
 
