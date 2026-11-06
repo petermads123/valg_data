@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="27" Type="OpstKreds">8. Valby</Sted>
+  <SenestRettet>08-06-2009 00:42:46</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:31</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst27.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg27.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>33421</Stemmeberettigede>
+  <DeltagelsePct>55</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="12891" StemmerPct="82.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2650" StemmerPct="17.1" />
+    <IAltGyldigeStemmer>15541</IAltGyldigeStemmer>
+    <BlankeStemmer>2610</BlankeStemmer>
+    <AndreUgyldigeStemmer>229</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2839</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>18380</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="72" Type="OpstKreds">5. Esbjerg Omegn</Sted>
+  <SenestRettet>01-06-2022 21:47:33</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:47:33</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst72.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg72.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>40463</Stemmeberettigede>
+  <DeltagelsePct>65.2</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16775" StemmerPct="64.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="9304" StemmerPct="35.7" />
+    <IAltGyldigeStemmer>26079</IAltGyldigeStemmer>
+    <BlankeStemmer>260</BlankeStemmer>
+    <AndreUgyldigeStemmer>42</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>302</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26381</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

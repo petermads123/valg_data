@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="72" Type="OpstKreds">5. Esbjerg Omegn</Sted>
+  <SenestRettet>08-06-2009 01:17:30</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:39</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst72.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg72.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>39271</Stemmeberettigede>
+  <DeltagelsePct>58.26</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18323" StemmerPct="86.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2939" StemmerPct="13.8" />
+    <IAltGyldigeStemmer>21262</IAltGyldigeStemmer>
+    <BlankeStemmer>1504</BlankeStemmer>
+    <AndreUgyldigeStemmer>113</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1617</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>22879</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

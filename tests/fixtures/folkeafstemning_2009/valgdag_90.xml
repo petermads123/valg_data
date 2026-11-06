@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="90" Type="OpstKreds">10. Horsens</Sted>
+  <SenestRettet>07-06-2009 23:09:54</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:42</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst90.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg90.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>58672</Stemmeberettigede>
+  <DeltagelsePct>58.99</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="28215" StemmerPct="86.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4314" StemmerPct="13.3" />
+    <IAltGyldigeStemmer>32529</IAltGyldigeStemmer>
+    <BlankeStemmer>1901</BlankeStemmer>
+    <AndreUgyldigeStemmer>182</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2083</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>34612</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

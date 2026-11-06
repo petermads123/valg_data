@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="57" Type="OpstKreds">10. Kalundborg</Sted>
+  <SenestRettet>01-06-2022 22:05:08</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:05:08</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst57.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg57.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>63908</Stemmeberettigede>
+  <DeltagelsePct>65.18</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="24807" StemmerPct="60.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="16369" StemmerPct="39.8" />
+    <IAltGyldigeStemmer>41176</IAltGyldigeStemmer>
+    <BlankeStemmer>422</BlankeStemmer>
+    <AndreUgyldigeStemmer>59</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>481</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>41657</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

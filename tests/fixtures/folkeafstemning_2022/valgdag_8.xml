@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="8" Type="Landsdel">Sjælland-Syddanmark</Sted>
+  <SenestRettet>01-06-2022 23:01:27</SenestRettet>
+  <SenestRettetIso>2022-06-01T23:01:27</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:34</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:34</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgLand8.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg8.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>1539640</Stemmeberettigede>
+  <DeltagelsePct>65.86</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="646299" StemmerPct="64.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="354236" StemmerPct="35.4" />
+    <IAltGyldigeStemmer>1000535</IAltGyldigeStemmer>
+    <BlankeStemmer>11338</BlankeStemmer>
+    <AndreUgyldigeStemmer>2112</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>13450</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>1013985</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

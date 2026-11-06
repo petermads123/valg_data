@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="35" Type="OpstKreds">4. Rødovre</Sted>
+  <SenestRettet>01-06-2022 22:46:09</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:46:09</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst35.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg35.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>48088</Stemmeberettigede>
+  <DeltagelsePct>62.13</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="19027" StemmerPct="64.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="10466" StemmerPct="35.5" />
+    <IAltGyldigeStemmer>29493</IAltGyldigeStemmer>
+    <BlankeStemmer>341</BlankeStemmer>
+    <AndreUgyldigeStemmer>45</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>386</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>29879</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

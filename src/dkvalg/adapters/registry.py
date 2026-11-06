@@ -39,7 +39,7 @@ def main() -> None:
     names = (
         "Folketingsvalg tirsdag 24. marts 2026",
         "Europa-Parlamentsvalg søndag  9. juni 2024",
-        "Folkeafstemning torsdag  1. juni 2022",
+        "Folkeafstemning onsdag  1. juni 2022",
         "Kommunalvalg 2025",
     )
     template = (

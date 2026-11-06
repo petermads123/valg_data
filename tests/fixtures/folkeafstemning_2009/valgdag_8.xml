@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="8" Type="Landsdel">Sjælland-Syddanmark</Sted>
+  <SenestRettet>08-06-2009 01:19:22</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:27</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgLand8.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg8.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>1495704</Stemmeberettigede>
+  <DeltagelsePct>58.56</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="688545" StemmerPct="85" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="121520" StemmerPct="15" />
+    <IAltGyldigeStemmer>810065</IAltGyldigeStemmer>
+    <BlankeStemmer>61080</BlankeStemmer>
+    <AndreUgyldigeStemmer>4704</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>65784</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>875849</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

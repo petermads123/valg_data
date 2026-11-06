@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="28" Type="OpstKreds">9. Vesterbro</Sted>
+  <SenestRettet>07-06-2009 23:30:06</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:31</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst28.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg28.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>38477</Stemmeberettigede>
+  <DeltagelsePct>56.39</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14015" StemmerPct="83.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2703" StemmerPct="16.2" />
+    <IAltGyldigeStemmer>16718</IAltGyldigeStemmer>
+    <BlankeStemmer>4561</BlankeStemmer>
+    <AndreUgyldigeStemmer>419</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>4980</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21698</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

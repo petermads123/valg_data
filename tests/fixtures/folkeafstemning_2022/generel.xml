@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/generel.xsd">
+  <OpstilledePartier>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" />
+  </OpstilledePartier>
+  <KandidaterUdenForPartier />
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="98" Type="OpstKreds">7. Ikast</Sted>
+  <SenestRettet>01-06-2022 22:18:30</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:18:30</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst98.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg98.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>29450</Stemmeberettigede>
+  <DeltagelsePct>64.14</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="11780" StemmerPct="63.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="6864" StemmerPct="36.8" />
+    <IAltGyldigeStemmer>18644</IAltGyldigeStemmer>
+    <BlankeStemmer>214</BlankeStemmer>
+    <AndreUgyldigeStemmer>32</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>246</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>18890</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

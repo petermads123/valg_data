@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="102" Type="OpstKreds">11. Ringkøbing</Sted>
+  <SenestRettet>07-06-2009 23:03:16</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:44</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst102.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg102.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>42148</Stemmeberettigede>
+  <DeltagelsePct>60.5</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="20665" StemmerPct="85.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3498" StemmerPct="14.5" />
+    <IAltGyldigeStemmer>24163</IAltGyldigeStemmer>
+    <BlankeStemmer>1274</BlankeStemmer>
+    <AndreUgyldigeStemmer>62</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1336</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>25499</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="23" Type="OpstKreds">4. Sundbyøster</Sted>
+  <SenestRettet>08-06-2009 10:22:56</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:30</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst23.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg23.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36619</Stemmeberettigede>
+  <DeltagelsePct>53.32</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="13612" StemmerPct="83.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2726" StemmerPct="16.7" />
+    <IAltGyldigeStemmer>16338</IAltGyldigeStemmer>
+    <BlankeStemmer>2938</BlankeStemmer>
+    <AndreUgyldigeStemmer>251</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3189</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19527</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

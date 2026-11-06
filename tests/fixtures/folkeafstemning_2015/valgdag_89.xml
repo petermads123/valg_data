@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="89" Type="OpstKreds">9. Skanderborg</Sted>
+  <SenestRettet>03-12-2015 21:23:34</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:23:34</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst89.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg89.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>61421</Stemmeberettigede>
+  <DeltagelsePct>76.79</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="23955" StemmerPct="51.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="22245" StemmerPct="48.1" />
+    <IAltGyldigeStemmer>46200</IAltGyldigeStemmer>
+    <BlankeStemmer>853</BlankeStemmer>
+    <AndreUgyldigeStemmer>114</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>967</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>47167</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

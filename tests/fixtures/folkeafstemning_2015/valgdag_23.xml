@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="23" Type="OpstKreds">4. Sundbyøster</Sted>
+  <SenestRettet>03-12-2015 22:05:25</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:05:25</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst23.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg23.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>39926</Stemmeberettigede>
+  <DeltagelsePct>64.97</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="11271" StemmerPct="44.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="13997" StemmerPct="55.4" />
+    <IAltGyldigeStemmer>25268</IAltGyldigeStemmer>
+    <BlankeStemmer>573</BlankeStemmer>
+    <AndreUgyldigeStemmer>100</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>673</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>25941</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="109" Type="OpstKreds">7. Aalborg Øst</Sted>
+  <SenestRettet>03-12-2015 21:51:34</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:51:34</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:54</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:54</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst109.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg109.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>60087</Stemmeberettigede>
+  <DeltagelsePct>67.85</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16665" StemmerPct="41.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="23277" StemmerPct="58.3" />
+    <IAltGyldigeStemmer>39942</IAltGyldigeStemmer>
+    <BlankeStemmer>744</BlankeStemmer>
+    <AndreUgyldigeStemmer>81</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>825</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>40767</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

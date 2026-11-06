@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="13" Type="StorKreds">Bornholms Storkreds</Sted>
+  <SenestRettet>07-06-2009 22:26:30</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:28</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgStor13.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg13.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>32926</Stemmeberettigede>
+  <DeltagelsePct>54.16</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="13428" StemmerPct="82.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2795" StemmerPct="17.2" />
+    <IAltGyldigeStemmer>16223</IAltGyldigeStemmer>
+    <BlankeStemmer>1395</BlankeStemmer>
+    <AndreUgyldigeStemmer>214</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1609</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>17832</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

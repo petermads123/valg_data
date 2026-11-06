@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="58" Type="OpstKreds">11. Ringsted</Sted>
+  <SenestRettet>03-12-2015 21:43:13</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:43:13</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst58.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg58.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>46666</Stemmeberettigede>
+  <DeltagelsePct>72.61</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14494" StemmerPct="43.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="18836" StemmerPct="56.5" />
+    <IAltGyldigeStemmer>33330</IAltGyldigeStemmer>
+    <BlankeStemmer>478</BlankeStemmer>
+    <AndreUgyldigeStemmer>76</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>554</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>33884</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

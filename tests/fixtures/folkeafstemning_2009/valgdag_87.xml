@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="87" Type="OpstKreds">7. Randers Syd</Sted>
+  <SenestRettet>07-06-2009 22:59:24</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:42</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst87.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg87.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36246</Stemmeberettigede>
+  <DeltagelsePct>56.37</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16143" StemmerPct="85.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2810" StemmerPct="14.8" />
+    <IAltGyldigeStemmer>18953</IAltGyldigeStemmer>
+    <BlankeStemmer>1355</BlankeStemmer>
+    <AndreUgyldigeStemmer>123</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1478</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>20431</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

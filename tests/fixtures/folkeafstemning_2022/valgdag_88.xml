@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="88" Type="OpstKreds">8. Favrskov</Sted>
+  <SenestRettet>01-06-2022 21:32:42</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:32:42</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:38</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:38</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst88.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg88.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>34878</Stemmeberettigede>
+  <DeltagelsePct>71.48</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17081" StemmerPct="69.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="7547" StemmerPct="30.6" />
+    <IAltGyldigeStemmer>24628</IAltGyldigeStemmer>
+    <BlankeStemmer>259</BlankeStemmer>
+    <AndreUgyldigeStemmer>44</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>303</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>24931</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

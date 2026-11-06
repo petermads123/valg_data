@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="47" Type="OpstKreds">2. Aakirkeby</Sted>
+  <SenestRettet>07-06-2009 22:26:30</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:34</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst47.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg47.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>16955</Stemmeberettigede>
+  <DeltagelsePct>55.1</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="7031" StemmerPct="82.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="1447" StemmerPct="17.1" />
+    <IAltGyldigeStemmer>8478</IAltGyldigeStemmer>
+    <BlankeStemmer>741</BlankeStemmer>
+    <AndreUgyldigeStemmer>123</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>864</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>9342</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

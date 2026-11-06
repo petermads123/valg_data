@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="7" Type="Landsdel">Hovedstaden</Sted>
+  <SenestRettet>01-06-2022 23:29:03</SenestRettet>
+  <SenestRettetIso>2022-06-01T23:29:03</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:34</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:34</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgLand7.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg7.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>1289070</Stemmeberettigede>
+  <DeltagelsePct>65.81</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="581857" StemmerPct="69.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="254763" StemmerPct="30.5" />
+    <IAltGyldigeStemmer>836620</IAltGyldigeStemmer>
+    <BlankeStemmer>10048</BlankeStemmer>
+    <AndreUgyldigeStemmer>1620</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>11668</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>848288</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

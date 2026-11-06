@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="49" Type="OpstKreds">2. Guldborgsund</Sted>
+  <SenestRettet>07-06-2009 22:18:18</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:35</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst49.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg49.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>49008</Stemmeberettigede>
+  <DeltagelsePct>58.53</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22313" StemmerPct="83.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4515" StemmerPct="16.8" />
+    <IAltGyldigeStemmer>26828</IAltGyldigeStemmer>
+    <BlankeStemmer>1697</BlankeStemmer>
+    <AndreUgyldigeStemmer>158</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1855</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>28683</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

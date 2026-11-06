@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="18" Type="StorKreds">Vestjyllands Storkreds</Sted>
+  <SenestRettet>01-06-2022 22:18:30</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:18:30</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:35</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:35</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgStor18.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg18.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>385654</Stemmeberettigede>
+  <DeltagelsePct>66.92</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="168850" StemmerPct="66.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="85654" StemmerPct="33.7" />
+    <IAltGyldigeStemmer>254504</IAltGyldigeStemmer>
+    <BlankeStemmer>3105</BlankeStemmer>
+    <AndreUgyldigeStemmer>477</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3582</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>258086</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="11" Type="StorKreds">Københavns Omegns Storkreds</Sted>
+  <SenestRettet>03-12-2015 22:49:49</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:49:49</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgStor11.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg11.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>368845</Stemmeberettigede>
+  <DeltagelsePct>71.41</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="125083" StemmerPct="48.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="133978" StemmerPct="51.7" />
+    <IAltGyldigeStemmer>259061</IAltGyldigeStemmer>
+    <BlankeStemmer>3738</BlankeStemmer>
+    <AndreUgyldigeStemmer>595</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>4333</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>263394</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

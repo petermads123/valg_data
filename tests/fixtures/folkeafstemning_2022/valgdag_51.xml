@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="51" Type="OpstKreds">4. Næstved</Sted>
+  <SenestRettet>01-06-2022 21:56:19</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:56:19</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst51.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg51.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>63579</Stemmeberettigede>
+  <DeltagelsePct>65.35</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="25706" StemmerPct="62.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="15337" StemmerPct="37.4" />
+    <IAltGyldigeStemmer>41043</IAltGyldigeStemmer>
+    <BlankeStemmer>393</BlankeStemmer>
+    <AndreUgyldigeStemmer>111</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>504</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>41547</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

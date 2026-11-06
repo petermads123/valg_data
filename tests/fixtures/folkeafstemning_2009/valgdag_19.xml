@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="19" Type="StorKreds">Nordjyllands Storkreds</Sted>
+  <SenestRettet>07-06-2009 23:27:07</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:29</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgStor19.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg19.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>436132</Stemmeberettigede>
+  <DeltagelsePct>53.78</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="186916" StemmerPct="85.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="31111" StemmerPct="14.3" />
+    <IAltGyldigeStemmer>218027</IAltGyldigeStemmer>
+    <BlankeStemmer>15360</BlankeStemmer>
+    <AndreUgyldigeStemmer>1153</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>16513</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>234540</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

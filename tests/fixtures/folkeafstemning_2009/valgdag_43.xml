@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="43" Type="OpstKreds">4. Frederikssund</Sted>
+  <SenestRettet>07-06-2009 23:11:11</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:34</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst43.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg43.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>55681</Stemmeberettigede>
+  <DeltagelsePct>58.02</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="25009" StemmerPct="84.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4578" StemmerPct="15.5" />
+    <IAltGyldigeStemmer>29587</IAltGyldigeStemmer>
+    <BlankeStemmer>2516</BlankeStemmer>
+    <AndreUgyldigeStemmer>202</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2718</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>32305</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

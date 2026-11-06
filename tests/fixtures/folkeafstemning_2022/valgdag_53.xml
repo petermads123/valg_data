@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="53" Type="OpstKreds">6. Køge</Sted>
+  <SenestRettet>01-06-2022 22:03:27</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:03:27</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst53.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg53.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>65826</Stemmeberettigede>
+  <DeltagelsePct>69.27</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="29937" StemmerPct="66.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="15038" StemmerPct="33.4" />
+    <IAltGyldigeStemmer>44975</IAltGyldigeStemmer>
+    <BlankeStemmer>536</BlankeStemmer>
+    <AndreUgyldigeStemmer>86</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>622</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>45597</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

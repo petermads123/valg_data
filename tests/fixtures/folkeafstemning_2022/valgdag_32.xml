@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="32" Type="OpstKreds">1. Gentofte</Sted>
+  <SenestRettet>01-06-2022 22:02:12</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:02:12</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:35</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:35</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst32.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg32.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50457</Stemmeberettigede>
+  <DeltagelsePct>73.35</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="29361" StemmerPct="80.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="7274" StemmerPct="19.9" />
+    <IAltGyldigeStemmer>36635</IAltGyldigeStemmer>
+    <BlankeStemmer>298</BlankeStemmer>
+    <AndreUgyldigeStemmer>76</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>374</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>37009</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

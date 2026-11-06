@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="93" Type="OpstKreds">2. Skive</Sted>
+  <SenestRettet>07-06-2009 23:01:08</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:43</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst93.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg93.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36222</Stemmeberettigede>
+  <DeltagelsePct>54.34</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15805" StemmerPct="86.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2525" StemmerPct="13.8" />
+    <IAltGyldigeStemmer>18330</IAltGyldigeStemmer>
+    <BlankeStemmer>1277</BlankeStemmer>
+    <AndreUgyldigeStemmer>77</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1354</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19684</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

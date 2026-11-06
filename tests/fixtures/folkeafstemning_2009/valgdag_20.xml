@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="20" Type="OpstKreds">1. Østerbro</Sted>
+  <SenestRettet>08-06-2009 00:46:34</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:29</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst20.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg20.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50781</Stemmeberettigede>
+  <DeltagelsePct>60.51</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="21160" StemmerPct="84.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3805" StemmerPct="15.2" />
+    <IAltGyldigeStemmer>24965</IAltGyldigeStemmer>
+    <BlankeStemmer>5322</BlankeStemmer>
+    <AndreUgyldigeStemmer>442</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>5764</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>30729</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

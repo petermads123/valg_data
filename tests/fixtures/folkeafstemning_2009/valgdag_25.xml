@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="25" Type="OpstKreds">6. Utterslev</Sted>
+  <SenestRettet>07-06-2009 23:55:57</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:30</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst25.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg25.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>33778</Stemmeberettigede>
+  <DeltagelsePct>50.02</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="11397" StemmerPct="82.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2449" StemmerPct="17.7" />
+    <IAltGyldigeStemmer>13846</IAltGyldigeStemmer>
+    <BlankeStemmer>2197</BlankeStemmer>
+    <AndreUgyldigeStemmer>852</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3049</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>16895</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

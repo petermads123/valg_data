@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="36" Type="OpstKreds">5. Hvidovre</Sted>
+  <SenestRettet>03-12-2015 21:16:37</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:16:37</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst36.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg36.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36823</Stemmeberettigede>
+  <DeltagelsePct>69.67</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="9901" StemmerPct="39.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="15372" StemmerPct="60.8" />
+    <IAltGyldigeStemmer>25273</IAltGyldigeStemmer>
+    <BlankeStemmer>335</BlankeStemmer>
+    <AndreUgyldigeStemmer>48</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>383</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>25656</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

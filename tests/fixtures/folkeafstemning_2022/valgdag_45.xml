@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="45" Type="OpstKreds">6. Rudersdal</Sted>
+  <SenestRettet>01-06-2022 22:37:04</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:37:04</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst45.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg45.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>58353</Stemmeberettigede>
+  <DeltagelsePct>76.64</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="35435" StemmerPct="80" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="8851" StemmerPct="20" />
+    <IAltGyldigeStemmer>44286</IAltGyldigeStemmer>
+    <BlankeStemmer>359</BlankeStemmer>
+    <AndreUgyldigeStemmer>78</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>437</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>44723</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="76" Type="OpstKreds">9. Vejle Syd</Sted>
+  <SenestRettet>03-12-2015 22:31:59</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:31:59</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst76.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg76.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>41987</Stemmeberettigede>
+  <DeltagelsePct>70.65</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="13412" StemmerPct="46.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="15663" StemmerPct="53.9" />
+    <IAltGyldigeStemmer>29075</IAltGyldigeStemmer>
+    <BlankeStemmer>480</BlankeStemmer>
+    <AndreUgyldigeStemmer>107</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>587</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>29662</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

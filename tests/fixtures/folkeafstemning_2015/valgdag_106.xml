@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="106" Type="OpstKreds">4. Thisted</Sted>
+  <SenestRettet>03-12-2015 21:19:57</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:19:57</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:54</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:54</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst106.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg106.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>48706</Stemmeberettigede>
+  <DeltagelsePct>71.03</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15117" StemmerPct="44.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="18878" StemmerPct="55.5" />
+    <IAltGyldigeStemmer>33995</IAltGyldigeStemmer>
+    <BlankeStemmer>524</BlankeStemmer>
+    <AndreUgyldigeStemmer>78</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>602</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>34597</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>
