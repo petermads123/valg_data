@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="44" Type="OpstKreds">5. Egedal</Sted>
+  <SenestRettet>07-06-2009 23:41:04</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:34</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst44.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg44.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>55174</Stemmeberettigede>
+  <DeltagelsePct>68.36</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="29432" StemmerPct="86.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4456" StemmerPct="13.1" />
+    <IAltGyldigeStemmer>33888</IAltGyldigeStemmer>
+    <BlankeStemmer>3560</BlankeStemmer>
+    <AndreUgyldigeStemmer>270</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3830</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>37718</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

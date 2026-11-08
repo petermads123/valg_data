@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="15" Type="StorKreds">Fyns Storkreds</Sted>
+  <SenestRettet>07-06-2009 23:33:37</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:28</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgStor15.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg15.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>361760</Stemmeberettigede>
+  <DeltagelsePct>60.03</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="169484" StemmerPct="84.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="30524" StemmerPct="15.3" />
+    <IAltGyldigeStemmer>200008</IAltGyldigeStemmer>
+    <BlankeStemmer>15862</BlankeStemmer>
+    <AndreUgyldigeStemmer>1277</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>17139</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>217147</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

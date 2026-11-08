@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="67" Type="OpstKreds">8. Faaborg</Sted>
+  <SenestRettet>07-06-2009 22:06:01</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:38</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst67.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg67.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>44335</Stemmeberettigede>
+  <DeltagelsePct>63.02</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22273" StemmerPct="85.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3800" StemmerPct="14.6" />
+    <IAltGyldigeStemmer>26073</IAltGyldigeStemmer>
+    <BlankeStemmer>1725</BlankeStemmer>
+    <AndreUgyldigeStemmer>141</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1866</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>27939</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

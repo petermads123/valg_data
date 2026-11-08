@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="106" Type="OpstKreds">4. Thisted</Sted>
+  <SenestRettet>07-06-2009 23:03:55</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:45</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst106.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg106.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50512</Stemmeberettigede>
+  <DeltagelsePct>55.12</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22587" StemmerPct="86.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3487" StemmerPct="13.4" />
+    <IAltGyldigeStemmer>26074</IAltGyldigeStemmer>
+    <BlankeStemmer>1671</BlankeStemmer>
+    <AndreUgyldigeStemmer>99</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1770</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>27844</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -8,7 +8,15 @@ from dataclasses import replace
 from datetime import timedelta
 
 import pytest
-from conftest import dt, make_election, make_ep_election, make_party, make_place
+from conftest import (
+    dt,
+    make_answer,
+    make_election,
+    make_ep_election,
+    make_fa_election,
+    make_party,
+    make_place,
+)
 
 from dkvalg import (
     Change,
@@ -840,3 +848,124 @@ def test_an_ep_overtake_is_a_leader_change_between_the_two_parties(
     leader = _only(diff_elections(ep_election, later), LeaderChanged)
 
     assert [(c.before.letter, c.after.letter) for c in leader] == [("F", "A")]  # type: ignore[union-attr]  # before is set
+
+
+# --- round 4: referenda (A6, T6) ------------------------------------------------------
+
+
+def _fa_country(ja: int, nej: int, status: Status = Status.PRELIMINARY) -> Place:
+    return make_place(
+        "0",
+        place_type=COUNTRY,
+        name="Hele landet",
+        status=status,
+        parties=(make_answer("JA", ja), make_answer("NEJ", nej)),
+    )
+
+
+def test_a_referendum_lead_flipping_from_ja_to_nej_is_a_leader_change_with_deltas() -> (
+    None
+):
+    before = make_fa_election(_fa_country(600, 400))
+    after = make_fa_election(_fa_country(400, 600))
+
+    changes = diff_elections(before, after)
+
+    (leader,) = _only(changes, LeaderChanged)
+    assert (leader.before.letter, leader.after.letter) == ("JA", "NEJ")
+    deltas = {
+        c.after.letter: (c.votes_delta, c.seats_delta)
+        for c in _only(changes, PartyResultChanged)
+    }
+    assert deltas == {"JA": (-200, None), "NEJ": (200, None)}
+
+
+def test_a_referendum_tie_keeps_the_earlier_answer_and_reports_no_leader_change() -> (
+    None
+):
+    before = make_fa_election(_fa_country(600, 400))
+    after = make_fa_election(_fa_country(500, 500))
+
+    assert _only(diff_elections(before, after), LeaderChanged) == []
+
+
+def test_a_referendum_percent_only_move_is_a_party_result_change_without_seats() -> (
+    None
+):
+    before = make_fa_election(_fa_country(600, 400))
+    moved = _swap_party(before, COUNTRY, "0", "JA", percent=60.5)
+
+    changes = diff_elections(before, moved)
+
+    (change,) = _only(changes, PartyResultChanged)
+    assert (change.votes_delta, change.seats_delta) == (0, None)
+    assert change.after.percent == 60.5
+    assert _only(changes, LeaderChanged) == []
+
+
+def test_a_newly_counted_referendum_place_gives_place_counted_and_the_leading_answer() -> (
+    None
+):
+    before = make_fa_election(_fa_country(0, 0, Status.NOT_AVAILABLE))
+    after = make_fa_election(_fa_country(300, 700))
+
+    changes = diff_elections(before, after)
+
+    # a country does not move the districts-counted progress, so no ProgressChanged
+    assert _kinds(changes) == ["PlaceCounted", "LeaderChanged"]
+    (leader,) = _only(changes, LeaderChanged)
+    assert leader.before is None
+    assert leader.after.letter == "NEJ"
+    assert _only(changes, PartyResultChanged) == []
+
+
+def test_a_referendum_diffed_against_a_party_election_names_both_types() -> None:
+    referendum = make_fa_election(_fa_country(600, 400))
+    other = replace(referendum, election_type=make_ep_election().election_type)
+
+    with pytest.raises(ValueError, match="folkeafstemning") as caught:
+        diff_elections(referendum, other)
+
+    assert "europaparlamentsvalg" in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "places", "kreds", "leader_letter"),
+    [
+        ("fa_2022", 107, 92, "JA"),
+        ("fa_2015", 107, 92, "NEJ"),
+        ("fa_2009", 109, 94, "JA"),
+    ],
+)
+def test_diffing_every_referendum_replay_step_gives_one_place_counted_per_reported_place(
+    request: pytest.FixtureRequest,
+    fixture_name: str,
+    places: int,
+    kreds: int,
+    leader_letter: str,
+) -> None:
+    full: Election = request.getfixturevalue(fixture_name)
+    source = ReplaySource(full, speed=math.inf)
+    previous = source.initial()
+    changes: list[Change] = []
+    for step in source:
+        step_changes = diff_elections(previous, step.election)
+        assert len(_only(step_changes, PlaceCounted)) == 1
+        changes.extend(step_changes)
+        previous = step.election
+
+    progress = _only(tuple(changes), ProgressChanged)
+    country_leaders = [
+        c for c in _only(tuple(changes), LeaderChanged) if c.place.place_type is COUNTRY
+    ]
+    assert len(_only(tuple(changes), PlaceCounted)) == places
+    assert places == sum(1 for p in full.places if p.has_result)
+    assert _only(tuple(changes), PartyResultChanged) == []
+    assert _only(tuple(changes), StatusChanged) == []
+    assert progress[0].before == CountingProgress(0, kreds)
+    assert progress[-1].after == CountingProgress(kreds, kreds)
+    assert len(progress) == kreds
+    assert [c.after.letter for c in country_leaders] == [leader_letter]
+    assert previous == full
+    assert previous.get(COUNTRY, "0").leader.letter == leader_letter  # type: ignore[union-attr]  # a result is present
+    assert all(c.after.seats is None for c in _only(tuple(changes), LeaderChanged))

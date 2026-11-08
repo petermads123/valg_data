@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="35" Type="OpstKreds">4. Rødovre</Sted>
+  <SenestRettet>07-06-2009 23:14:23</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:32</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst35.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg35.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>45739</Stemmeberettigede>
+  <DeltagelsePct>58.91</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="20049" StemmerPct="83.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4033" StemmerPct="16.7" />
+    <IAltGyldigeStemmer>24082</IAltGyldigeStemmer>
+    <BlankeStemmer>2658</BlankeStemmer>
+    <AndreUgyldigeStemmer>205</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2863</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26945</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

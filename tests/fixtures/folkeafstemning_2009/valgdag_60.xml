@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="60" Type="OpstKreds">1. Odense Øst</Sted>
+  <SenestRettet>07-06-2009 23:33:11</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:37</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst60.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg60.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>49050</Stemmeberettigede>
+  <DeltagelsePct>49.65</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18101" StemmerPct="83" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3700" StemmerPct="17" />
+    <IAltGyldigeStemmer>21801</IAltGyldigeStemmer>
+    <BlankeStemmer>2368</BlankeStemmer>
+    <AndreUgyldigeStemmer>182</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2550</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>24351</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

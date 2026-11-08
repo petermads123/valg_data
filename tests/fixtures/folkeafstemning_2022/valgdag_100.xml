@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="100" Type="OpstKreds">9. Herning Nord</Sted>
+  <SenestRettet>01-06-2022 21:54:50</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:54:50</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst100.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg100.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>33715</Stemmeberettigede>
+  <DeltagelsePct>68.88</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15284" StemmerPct="66.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="7631" StemmerPct="33.3" />
+    <IAltGyldigeStemmer>22915</IAltGyldigeStemmer>
+    <BlankeStemmer>270</BlankeStemmer>
+    <AndreUgyldigeStemmer>38</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>308</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>23223</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

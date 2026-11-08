@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="95" Type="OpstKreds">4. Viborg Øst</Sted>
+  <SenestRettet>07-06-2009 23:01:41</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:43</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst95.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg95.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>32064</Stemmeberettigede>
+  <DeltagelsePct>61.1</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16187" StemmerPct="88.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2191" StemmerPct="11.9" />
+    <IAltGyldigeStemmer>18378</IAltGyldigeStemmer>
+    <BlankeStemmer>1146</BlankeStemmer>
+    <AndreUgyldigeStemmer>68</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1214</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19592</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="61" Type="OpstKreds">2. Odense Vest</Sted>
+  <SenestRettet>03-12-2015 21:56:39</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:56:39</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst61.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg61.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>43787</Stemmeberettigede>
+  <DeltagelsePct>71.32</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="13889" StemmerPct="45.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="16671" StemmerPct="54.6" />
+    <IAltGyldigeStemmer>30560</IAltGyldigeStemmer>
+    <BlankeStemmer>583</BlankeStemmer>
+    <AndreUgyldigeStemmer>87</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>670</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>31230</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

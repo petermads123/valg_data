@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="57" Type="OpstKreds">10. Kalundborg</Sted>
+  <SenestRettet>07-06-2009 22:55:09</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:36</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst57.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg57.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>63204</Stemmeberettigede>
+  <DeltagelsePct>55.83</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="27711" StemmerPct="84.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="5047" StemmerPct="15.4" />
+    <IAltGyldigeStemmer>32758</IAltGyldigeStemmer>
+    <BlankeStemmer>2343</BlankeStemmer>
+    <AndreUgyldigeStemmer>183</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2526</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>35284</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

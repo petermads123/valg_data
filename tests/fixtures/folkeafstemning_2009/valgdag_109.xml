@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="109" Type="OpstKreds">7. Aalborg Øst</Sted>
+  <SenestRettet>07-06-2009 23:15:54</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:46</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst109.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg109.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>55660</Stemmeberettigede>
+  <DeltagelsePct>53.23</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22792" StemmerPct="84.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4168" StemmerPct="15.5" />
+    <IAltGyldigeStemmer>26960</IAltGyldigeStemmer>
+    <BlankeStemmer>2483</BlankeStemmer>
+    <AndreUgyldigeStemmer>185</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2668</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>29628</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

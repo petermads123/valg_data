@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="88" Type="OpstKreds">8. Favrskov</Sted>
+  <SenestRettet>03-12-2015 21:16:56</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:16:56</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst88.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg88.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>33943</Stemmeberettigede>
+  <DeltagelsePct>76.5</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="12364" StemmerPct="48.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="13098" StemmerPct="51.4" />
+    <IAltGyldigeStemmer>25462</IAltGyldigeStemmer>
+    <BlankeStemmer>461</BlankeStemmer>
+    <AndreUgyldigeStemmer>45</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>506</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>25968</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

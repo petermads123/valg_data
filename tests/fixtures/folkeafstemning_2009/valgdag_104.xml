@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="104" Type="OpstKreds">2. Hjørring</Sted>
+  <SenestRettet>07-06-2009 23:24:25</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:45</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst104.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg104.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>50346</Stemmeberettigede>
+  <DeltagelsePct>52.08</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="21088" StemmerPct="85.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3518" StemmerPct="14.3" />
+    <IAltGyldigeStemmer>24606</IAltGyldigeStemmer>
+    <BlankeStemmer>1482</BlankeStemmer>
+    <AndreUgyldigeStemmer>131</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1613</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26219</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

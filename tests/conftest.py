@@ -33,9 +33,17 @@ from dkvalg.sources.http_source import HttpResponse
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures" / "folketingsvalg_2026"
 EP_FIXTURES = ROOT / "tests" / "fixtures" / "ep_2024"
+FA_2022_FIXTURES = ROOT / "tests" / "fixtures" / "folkeafstemning_2022"
+FA_2015_FIXTURES = ROOT / "tests" / "fixtures" / "folkeafstemning_2015"
+FA_2009_FIXTURES = ROOT / "tests" / "fixtures" / "folkeafstemning_2009"
 BOM = b"\xef\xbb\xbf"
 ELECTION_NAME = "Folketingsvalg tirsdag 24. marts 2026"
 EP_ELECTION_NAME = "Europa-Parlamentsvalg søndag  9. juni 2024"  # note the double space
+# The Folkeafstemning names, copied verbatim from each valgdag.xml.
+FA_2022_NAME = "Folkeafstemning onsdag  1. juni 2022"  # double space
+FA_2015_NAME = "Folkeafstemning torsdag 3. december 2015"  # single space
+FA_2009_NAME = "Folkeafstemning søndag  7. juni 2009"  # double space
+FA_ELECTION_NAME = FA_2022_NAME
 
 PARTIES_XML = (
     '<Parti Id="5891" Bogstav="A" Navn="A. Socialdemokratiet" StemmerAntal="600" '
@@ -245,6 +253,29 @@ def make_party(
     )
 
 
+def make_fa_election(*places: Place) -> Election:
+    """Build a Folkeafstemning (referendum) `Election` around the given places."""
+    return Election(
+        FA_2022_NAME,
+        ElectionType.FOLKEAFSTEMNING,
+        date.fromisoformat("2022-06-01"),
+        tuple(places),
+    )
+
+
+def make_answer(
+    letter: str, votes: int, *, percent: float | None = None
+) -> PartyResult:
+    """Build a referendum answer (`JA`, `NEJ`) as a `PartyResult` without seats."""
+    return PartyResult(
+        f"id-{letter}",
+        letter,
+        letter,
+        votes,
+        votes / 10 if percent is None else percent,
+    )
+
+
 def make_ep_election(*places: Place) -> Election:
     """Build a Europa-Parlamentsvalg `Election` around the given places."""
     return Election(
@@ -308,10 +339,60 @@ def ep_election(ep_fixture_dir: Path) -> Election:
     return load_election(ep_fixture_dir)
 
 
+@pytest.fixture(scope="session")
+def fa_2022_dir() -> Path:
+    """The unmodified 2022 Folkeafstemning fixtures (read-only)."""
+    assert FA_2022_FIXTURES.is_dir(), f"fixtures missing at {FA_2022_FIXTURES}"
+    return FA_2022_FIXTURES
+
+
+@pytest.fixture(scope="session")
+def fa_2015_dir() -> Path:
+    """The unmodified 2015 Folkeafstemning fixtures (read-only)."""
+    assert FA_2015_FIXTURES.is_dir(), f"fixtures missing at {FA_2015_FIXTURES}"
+    return FA_2015_FIXTURES
+
+
+@pytest.fixture(scope="session")
+def fa_2009_dir() -> Path:
+    """The unmodified 2009 Folkeafstemning fixtures (read-only)."""
+    assert FA_2009_FIXTURES.is_dir(), f"fixtures missing at {FA_2009_FIXTURES}"
+    return FA_2009_FIXTURES
+
+
+@pytest.fixture
+def fa_2022_copy(tmp_path: Path) -> Path:
+    """A throwaway copy of the 2022 referendum directory a test may damage."""
+    target = tmp_path / "fa_copy"
+    shutil.copytree(FA_2022_FIXTURES, target)
+    return target
+
+
+@pytest.fixture(scope="session")
+def fa_2022(fa_2022_dir: Path) -> Election:
+    """The 2022 referendum loaded once; immutable, so sharing it is safe."""
+    return load_election(fa_2022_dir)
+
+
+@pytest.fixture(scope="session")
+def fa_2015(fa_2015_dir: Path) -> Election:
+    """The 2015 referendum loaded once."""
+    return load_election(fa_2015_dir)
+
+
+@pytest.fixture(scope="session")
+def fa_2009(fa_2009_dir: Path) -> Election:
+    """The 2009 referendum (94 opstillingskredse) loaded once."""
+    return load_election(fa_2009_dir)
+
+
 # --- live polling helpers: a fake transport, a fake clock, feed mutations -------
 
 BASE_URL = "https://www.dst.dk/valg/Valg2546527/xml/"
 EP_BASE_URL = "https://www.dst.dk/valg/Valg2546524/xml/"
+FA_2022_BASE_URL = "https://www.dst.dk/valg/Valg1962294/xml/"
+FA_2015_BASE_URL = "https://www.dst.dk/valg/Valg1664255/xml/"
+FA_2009_BASE_URL = "https://www.dst.dk/valg/Valg1191213/xml/"
 OVERVIEW = "valgdag.xml"
 NATIONAL = "valgdag_0.xml"
 LATER_ISO = "2026-03-25T01:00:00"  # after every timestamp in the 2026 fixtures
@@ -331,6 +412,11 @@ def fixture_files() -> dict[str, bytes]:
 def ep_fixture_files() -> dict[str, bytes]:
     """A fresh dict of the 109 EP fixture files by name, free to mutate."""
     return {p.name: p.read_bytes() for p in sorted(EP_FIXTURES.glob("*.xml"))}
+
+
+def fa_fixture_files(directory: Path = FA_2022_FIXTURES) -> dict[str, bytes]:
+    """A fresh dict of a referendum set's XML files by name (2022 by default)."""
+    return {p.name: p.read_bytes() for p in sorted(directory.glob("*.xml"))}
 
 
 def dst_stamp(iso: str) -> str:
@@ -569,3 +655,15 @@ def transport() -> FakeTransport:
 def ep_transport() -> FakeTransport:
     """A fake DST serving the 2024 EP fixtures under their own election id."""
     return FakeTransport(ep_fixture_files(), base_url=EP_BASE_URL)
+
+
+@pytest.fixture
+def fa_transport() -> FakeTransport:
+    """A fake DST serving the 2022 referendum under its own election id."""
+    return FakeTransport(fa_fixture_files(FA_2022_FIXTURES), base_url=FA_2022_BASE_URL)
+
+
+@pytest.fixture
+def fa_2009_transport() -> FakeTransport:
+    """A fake DST serving the 2009 referendum (no `SenestRettetIso`)."""
+    return FakeTransport(fa_fixture_files(FA_2009_FIXTURES), base_url=FA_2009_BASE_URL)

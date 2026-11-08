@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="48" Type="OpstKreds">1. Lolland</Sted>
+  <SenestRettet>07-06-2009 21:46:19</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:34</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst48.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg48.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>36957</Stemmeberettigede>
+  <DeltagelsePct>52.06</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14824" StemmerPct="82.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3176" StemmerPct="17.6" />
+    <IAltGyldigeStemmer>18000</IAltGyldigeStemmer>
+    <BlankeStemmer>1130</BlankeStemmer>
+    <AndreUgyldigeStemmer>109</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1239</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19239</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

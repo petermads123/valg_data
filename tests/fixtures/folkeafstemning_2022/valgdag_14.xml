@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="14" Type="StorKreds">Sjællands Storkreds</Sted>
+  <SenestRettet>01-06-2022 22:20:23</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:20:23</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:34</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:34</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgStor14.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg14.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>633871</Stemmeberettigede>
+  <DeltagelsePct>66.37</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="265989" StemmerPct="64" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="149486" StemmerPct="36" />
+    <IAltGyldigeStemmer>415475</IAltGyldigeStemmer>
+    <BlankeStemmer>4396</BlankeStemmer>
+    <AndreUgyldigeStemmer>848</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>5244</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>420719</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

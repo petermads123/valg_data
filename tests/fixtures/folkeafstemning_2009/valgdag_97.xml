@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="97" Type="OpstKreds">6. Silkeborg Syd</Sted>
+  <SenestRettet>07-06-2009 23:02:16</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:44</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst97.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg97.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>33513</Stemmeberettigede>
+  <DeltagelsePct>61.69</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16558" StemmerPct="87.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2427" StemmerPct="12.8" />
+    <IAltGyldigeStemmer>18985</IAltGyldigeStemmer>
+    <BlankeStemmer>1576</BlankeStemmer>
+    <AndreUgyldigeStemmer>112</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1688</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>20673</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

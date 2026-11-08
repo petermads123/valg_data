@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="28" Type="OpstKreds">9. Vesterbro</Sted>
+  <SenestRettet>03-12-2015 22:14:18</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:14:18</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst28.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg28.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>42889</Stemmeberettigede>
+  <DeltagelsePct>69.52</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14471" StemmerPct="50.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="14416" StemmerPct="49.9" />
+    <IAltGyldigeStemmer>28887</IAltGyldigeStemmer>
+    <BlankeStemmer>820</BlankeStemmer>
+    <AndreUgyldigeStemmer>111</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>931</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>29818</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

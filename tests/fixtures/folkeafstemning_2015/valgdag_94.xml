@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="94" Type="OpstKreds">3. Viborg Vest</Sted>
+  <SenestRettet>03-12-2015 21:22:17</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:22:17</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst94.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg94.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>37792</Stemmeberettigede>
+  <DeltagelsePct>68.9</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="12633" StemmerPct="49.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="12914" StemmerPct="50.5" />
+    <IAltGyldigeStemmer>25547</IAltGyldigeStemmer>
+    <BlankeStemmer>433</BlankeStemmer>
+    <AndreUgyldigeStemmer>60</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>493</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26040</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

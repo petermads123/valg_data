@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="57" Type="OpstKreds">10. Kalundborg</Sted>
+  <SenestRettet>03-12-2015 21:18:16</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:18:16</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst57.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg57.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>63302</Stemmeberettigede>
+  <DeltagelsePct>72.05</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17401" StemmerPct="38.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="27604" StemmerPct="61.3" />
+    <IAltGyldigeStemmer>45005</IAltGyldigeStemmer>
+    <BlankeStemmer>518</BlankeStemmer>
+    <AndreUgyldigeStemmer>85</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>603</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>45608</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

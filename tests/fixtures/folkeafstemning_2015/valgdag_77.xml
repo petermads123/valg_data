@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="77" Type="OpstKreds">10. Fredericia</Sted>
+  <SenestRettet>03-12-2015 22:10:45</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:10:45</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst77.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg77.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>37423</Stemmeberettigede>
+  <DeltagelsePct>71.59</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="10830" StemmerPct="41" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="15591" StemmerPct="59" />
+    <IAltGyldigeStemmer>26421</IAltGyldigeStemmer>
+    <BlankeStemmer>310</BlankeStemmer>
+    <AndreUgyldigeStemmer>61</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>371</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26792</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

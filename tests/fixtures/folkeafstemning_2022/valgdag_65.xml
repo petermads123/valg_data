@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="65" Type="OpstKreds">6. Nyborg</Sted>
+  <SenestRettet>01-06-2022 21:50:02</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:50:02</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst65.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg65.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>42846</Stemmeberettigede>
+  <DeltagelsePct>67.64</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18794" StemmerPct="65.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="9767" StemmerPct="34.2" />
+    <IAltGyldigeStemmer>28561</IAltGyldigeStemmer>
+    <BlankeStemmer>374</BlankeStemmer>
+    <AndreUgyldigeStemmer>47</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>421</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>28982</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

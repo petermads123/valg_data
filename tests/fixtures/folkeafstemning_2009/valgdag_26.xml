@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="26" Type="OpstKreds">7. Brønshøj</Sted>
+  <SenestRettet>07-06-2009 23:49:14</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:30</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst26.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg26.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>53035</Stemmeberettigede>
+  <DeltagelsePct>58.37</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22117" StemmerPct="84.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4172" StemmerPct="15.9" />
+    <IAltGyldigeStemmer>26289</IAltGyldigeStemmer>
+    <BlankeStemmer>4266</BlankeStemmer>
+    <AndreUgyldigeStemmer>401</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>4667</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>30956</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

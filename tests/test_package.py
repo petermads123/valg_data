@@ -160,4 +160,18 @@ def test_election_type_exposes_the_ep_member_at_the_top_level() -> None:
     assert {m.name for m in dkvalg.ElectionType} == {
         "FOLKETINGSVALG",
         "EUROPAPARLAMENTSVALG",
+        "FOLKEAFSTEMNING",
     }
+
+
+def test_election_type_exposes_the_referendum_member_at_the_top_level() -> None:
+    member = dkvalg.ElectionType.FOLKEAFSTEMNING
+
+    assert member.value == "folkeafstemning"
+    assert dkvalg.ElectionType("folkeafstemning") is member
+
+
+@pytest.mark.parametrize("name", ["folkeafstemning", "FOLKEAFSTEMNING"])
+def test_dkvalg_keeps_the_referendum_adapter_out_of_the_top_level(name: str) -> None:
+    assert not hasattr(dkvalg, name)
+    assert importlib.import_module("dkvalg.adapters.folkeafstemning")

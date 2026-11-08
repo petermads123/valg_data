@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="30" Type="OpstKreds">11. Slots</Sted>
+  <SenestRettet>08-06-2009 00:17:41</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:31</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst30.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg30.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35297</Stemmeberettigede>
+  <DeltagelsePct>60.82</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15429" StemmerPct="84.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2779" StemmerPct="15.3" />
+    <IAltGyldigeStemmer>18208</IAltGyldigeStemmer>
+    <BlankeStemmer>2950</BlankeStemmer>
+    <AndreUgyldigeStemmer>311</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>3261</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21469</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

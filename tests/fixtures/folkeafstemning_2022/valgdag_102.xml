@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="102" Type="OpstKreds">11. Ringkøbing</Sted>
+  <SenestRettet>01-06-2022 22:01:36</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:01:36</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst102.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg102.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>40475</Stemmeberettigede>
+  <DeltagelsePct>67.5</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17653" StemmerPct="65.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="9289" StemmerPct="34.5" />
+    <IAltGyldigeStemmer>26942</IAltGyldigeStemmer>
+    <BlankeStemmer>330</BlankeStemmer>
+    <AndreUgyldigeStemmer>50</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>380</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>27322</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

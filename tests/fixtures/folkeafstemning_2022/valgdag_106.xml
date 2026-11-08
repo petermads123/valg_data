@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="106" Type="OpstKreds">4. Thisted</Sted>
+  <SenestRettet>01-06-2022 21:21:19</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:21:19</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:39</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:39</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst106.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg106.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>47629</Stemmeberettigede>
+  <DeltagelsePct>63.06</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18494" StemmerPct="62.3" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="11175" StemmerPct="37.7" />
+    <IAltGyldigeStemmer>29669</IAltGyldigeStemmer>
+    <BlankeStemmer>331</BlankeStemmer>
+    <AndreUgyldigeStemmer>34</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>365</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>30034</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

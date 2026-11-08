@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="87" Type="OpstKreds">7. Randers Syd</Sted>
+  <SenestRettet>03-12-2015 22:05:59</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:05:59</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:53</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:53</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst87.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg87.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>37646</Stemmeberettigede>
+  <DeltagelsePct>69.19</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="10883" StemmerPct="42.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="14746" StemmerPct="57.5" />
+    <IAltGyldigeStemmer>25629</IAltGyldigeStemmer>
+    <BlankeStemmer>369</BlankeStemmer>
+    <AndreUgyldigeStemmer>50</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>419</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26048</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

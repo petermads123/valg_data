@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="31" Type="OpstKreds">12. Tårnby</Sted>
+  <SenestRettet>07-06-2009 23:23:45</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:31</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst31.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg31.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>39355</Stemmeberettigede>
+  <DeltagelsePct>58.48</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17557" StemmerPct="84.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3305" StemmerPct="15.8" />
+    <IAltGyldigeStemmer>20862</IAltGyldigeStemmer>
+    <BlankeStemmer>2028</BlankeStemmer>
+    <AndreUgyldigeStemmer>125</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2153</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>23015</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

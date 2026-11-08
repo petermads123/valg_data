@@ -3,14 +3,24 @@
 from pathlib import Path
 
 import pytest
-from conftest import BOM, ELECTION_NAME, EP_ELECTION_NAME, kreds_entry, overview_xml
+from conftest import (
+    BOM,
+    ELECTION_NAME,
+    EP_ELECTION_NAME,
+    FA_2009_NAME,
+    FA_2015_NAME,
+    FA_2022_NAME,
+    kreds_entry,
+    overview_xml,
+)
 
 from dkvalg import ElectionType, FeedError
-from dkvalg.adapters import europaparlamentsvalg, folketingsvalg
+from dkvalg.adapters import europaparlamentsvalg, folkeafstemning, folketingsvalg
 from dkvalg.adapters.registry import parse_any_overview
 
 FV = ElectionType.FOLKETINGSVALG
 EP = ElectionType.EUROPAPARLAMENTSVALG
+FA = ElectionType.FOLKEAFSTEMNING
 
 
 def _overview(name: str | None, **kwargs: object) -> bytes:
@@ -64,7 +74,6 @@ def test_parse_any_overview_accepts_names_that_start_with_a_supported_prefix(
 @pytest.mark.parametrize(
     "name",
     [
-        "Folkeafstemning 2022",
         "Kommunalvalg 2025",
         "folketingsvalg 2026",
         "FOLKETINGSVALG 2026",
@@ -170,3 +179,99 @@ def test_parse_any_overview_is_idempotent(ep_fixture_dir: Path) -> None:
     xml = (ep_fixture_dir / "valgdag.xml").read_bytes()
 
     assert parse_any_overview(xml) == parse_any_overview(xml)
+
+
+# --- round 4: Folkeafstemning (A3, T3) -------------------------------------------------
+
+REFUSAL = (
+    "valgdag.xml: not a supported election "
+    "(Folketingsvalg, Europa-Parlamentsvalg, Folkeafstemning), ValgNavn is {name!r}"
+)
+
+
+@pytest.mark.parametrize(
+    ("directory_name", "name", "feeds"),
+    [
+        ("fa_2022_dir", FA_2022_NAME, 107),
+        ("fa_2015_dir", FA_2015_NAME, 107),
+        ("fa_2009_dir", FA_2009_NAME, 109),
+    ],
+)
+def test_each_real_referendum_overview_gives_the_referendum_type(
+    request: pytest.FixtureRequest, directory_name: str, name: str, feeds: int
+) -> None:
+    xml = (request.getfixturevalue(directory_name) / "valgdag.xml").read_bytes()
+
+    overview = parse_any_overview(xml)
+
+    assert overview.election_type is FA
+    assert overview.name == name
+    assert len(overview.feeds) == feeds
+    assert overview == folkeafstemning.parse_overview(xml)
+
+
+@pytest.mark.parametrize(
+    ("name", "expected_name"),
+    [
+        (FA_2022_NAME, FA_2022_NAME),
+        (f"  {FA_2009_NAME}\n", FA_2009_NAME),
+        ("Folkeafstemning", "Folkeafstemning"),
+        # startswith, as for the other two: a longer word is accepted (pinned).
+        ("Folkeafstemningxyz", "Folkeafstemningxyz"),
+    ],
+)
+def test_parse_any_overview_accepts_referendum_names_and_keeps_the_double_space(
+    name: str, expected_name: str
+) -> None:
+    overview = parse_any_overview(_overview(name))
+
+    assert overview.election_type is FA
+    assert overview.name == expected_name
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "Kommunalvalg 2025",
+        "folkeafstemning 2022",
+        "FOLKEAFSTEMNING 2022",
+        "x Folkeafstemning",
+        "Folke afstemning",
+    ],
+)
+def test_parse_any_overview_refusal_message_lists_the_three_types_in_order(
+    name: str,
+) -> None:
+    with pytest.raises(FeedError) as caught:
+        parse_any_overview(_overview(name))
+
+    assert str(caught.value) == REFUSAL.format(name=name)
+
+
+@pytest.mark.parametrize(
+    "parse",
+    [
+        folketingsvalg.parse_overview,
+        europaparlamentsvalg.parse_overview,
+        folkeafstemning.parse_overview,
+    ],
+)
+def test_the_registry_result_equals_the_matching_adapter_and_no_other_accepts_it(
+    parse: object, fa_2022_dir: Path
+) -> None:
+    xml = (fa_2022_dir / "valgdag.xml").read_bytes()
+
+    if parse is folkeafstemning.parse_overview:
+        assert parse(xml) == parse_any_overview(xml)  # type: ignore[operator]  # parse is one of the three adapters
+    else:
+        with pytest.raises(FeedError, match="not a "):
+            parse(xml)  # type: ignore[operator]  # parse is one of the three adapters
+
+
+def test_the_registry_reads_a_referendum_overview_with_a_double_space_name(
+    fa_2022_dir: Path,
+) -> None:
+    xml = (fa_2022_dir / "valgdag.xml").read_bytes()
+
+    assert b"onsdag  1." in xml
+    assert parse_any_overview(xml).name == FA_2022_NAME

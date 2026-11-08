@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="65" Type="OpstKreds">6. Nyborg</Sted>
+  <SenestRettet>07-06-2009 23:33:37</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:38</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst65.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg65.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>41621</Stemmeberettigede>
+  <DeltagelsePct>61.66</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="19913" StemmerPct="83.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3871" StemmerPct="16.3" />
+    <IAltGyldigeStemmer>23784</IAltGyldigeStemmer>
+    <BlankeStemmer>1758</BlankeStemmer>
+    <AndreUgyldigeStemmer>122</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1880</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>25664</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

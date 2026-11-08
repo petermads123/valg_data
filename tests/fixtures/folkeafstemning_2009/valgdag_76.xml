@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="76" Type="OpstKreds">9. Vejle Syd</Sted>
+  <SenestRettet>07-06-2009 23:37:58</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:40</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst76.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg76.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>40314</Stemmeberettigede>
+  <DeltagelsePct>57.09</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18510" StemmerPct="86.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2966" StemmerPct="13.8" />
+    <IAltGyldigeStemmer>21476</IAltGyldigeStemmer>
+    <BlankeStemmer>1404</BlankeStemmer>
+    <AndreUgyldigeStemmer>136</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1540</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>23016</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

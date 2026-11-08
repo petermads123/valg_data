@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="64" Type="OpstKreds">5. Middelfart</Sted>
+  <SenestRettet>07-06-2009 22:55:45</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:37</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst64.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg64.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>49864</Stemmeberettigede>
+  <DeltagelsePct>61.86</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="24740" StemmerPct="85.6" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4148" StemmerPct="14.4" />
+    <IAltGyldigeStemmer>28888</IAltGyldigeStemmer>
+    <BlankeStemmer>1798</BlankeStemmer>
+    <AndreUgyldigeStemmer>159</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1957</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>30845</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

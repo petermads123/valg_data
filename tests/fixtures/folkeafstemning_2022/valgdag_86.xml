@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="86" Type="OpstKreds">6. Randers Nord</Sted>
+  <SenestRettet>01-06-2022 22:21:35</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:21:35</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:38</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:38</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst86.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg86.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35745</Stemmeberettigede>
+  <DeltagelsePct>62.02</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="13437" StemmerPct="61.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="8462" StemmerPct="38.6" />
+    <IAltGyldigeStemmer>21899</IAltGyldigeStemmer>
+    <BlankeStemmer>228</BlankeStemmer>
+    <AndreUgyldigeStemmer>42</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>270</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>22169</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

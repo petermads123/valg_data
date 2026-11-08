@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="89" Type="OpstKreds">9. Skanderborg</Sted>
+  <SenestRettet>07-06-2009 22:47:54</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:42</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst89.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg89.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>59176</Stemmeberettigede>
+  <DeltagelsePct>65.4</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="31491" StemmerPct="87.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4320" StemmerPct="12.1" />
+    <IAltGyldigeStemmer>35811</IAltGyldigeStemmer>
+    <BlankeStemmer>2691</BlankeStemmer>
+    <AndreUgyldigeStemmer>200</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2891</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>38702</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

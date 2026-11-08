@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="52" Type="OpstKreds">5. Faxe</Sted>
+  <SenestRettet>01-06-2022 22:04:49</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:04:49</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:36</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:36</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst52.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg52.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>45747</Stemmeberettigede>
+  <DeltagelsePct>67.23</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="18803" StemmerPct="61.9" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="11571" StemmerPct="38.1" />
+    <IAltGyldigeStemmer>30374</IAltGyldigeStemmer>
+    <BlankeStemmer>289</BlankeStemmer>
+    <AndreUgyldigeStemmer>94</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>383</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>30757</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

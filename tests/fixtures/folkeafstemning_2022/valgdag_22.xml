@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="22" Type="OpstKreds">3. Indre By</Sted>
+  <SenestRettet>01-06-2022 22:55:52</SenestRettet>
+  <SenestRettetIso>2022-06-01T22:55:52</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:35</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:35</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst22.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg22.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>41266</Stemmeberettigede>
+  <DeltagelsePct>64.86</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="19678" StemmerPct="74.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="6660" StemmerPct="25.3" />
+    <IAltGyldigeStemmer>26338</IAltGyldigeStemmer>
+    <BlankeStemmer>364</BlankeStemmer>
+    <AndreUgyldigeStemmer>63</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>427</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>26765</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

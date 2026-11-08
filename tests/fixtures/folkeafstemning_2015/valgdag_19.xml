@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="19" Type="StorKreds">Nordjyllands Storkreds</Sted>
+  <SenestRettet>03-12-2015 22:28:02</SenestRettet>
+  <SenestRettetIso>2015-12-03T22:28:02</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:51</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:51</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgStor19.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg19.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>441249</Stemmeberettigede>
+  <DeltagelsePct>69.63</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="128850" StemmerPct="42.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="173112" StemmerPct="57.3" />
+    <IAltGyldigeStemmer>301962</IAltGyldigeStemmer>
+    <BlankeStemmer>4633</BlankeStemmer>
+    <AndreUgyldigeStemmer>634</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>5267</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>307229</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

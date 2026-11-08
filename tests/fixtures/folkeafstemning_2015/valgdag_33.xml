@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="33" Type="OpstKreds">2. Lyngby</Sted>
+  <SenestRettet>03-12-2015 21:19:07</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:19:07</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst33.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg33.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>38569</Stemmeberettigede>
+  <DeltagelsePct>76.15</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17511" StemmerPct="60.8" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="11292" StemmerPct="39.2" />
+    <IAltGyldigeStemmer>28803</IAltGyldigeStemmer>
+    <BlankeStemmer>491</BlankeStemmer>
+    <AndreUgyldigeStemmer>75</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>566</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>29369</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

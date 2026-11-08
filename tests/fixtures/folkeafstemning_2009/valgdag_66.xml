@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="66" Type="OpstKreds">7. Svendborg</Sted>
+  <SenestRettet>07-06-2009 22:27:00</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:38</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst66.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg66.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>55519</Stemmeberettigede>
+  <DeltagelsePct>60.96</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="26302" StemmerPct="84.7" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4754" StemmerPct="15.3" />
+    <IAltGyldigeStemmer>31056</IAltGyldigeStemmer>
+    <BlankeStemmer>2540</BlankeStemmer>
+    <AndreUgyldigeStemmer>247</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2787</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>33843</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

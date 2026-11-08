@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="36" Type="OpstKreds">5. Hvidovre</Sted>
+  <SenestRettet>07-06-2009 22:53:36</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:32</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst36.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg36.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35495</Stemmeberettigede>
+  <DeltagelsePct>56.12</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="14645" StemmerPct="82.1" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3186" StemmerPct="17.9" />
+    <IAltGyldigeStemmer>17831</IAltGyldigeStemmer>
+    <BlankeStemmer>1938</BlankeStemmer>
+    <AndreUgyldigeStemmer>150</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>2088</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>19919</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

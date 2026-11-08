@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="31" Type="OpstKreds">12. Tårnby</Sted>
+  <SenestRettet>01-06-2022 23:10:39</SenestRettet>
+  <SenestRettetIso>2022-06-01T23:10:39</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:35</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:35</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst31.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg31.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>40514</Stemmeberettigede>
+  <DeltagelsePct>66.95</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="17315" StemmerPct="64.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="9524" StemmerPct="35.5" />
+    <IAltGyldigeStemmer>26839</IAltGyldigeStemmer>
+    <BlankeStemmer>242</BlankeStemmer>
+    <AndreUgyldigeStemmer>44</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>286</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>27125</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

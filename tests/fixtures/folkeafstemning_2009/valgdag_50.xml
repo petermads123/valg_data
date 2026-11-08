@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="50" Type="OpstKreds">3. Vordingborg</Sted>
+  <SenestRettet>07-06-2009 23:25:30</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:35</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst50.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg50.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35626</Stemmeberettigede>
+  <DeltagelsePct>61.09</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16778" StemmerPct="84" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="3203" StemmerPct="16" />
+    <IAltGyldigeStemmer>19981</IAltGyldigeStemmer>
+    <BlankeStemmer>1664</BlankeStemmer>
+    <AndreUgyldigeStemmer>119</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>1783</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>21764</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

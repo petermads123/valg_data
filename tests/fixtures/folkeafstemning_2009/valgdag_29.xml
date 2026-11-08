@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="29" Type="OpstKreds">10. Falkoner</Sted>
+  <SenestRettet>08-06-2009 00:17:15</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:31</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst29.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg29.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>35850</Stemmeberettigede>
+  <DeltagelsePct>64.5</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="16217" StemmerPct="85" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="2854" StemmerPct="15" />
+    <IAltGyldigeStemmer>19071</IAltGyldigeStemmer>
+    <BlankeStemmer>3751</BlankeStemmer>
+    <AndreUgyldigeStemmer>302</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>4053</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>23124</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning onsdag  1. juni 2022</ValgNavn>
+  <ValgDato>01-06-2022</ValgDato>
+  <Sted Id="68" Type="OpstKreds">1. Sønderborg</Sted>
+  <SenestRettet>01-06-2022 21:50:16</SenestRettet>
+  <SenestRettetIso>2022-06-01T21:50:16</SenestRettetIso>
+  <SenestDannet>02-06-2022 09:34:37</SenestDannet>
+  <SenestDannetIso>2022-06-02T09:34:37</SenestDannetIso>
+  <HtmlUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopgOpst68.htm</HtmlUrl>
+  <GrafUrl>https://www.dst.dk/valg/Valg1962294/valgopg/valgopg68.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>53989</Stemmeberettigede>
+  <DeltagelsePct>66.07</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="22362" StemmerPct="63.5" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="12831" StemmerPct="36.5" />
+    <IAltGyldigeStemmer>35193</IAltGyldigeStemmer>
+    <BlankeStemmer>380</BlankeStemmer>
+    <AndreUgyldigeStemmer>96</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>476</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>35669</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

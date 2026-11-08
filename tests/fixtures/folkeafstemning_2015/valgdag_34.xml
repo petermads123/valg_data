@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.dst.dk/valg/xml/resultat.xsd">
+  <ValgNavn>Folkeafstemning torsdag 3. december 2015</ValgNavn>
+  <ValgDato>03-12-2015</ValgDato>
+  <Sted Id="34" Type="OpstKreds">3. Gladsaxe</Sted>
+  <SenestRettet>03-12-2015 21:44:02</SenestRettet>
+  <SenestRettetIso>2015-12-03T21:44:02</SenestRettetIso>
+  <SenestDannet>04-12-2015 08:28:52</SenestDannet>
+  <SenestDannetIso>2015-12-04T08:28:52</SenestDannetIso>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopgOpst34.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1664255/valgopg/valgopg34.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>46324</Stemmeberettigede>
+  <DeltagelsePct>71.49</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="15998" StemmerPct="49.2" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="16499" StemmerPct="50.8" />
+    <IAltGyldigeStemmer>32497</IAltGyldigeStemmer>
+    <BlankeStemmer>574</BlankeStemmer>
+    <AndreUgyldigeStemmer>45</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>619</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>33116</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>

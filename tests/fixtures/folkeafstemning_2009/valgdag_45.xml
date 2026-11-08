@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Data>
+  <ValgNavn>Folkeafstemning søndag  7. juni 2009</ValgNavn>
+  <ValgDato>07-06-2009</ValgDato>
+  <Sted Id="45" Type="OpstKreds">6. Rudersdal</Sted>
+  <SenestRettet>08-06-2009 00:16:17</SenestRettet>
+  <SenestDannet>09-01-2014 13:36:34</SenestDannet>
+  <HtmlUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopgOpst45.htm</HtmlUrl>
+  <GrafUrl>http://www.dst.dk/valg/Valg1191213/valgopg/valgopg45.png</GrafUrl>
+  <Status Kode="1">Foreløbigt resultat</Status>
+  <Stemmeberettigede>54663</Stemmeberettigede>
+  <DeltagelsePct>71.25</DeltagelsePct>
+  <Stemmer>
+    <Parti Id="434284" Bogstav="JA" Navn="JA" StemmerAntal="30439" StemmerPct="87.4" />
+    <Parti Id="434285" Bogstav="NEJ" Navn="NEJ" StemmerAntal="4389" StemmerPct="12.6" />
+    <IAltGyldigeStemmer>34828</IAltGyldigeStemmer>
+    <BlankeStemmer>3844</BlankeStemmer>
+    <AndreUgyldigeStemmer>276</AndreUgyldigeStemmer>
+    <IAltUgyldigeStemmer>4120</IAltUgyldigeStemmer>
+    <IAltAfgivneStemmer>38948</IAltAfgivneStemmer>
+  </Stemmer>
+</Data>
