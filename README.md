@@ -7,7 +7,7 @@ live night can be replayed later with its true timing. The pipeline is developed
 real past election (24 March 2026), the EP election of 9 June 2024 and the referenda of
 2022, 2015 and 2009. Standard library only.
 
-**Version:** 1.3.1
+**Version:** 1.3.2
 
 ## Install as a dependency
 
