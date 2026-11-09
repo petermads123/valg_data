@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dkvalg"
-version = "1.3.0"
+version = "1.3.1"
 description = "Danish election data (Folketingsvalg) in one normalised model, with replay of saved DST feeds"
 authors = [
   { name = "Peter Mads Pedersen", email = "petermads123@hotmail.com" }
@@ -19,7 +19,7 @@ dependencies = []
 [project.optional-dependencies]
 # Pinned to a minor series rather than left open. A Ruff release added
 # formatting of Python inside Markdown code blocks and turned the gate red on
-# prose nobody had edited; an unpinned linter makes the stop gate fail for
+# prose nobody had edited; an unpinned linter makes the gate fail for
 # reasons unrelated to the change in front of it. Widen deliberately, not by
 # accident.
 dev = [
