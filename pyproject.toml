@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dkvalg"
-version = "1.3.1"
+version = "1.3.2"
 description = "Danish election data (Folketingsvalg) in one normalised model, with replay of saved DST feeds"
 authors = [
   { name = "Peter Mads Pedersen", email = "petermads123@hotmail.com" }
